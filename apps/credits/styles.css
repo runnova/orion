@@ -11,7 +11,7 @@
  }
 
  .basic {
-    padding: .5em;
+     padding: .5em;
  }
 
  input,
@@ -123,6 +123,7 @@
 
  .chart canvas {
      width: 100%;
+    max-height: 235px;
  }
 
  .screen {
@@ -317,6 +318,55 @@
  }
 
  td {
-    padding: .8em;
-    border-bottom: 1px solid grey;
-}
+     padding: .8em;
+     border-bottom: 1px solid grey;
+ }
+
+ #widgets {
+     display: flex;
+     flex-direction: column;
+     gap: .5em;
+ }
+
+ .widget-header {
+     display: flex;
+     flex-direction: row;
+     white-space: nowrap;
+     gap: .5em;
+     justify-content: space-between;
+ }
+
+ .widget-body {
+     display: flex;
+     flex-direction: row;
+     white-space: nowrap;
+     gap: .5em;
+ }
+
+ select {
+     background: var(--col-bg3);
+     color: inherit;
+     border-radius: .3em;
+     padding: 1px 5px;
+     border: var(--box-crisp);
+ }
+
+ #widgets_wide {
+     display: flex;
+     flex-direction: row;
+     justify-content: flex-start;
+     flex-wrap: wrap;
+     margin-top: .5em;
+     align-items: flex-end;
+     gap: .5em;
+
+     >* {
+         flex: 1;
+         height: 250px;
+
+         & canvas {
+             max-height: 200px;
+             aspect-ratio: initial;
+         }
+     }
+ }
