@@ -335,6 +335,13 @@
      white-space: nowrap;
      gap: .5em;
      justify-content: space-between;
+     border-bottom: 1px solid var(--box-crisp-col);
+     padding-bottom: .3em;
+     margin-bottom: .3em;
+     &>span {
+     opacity: .5;
+     font-size: small;
+     }
  }
 
  .widget-body {

@@ -58,93 +58,93 @@
 
                         </div>
 
-               </div>
-                        <div class="widget" id="gainloss-widget">
-                            <div class="widget-header">
-                                <span>Gain–loss ratio</span>
-                                <select id="gainloss-range">
-                                    <option value="this_week">This week</option>
-                                    <option value="last_week">Last week</option>
-                                    <option value="this_month">This month</option>
-                                    <option value="last_month">Last month</option>
-                                    <option value="this_year">This year</option>
-                                    <option value="all_time">All time</option>
-                                </select>
-                            </div>
-                            <div class="widget-body">
-                                <span class="material-symbols-rounded" id="gainorloss"></span>
-                                <span id="accgainlossdisp"></span>
-                            </div>
+                    </div>
+                    <div class="widget" id="gainloss-widget">
+                        <div class="widget-header">
+                            <span>Gain–loss ratio</span>
+                            <select id="gainloss-range">
+                                <option value="this_week">This week</option>
+                                <option value="last_week">Last week</option>
+                                <option value="this_month">This month</option>
+                                <option value="last_month">Last month</option>
+                                <option value="this_year">This year</option>
+                                <option value="all_time">All time</option>
+                            </select>
                         </div>
-
-                        <div class="widget" id="flow-widget">
-                            <div class="widget-header">
-                                <span>Inflow / Outflow</span>
-                                <select id="flow-range">
-                                    <option value="this_week">This week</option>
-                                    <option value="last_week">Last week</option>
-                                    <option value="this_month">This month</option>
-                                    <option value="last_month">Last month</option>
-                                    <option value="this_year">This year</option>
-                                    <option value="all_time">All time</option>
-                                </select>
-                            </div>
-                            <div class="widget-body">
-                                <span id="flow-in"></span>
-                                <span id="flow-out"></span>
-                            </div>
+                        <div class="widget-body">
+                            <span class="material-symbols-rounded" id="gainorloss"></span>
+                            <span id="accgainlossdisp"></span>
                         </div>
                     </div>
 
+                    <div class="widget" id="flow-widget">
+                        <div class="widget-header">
+                            <span>Inflow / Outflow</span>
+                            <select id="flow-range">
+                                <option value="this_week">This week</option>
+                                <option value="last_week">Last week</option>
+                                <option value="this_month">This month</option>
+                                <option value="last_month">Last month</option>
+                                <option value="this_year">This year</option>
+                                <option value="all_time">All time</option>
+                            </select>
+                        </div>
+                        <div class="widget-body">
+                            <span id="flow-in"></span>/
+                            <span id="flow-out"></span>
+                        </div>
+                    </div>
                 </div>
-                <div class="chart">
-                    <canvas id="transactionChart"></canvas>
-                </div>
+
             </div>
-            <div id="widgets_wide">
-    <div class="widget" id="top-payers-chart-widget">
-        <div class="widget-header">Top payers</div>
-        <canvas id="topPayersChart"></canvas>
+            <div class="chart">
+                <canvas id="transactionChart"></canvas>
+            </div>
+        </div>
+        <div id="widgets_wide">
+            <div class="widget" id="top-payers-chart-widget">
+                <div class="widget-header"><span>Top payers</span></div>
+                <canvas id="topPayersChart"></canvas>
+            </div>
+
+            <div class="widget" id="top-receivers-chart-widget">
+                <div class="widget-header"><span>Top receivers</span></div>
+                <canvas id="topReceiversChart"></canvas>
+            </div>
+            <div class="widget" id="volatility-widget">
+                <div class="widget-header"><span>Volatility - by week</span></div>
+                <canvas id="volatilityChart"></canvas>
+            </div>
+
+        </div>
+
+        <h1>All transactions</h1>
+        <div id="transactionList">
+        </div>
     </div>
-
-    <div class="widget" id="top-receivers-chart-widget">
-        <div class="widget-header">Top receivers</div>
-        <canvas id="topReceiversChart"></canvas>
+    <div class="screen" id="paymentscreen">
+        <small id="sendmoneystat">Sending <span id="sendmoneyusrchip">darkdot</span>:</small>
+        <input id="sendmoneyvalue" onkeyup="recalculatepaycheck()" value="01.00" placeholder="01.00">
+        <div id="note_abt_tax">
+            +1 <div class="rtr"></div> taxes
+        </div>
+        <div class="aboutotsend">
+            <input id="sendmoneynote" placeholder="Note...">
+            <button id="sendmoneybtn" onclick="sendmoneyfr()">
+                <span class="totalPaymentdisp">Pay <span id="totalpaymentfr">no</span>
+                    <div class="rtr"></div>
+                </span>
+                <span class="material-symbols-rounded">
+                    arrow_forward
+                </span></button>
+        </div>
+        <button class="sendmoneycancel" onclick="cancelpayment()">
+            Cancel</button>
     </div>
-    <div class="widget" id="volatility-widget">
-    <div class="widget-header">Volatility (3 weeks)</div>
-    <canvas id="volatilityChart"></canvas>
-</div>
+    <div class="screen" id="donescreen">
 
-</div>
-
-            <h1>All transactions</h1>
-            <div id="transactionList">
-            </div>
-        </div>
-        <div class="screen" id="paymentscreen">
-            <small id="sendmoneystat">Sending <span id="sendmoneyusrchip">darkdot</span>:</small>
-            <input id="sendmoneyvalue" onkeyup="recalculatepaycheck()" value="01.00" placeholder="01.00">
-            <div id="note_abt_tax">
-                +1 <div class="rtr"></div> taxes
-            </div>
-            <div class="aboutotsend">
-                <input id="sendmoneynote" placeholder="Note...">
-                <button id="sendmoneybtn" onclick="sendmoneyfr()">
-                    <span class="totalPaymentdisp">Pay <span id="totalpaymentfr">no</span>
-                        <div class="rtr"></div>
-                    </span>
-                    <span class="material-symbols-rounded">
-                        arrow_forward
-                    </span></button>
-            </div>
-            <button class="sendmoneycancel" onclick="cancelpayment()">
-                Cancel</button>
-        </div>
-        <div class="screen" id="donescreen">
-
-        </div>
-        <script src="script.js" defer></script>
+    </div>
+    <script src="script.js" defer></script>
 </body>
 
 </html>
