@@ -178,7 +178,7 @@ body {
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   animation: slide 2.5s linear infinite alternate;
-  text-shadow: 0 0 20px rgba(255, 0, 255, 0.6);
+  text-shadow: 0 0 8px rgba(106, 0, 255, 0.6);
 }
 
 @keyframes slide {

@@ -218,7 +218,7 @@ function attachWsHandlers() {
                 if (channel === state.currentChannel) {
                     const typingMap = state.typingUsers[channel];
 
-                    const expireAt = Date.now() + 10000;
+                    const expireAt = Date.now() + 5000;
                     typingMap.set(user, expireAt);
 
                     updateTypingIndicator();
@@ -957,12 +957,12 @@ function updateTypingIndicator() {
     const users = [...typingMap.keys()];
 
     if (users.length === 0) {
-        typingEl.textContent = "";
-        typingEl.style.display = "none";
+        typingEl.textContent = " ";
+        typingEl.style.opacity = "0";
         return;
     }
 
-    typingEl.style.display = "block";
+    typingEl.style.opacity = "1";
 
     let text = "";
     if (users.length === 1) {
