@@ -192,21 +192,24 @@ document.getElementById("accgainlossdisp").textContent = pct.toFixed(1) + "%";
   updateGainLoss('this_week');
   updateFlow('this_week');
 
-  function aggregateTotals(data) {
+ function aggregateTotals(data) {
     const payers = {};
     const receivers = {};
+
     data.forEach(d => {
-        if (d.amount < 0) {
-            if (!payers[d.user]) payers[d.user] = 0;
-            payers[d.user] += Math.abs(d.amount);
-        }
         if (d.amount > 0) {
+            if (!payers[d.user]) payers[d.user] = 0;
+            payers[d.user] += d.amount;
+        }
+        if (d.amount < 0) {
             if (!receivers[d.user]) receivers[d.user] = 0;
-            receivers[d.user] += d.amount;
+            receivers[d.user] += Math.abs(d.amount);
         }
     });
+
     return { payers, receivers };
 }
+
 
 function topFive(obj) {
     const entries = Object.entries(obj).sort((a,b)=>b[1]-a[1]);

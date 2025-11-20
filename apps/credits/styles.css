@@ -320,6 +320,7 @@
  td {
      padding: .8em;
      border-bottom: 1px solid grey;
+     user-select: text;
  }
 
  #widgets {
@@ -341,6 +342,7 @@
      flex-direction: row;
      white-space: nowrap;
      gap: .5em;
+     user-select: text;
  }
 
  select {
