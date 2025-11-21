@@ -1276,7 +1276,7 @@ class RoturExtension {
         return this.user["sys.currency"] ?? 0;
     }
 
-    tranferCurrency(args) {
+    transferCurrency(args) {
         if (!this.is_connected) return "Not Connected";
         if (!this.authenticated) return "Not Logged In";
 
@@ -1294,7 +1294,7 @@ class RoturExtension {
             },
             id: this.accounts,
         }, (packet, resolve, reject) => {
-            if (packet.val.payload === "Transfer Successful") {
+            if (packet.val.payload.toLowerCase() === "transfer successful") {
                 resolve("Success");
             } else {
                 reject(packet.val.payload);
@@ -1678,6 +1678,9 @@ async function attemptConnection() {
 }
 
 async function logoutofrtr() {
+    if (document.getElementById('settings').open) {
+        document.getElementById('settings').close();
+    }
     localStorage.setItem("orion-rotur", "")
     await roturExtension.logout();
     roturExtension.disconnect();
