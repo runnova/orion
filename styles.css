@@ -19,6 +19,9 @@ html>body {
     flex-direction: row;
     padding: 3px;
     gap: 3px;
+    background-size: cover;
+    background-blend-mode: overlay;
+    background-attachment: fixed;
 
     &>* {
         transition: width .3s;
@@ -110,6 +113,7 @@ html>body {
             & i {
                 font-size: 20px;
             }
+
             &.done {
                 opacity: 1;
             }
@@ -121,6 +125,10 @@ a.link {
     font-weight: bold;
     color: var(--col-txth);
     cursor: pointer;
+    background-color: var(--col-bgh);
+    padding: 3px 7px;
+    border-radius: .5em;
+    border: var(--box-crisp);
 }
 
 .header {
@@ -672,7 +680,7 @@ button {
     border-radius: .5em;
     border: var(--box-crisp);
     background: var(--col-bgh);
-    color: var(--col-txt1);
+    color: var(--col-txth);
 }
 
 @keyframes DiaPop {
@@ -754,6 +762,22 @@ dialog {
     padding: 1em;
     background: var(--col-bg3);
     border-radius: .5em;
+
+    &>span {
+        flex: 1;
+    }
+
+    & input[type="text"] {
+
+        padding: .5em .7em;
+        background: var(--col-bg1);
+        border: var(--box-crisp);
+        border-radius: .3em;
+        margin-right: .5em;
+        height: 100%;
+        color: inherit;
+        font: inherit;
+    }
 }
 
 #overlay {

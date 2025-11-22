@@ -333,8 +333,55 @@ document.getElementById("themesel").addEventListener("change", (ev) => {
 	setTheme(curtheme);
 	setTheme(curtheme, iframe.contentDocument.documentElement)
 })
+async function setTheme(themeName, documentItem = document.documentElement) {
+	themeName = themeName.toLowerCase();
+	let themeDecs = theme[themeName];
+	Object.keys(themeDecs).forEach(key => {
+		let val = themeDecs[key];
+		if (settings.get("img_bg") && /^#([0-9a-f]{3}|[0-9a-f]{6})$/i.test(val)) {
+			val = hexToRGBA(val, 0.8);
+		}
+		documentItem.style.setProperty(key, val);
+	});
+}
+
+function hexToRGBA(hex, alpha = 1) {
+	hex = hex.replace(/^#/, '');
+	if (hex.length === 3) hex = hex.split('').map(h => h + h).join('');
+	const num = parseInt(hex, 16);
+	const r = (num >> 16) & 255;
+	const g = (num >> 8) & 255;
+	const b = num & 255;
+	return `rgba(${r},${g},${b},${alpha})`;
+}
+
+async function applyBgSts() {
+	let x = settings.get("img_bg");
+	if (!x) return;
+	const proxyUrl = `https://proxy.mistium.com/?url=${encodeURIComponent(x)}`;
+	const cacheKey = `bgCache_${btoa(x)}`;
+	let cached = localStorage.getItem(cacheKey);
+	if (cached) {
+		document.body.style.backgroundImage = `url(${cached})`;
+		return;
+	}
+	try {
+		const res = await fetch(proxyUrl);
+		const blob = await res.blob();
+		const reader = new FileReader();
+		reader.onloadend = () => {
+			const dataUrl = reader.result;
+			localStorage.setItem(cacheKey, dataUrl);
+			document.body.style.backgroundImage = `url(${dataUrl})`;
+		};
+		reader.readAsDataURL(blob);
+	} catch (e) {
+		console.error("Failed to load background:", e);
+	}
+}
 
 setTheme(curtheme);
+applyBgSts();
 document.getElementById("themesel").value = curtheme;
 
 var sidebarCont = document.getElementById("sidebarapp");
@@ -398,13 +445,25 @@ document.querySelectorAll(".checkbox").forEach(item => {
 	};
 });
 
+document.querySelectorAll(".textInput").forEach(item => {
+	const key = item.getAttribute("data-setting");
+	const input = document.createElement("input");
+	input.type = "text";
+	input.value = settings.get(key) || "";
+	item.appendChild(input);
+
+	input.oninput = () => {
+		settings.set(key, input.value);
+	};
+});
+
 
 function sidebartoggle() {
 	sidebar.classList.toggle("collapsed");
 }
 
 var startupLoaderElement = document.getElementById("oriFullPLoader");
-var loaderTexts = ["Add ?=claw in url to open claw", "Add ?=orichats in url to open OriginChats", "Add ?=credits in url to open credits dashboard", "Click on the originchats loader if its stuck"];
+var loaderTexts = ["Add ?=claw in url to open claw", "Add ?=orichats in url to open OriginChats", "Add ?=credits in url to open credits dashboard", "Click on the originchats loader if its stuck", "ctrl+s brings up orion settings"];
 document.getElementById("flashText").innerText = loaderTexts[Math.floor(Math.random() * loaderTexts.length)];
 
 var startupLoader = {
@@ -426,3 +485,10 @@ var startupLoader = {
 	}
 }
 startupLoader.mark_complete("1")
+
+document.addEventListener('keydown', function(e) {
+    if (e.ctrlKey && e.key === 's') {
+        e.preventDefault();
+        document.getElementById('settings').showModal();
+    }
+});
