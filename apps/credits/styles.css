@@ -5,7 +5,6 @@ html {
 
 body {
     margin: 0;
-    background-color: var(--col-bg1);
     display: flex;
     flex-direction: column;
 }

@@ -6,31 +6,6 @@
     src: url("https://adthoughtsglobal.github.io/assets/MaterialSymbolsRounded.woff2") format('woff2');
 }
 
-:root {
-    --col-bg1: #000000;
-    --col-bg2: #101010;
-    --col-bg3: #1e1e1e;
-    --col-bgh: #33363b;
-}
-
-::-webkit-scrollbar {
-    width: 8px;
-    height: 8px;
-}
-
-::-webkit-scrollbar-track {
-    background: transparent;
-}
-
-::-webkit-scrollbar-thumb {
-    background: var(--col-bg1);
-    border-radius: 4px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-    background: var(--col-bgh);
-}
-
 * {
     scrollbar-width: thin;
     scrollbar-color: #ffffffab transparent;
@@ -57,7 +32,6 @@ body {
     height: 100%;
     width: 100%;
     margin: 0;
-    background-color: var(--col-bg1);
     color: white;
     display: flex;
     flex-direction: column;

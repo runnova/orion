@@ -7,6 +7,15 @@ var persohome = document.getElementById("persohome");
 var curtheme = localStorage.getItem("orion-theme") || "default";
 var accent = "#39335b";
 
+const settings = {
+	data: JSON.parse(localStorage.getItem("orion_settings") || "{}"),
+	get(k) { return this.data[k]; },
+	set(k, v) {
+		this.data[k] = v;
+		localStorage.setItem("orion_settings", JSON.stringify(this.data));
+	}
+};
+
 var theme = {
 	"default": {
 		"--col-bg1": "#101010",
@@ -40,6 +49,22 @@ var theme = {
 		"--col-txt1": "#feffd9",
 		"--col-txth": "#000000"
 	},
+	"aquamarine+": {
+		"--col-bg1": "#101819",
+		"--col-bg2": "#182227",
+		"--col-bg3": "#253D3E",
+		"--col-bgh": "#A9F9EF",
+		"--col-txt1": "#C5F3EE",
+		"--col-txth": "#203638",
+	},
+	"ristretto": {
+		"--col-bg1": "#191515",
+		"--col-bg2": "#2C2525",
+		"--col-bg3": "#211C1C",
+		"--col-bgh": "#F9CC6C",
+		"--col-txt1": "#F2F1F3",
+		"--col-txth": "#141414"
+	},
 	"banks use this": {
 		"--col-bg1": "#1a1d6a",
 		"--col-bg2": "#3c428d",
@@ -63,6 +88,14 @@ var theme = {
 		"--col-bgh": "#194209",
 		"--col-txt1": "#3cff32",
 		"--col-txth": "#95ff7e"
+	},
+	"mint": {
+		"--col-bg1": "#2E2E2E",
+		"--col-bg2": "#404040",
+		"--col-bg3": "#6C6C6C",
+		"--col-bgh": "#8AB057",
+		"--col-txt1": "#FFFFFF",
+		"--col-txth": "#FFFFFF",
 	}
 }
 
@@ -349,14 +382,6 @@ function closeSideBar() {
 	sidebarCont.style.flex = '0';
 	setTimeout(() => sidebarCont.style.display = 'none', 200);
 }
-const settings = {
-	data: JSON.parse(localStorage.getItem("orion_settings") || "{}"),
-	get(k) { return this.data[k]; },
-	set(k, v) {
-		this.data[k] = v;
-		localStorage.setItem("orion_settings", JSON.stringify(this.data));
-	}
-};
 
 document.querySelectorAll(".checkbox").forEach(item => {
 	const key = item.getAttribute("data-setting");
