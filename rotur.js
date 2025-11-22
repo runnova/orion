@@ -490,7 +490,8 @@ class RoturExtension {
 
         } catch (error) {
             this.authenticated = false;
-                say("<h1>Rotur is down. </h1>Looks like RoturTW's servers or their providers are down. Try again in a few minutes.", "failed")
+            startupLoader.mark_error(3)
+            say("<h1>Rotur is down. </h1>Looks like RoturTW's servers or their providers are down. Try again in a few minutes.", "failed")
             throw new Error(`Failed to login: ${error.message}`);
         }
     }
@@ -1688,12 +1689,13 @@ async function logoutofrtr() {
 
 async function roturTWEventCall(data) {
     if (data == "roturEXT_whenAuthenticated") {
+        startupLoader.mark_complete("3");
         notify(`Logged in ${roturExtension.user.username}, welcome back!`)
         persohome.classList.remove("disp");
-        loader.classList.add("disp");
         [...document.getElementsByClassName("username_display")].forEach(element => {
             element.innerText = roturExtension.user.username;
         })
+        startupLoader.mark_complete("4");
         if (settings.get("auto_daily") == true) {
             fetch("https://social.rotur.dev/claim_daily?auth=" + roturExtension.userToken).then((response) => {
                 if (response.ok) {
@@ -1705,6 +1707,7 @@ async function roturTWEventCall(data) {
         }
     } else if (data == "roturEXT_whenConnected") {
         (async () => {
+            startupLoader.mark_complete("2")
             let localroturdata = localStorage.getItem("orion-rotur");
             if (localroturdata) {
                 let targettype = JSON.parse(localroturdata).type;

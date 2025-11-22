@@ -64,6 +64,59 @@ html>body {
     }
 }
 
+.loader {
+    width: 17px;
+    margin: 0;
+    aspect-ratio: 1;
+    border-radius: 50%;
+    border: 2px solid #ffffff73;
+    animation: l20-1 0.8s infinite linear alternate, l20-2 1.6s infinite linear;
+}
+
+#oriFullPLoader {
+    display: flex;
+    position: absolute;
+    background: var(--col-bg1);
+    width: 100%;
+    height: 100%;
+    align-items: center;
+    justify-content: center;
+    z-index: 99;
+    flex-direction: column;
+    text-align: center;
+
+    &>.dynamicLoader {
+        display: flex;
+        flex-direction: column;
+        gap: .3em;
+        width: 90%;
+        max-width: 300px;
+
+        &>.card {
+            background-color: var(--col-bg2);
+            border: var(--box-crisp);
+            border-radius: .5em;
+            display: flex;
+            padding: .5em;
+            justify-content: space-between;
+            opacity: .7;
+            align-items: center;
+            transition: opacity .2s;
+
+            &>.loaderIcon {
+                display: inherit;
+            }
+
+            & i {
+                font-size: 20px;
+            }
+            &.done {
+                opacity: 1;
+            }
+        }
+    }
+}
+
 a.link {
     font-weight: bold;
     color: var(--col-txth);
@@ -331,17 +384,6 @@ div#toastdiv {
         color: white;
         transition: opacity .3s;
     }
-}
-
-#loader {
-    width: 50px;
-    margin: 3em auto;
-    aspect-ratio: 1;
-    border-radius: 50%;
-    border: 8px solid #514b82;
-    animation:
-        l20-1 0.8s infinite linear alternate,
-        l20-2 1.6s infinite linear;
 }
 
 @keyframes l20-1 {

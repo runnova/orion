@@ -8,14 +8,40 @@
     <link rel="stylesheet" href="styles.css">
     <link rel="stylesheet" href="nova.css">
     <link rel="icon" type="image/webp" href="oclogo.png">
-	<link href="webmanifest.json" rel="manifest">
+    <link href="webmanifest.json" rel="manifest">
 </head>
 
 <body>
+    <div id="oriFullPLoader">
+        <img src="../../oclogo.png" height="50" id="orionIconCol">
+<div style="margin: 2em 0;">
+        <b>Protip!</b>
+        <div id="flashText"></div></div>
+
+        <div class="dynamicLoader">
+            <div class="card">
+                <span>OrionClient GUI</span>
+                <div class="loaderIcon" startup-loader="1">
+                    <div class="loader"></div>
+                </div>
+            </div>
+            <div class="card">
+                <span>RoturTW Network</span>
+                <div class="loaderIcon" startup-loader="2">
+                    <div class="loader"></div>
+                </div>
+            </div>
+            <div class="card">
+                <span>Link User</span>
+                <div class="loaderIcon" startup-loader="3">
+                    <div class="loader"></div>
+                </div>
+            </div>
+        </div>
+    </div>
     <div id="sidebar">
         <img src="../../oclogo.png" height="50" id="orionIconCol">
         <div id="mainHead">OrionClient</div>
-        <div id="loader"></div>
         <div id="persohome">
             <div class="grid">
                 <div class="onebtn" data-name="home"><i class="material-symbols-rounded">home</i> <a>Home</a></div>
@@ -32,7 +58,8 @@
                 <div class="btn" onclick="document.getElementById('settings').showModal()"><i
                         class="material-symbols-rounded">tune</i></div>
                 <div class="divider"></div>
-                <div class="btn" onclick="sidebartoggle()"><i class="material-symbols-rounded">left_panel_close</i></div>
+                <div class="btn" onclick="sidebartoggle()"><i class="material-symbols-rounded">left_panel_close</i>
+                </div>
             </div>
         </div>
     </div>
@@ -88,6 +115,12 @@
                 <option>Aquamarine+</option>
                 <option>Ristretto</option>
             </select>
+        </div>
+        <div class="sing_setting">
+            <span>Claim daily credits on login</span>
+            <div class="input" data-setting="auto_daily">
+                <i class="ball"></i>
+            </div>
         </div>
         <h1>Preferences</h1>
         <div class="sing_setting">

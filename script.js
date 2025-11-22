@@ -402,3 +402,27 @@ document.querySelectorAll(".checkbox").forEach(item => {
 function sidebartoggle() {
 	sidebar.classList.toggle("collapsed");
 }
+
+var startupLoaderElement = document.getElementById("oriFullPLoader");
+var loaderTexts = ["Add ?=claw in url to open claw", "Add ?=orichats in url to open OriginChats", "Add ?=credits in url to open credits dashboard", "Click on the originchats loader if its stuck"];
+document.getElementById("flashText").innerText = loaderTexts[Math.floor(Math.random() * loaderTexts.length)];
+
+var startupLoader = {
+	cl: () => {
+		startupLoaderElement.style.display = "none";
+	},
+	mark_complete: (process)=> {
+		if (process == 4) {
+			startupLoader.cl();
+			return
+		}
+		var ele = document.querySelector(`[startup-loader="${process}"]`);
+		ele.innerHTML = `<i class="material-symbols-rounded">check</i>`;
+		ele.parentElement.classList.add("done")
+	},
+	mark_error: (process)=> {
+		var ele = document.querySelector(`[startup-loader="${process}"]`)[0];
+		ele.innerHTML = `<i class="material-symbols-rounded" style="color: red">close</i>`
+	}
+}
+startupLoader.mark_complete("1")
