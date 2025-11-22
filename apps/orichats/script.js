@@ -133,6 +133,11 @@ function attachWsHandlers() {
                 setTimeout(loader.hide, 500);
                 const input = document.getElementById("mainTxtAr");
                 if (input && !input._listenerAttached) {
+                    input.addEventListener('input', function () {
+                        this.style.height = 'auto';
+                        this.style.height = Math.min(this.scrollHeight - 20, 300) + 'px';
+                    });
+
                     input.addEventListener("keydown", (ev) => {
                         if (ev.key === "Enter" && !ev.shiftKey) {
                             const payload = {
@@ -569,7 +574,7 @@ function renderMessage(message) {
 
     const prevmsg = state.messages[lastmsgid] ?? null;
     lastmsgid = message.id;
-	const self = message["user"] === state.user.username;
+    const self = message["user"] === state.user.username;
     const blocked = !self && (state.user_keys["sys.blocked"] ?? []).includes(message["user"]);
     if (blocked && !state.show_blocked_msgs) return;
 
@@ -958,7 +963,7 @@ function updateTypingIndicator() {
     const users = [...typingMap.keys()];
 
     if (users.length === 0) {
-        typingEl.textContent = " ";
+        typingEl.textContent = "...";
         typingEl.style.opacity = "0";
         return;
     }
@@ -1037,7 +1042,7 @@ window.addEventListener("DOMContentLoaded", () => {
             x.dataset.char = emoji.emoji;
             x.classList.add("single_emoji");
             x.title = emoji.label.replaceAll(" ", "_");
-            x.onclick = ()=> {
+            x.onclick = () => {
                 document.getElementById("mainTxtAr").value += `:${x.title}:`
             }
             frag.appendChild(x);

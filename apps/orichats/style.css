@@ -229,16 +229,21 @@ body {
                 background: var(--col-bg2);
                 border-radius: .5em;
 
-                &>input {
+                &>textarea {
                     width: 100%;
                     background-color: transparent;
                     color: inherit;
                     font: inherit;
                     font-size: inherit;
                     border: 0;
+                    min-height: 0;
+                    height: 1.5em;
                     padding: .7em 1em;
                     outline: 0;
                     flex-grow: 1;
+                    max-height: 300px;
+                    overflow-y: auto;
+                    resize: none;
                 }
 
                 &>i {
@@ -637,6 +642,8 @@ div.blockedheader>a {
     box-shadow: 0 -8px 0px var(--col-bg2);
 }
 
-.msg_ctnt .name, .msg_ctnt .mention, .msg_ctnt .pfp {
-	cursor: pointer;
+.msg_ctnt .name,
+.msg_ctnt .mention,
+.msg_ctnt .pfp {
+    cursor: pointer;
 }
