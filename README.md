@@ -1,6 +1,6 @@
-<img src="https://runnova.github.io/orion/oclogo.png" height="50">
+<img width="1702" height="630" alt="Document (1)" src="https://github.com/user-attachments/assets/bf0a8740-2083-40bf-9bd2-44283b25af7f" />
 
-# OrionClient
+# About OrionClient
 OrionClient is a reliable, functional, and feature-rich client system for [roturTW](https://rotur.dev/).
 
 ## Key features
