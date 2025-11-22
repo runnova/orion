@@ -6,6 +6,7 @@ var loader = document.getElementById("loader");
 var persohome = document.getElementById("persohome");
 var curtheme = localStorage.getItem("orion-theme") || "default";
 var accent = "#39335b";
+var oriloaderstatic = document.getElementsByClassName("oriloaderstatic")[0];
 
 const settings = {
 	data: JSON.parse(localStorage.getItem("orion_settings") || "{}"),
@@ -105,6 +106,7 @@ var inView = false;
 
 function openApp(name) {
 	iframe.style.opacity = 0;
+	oriloaderstatic.style.display = "block"
 	setTimeout(() => {
 		iframe.src = "apps/" + name;
 	}, 300);
@@ -114,6 +116,7 @@ iframe.onload = () => {
 	setTheme(curtheme, iframe.contentDocument.documentElement);
 	setTimeout(() => {
 		iframe.style.opacity = 1;
+		oriloaderstatic.style.display = "none"
 	}, 500);
 }
 
