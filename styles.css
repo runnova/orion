@@ -762,6 +762,7 @@ dialog {
     padding: 1em;
     background: var(--col-bg3);
     border-radius: .5em;
+    margin-bottom: .5em;
 
     &>span {
         flex: 1;

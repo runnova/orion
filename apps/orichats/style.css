@@ -647,3 +647,25 @@ div.blockedheader>a {
 .msg_ctnt .pfp {
     cursor: pointer;
 }
+
+#typing {
+    background: linear-gradient(90deg, rgba(255,255,255,0.5) 0%, rgba(255,255,255,1) 50%, rgba(255,255,255,0.5) 100%);
+    background-size: 150% 100%;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: pulseGradient 3s linear infinite;
+    opacity: 0.8;
+    transition: opacity 0.2s;
+}
+
+@keyframes pulseGradient {
+    0% {
+        background-position: 200% 0;
+    }
+    50% {
+        background-position: 0% 0;
+    }
+    100% {
+        background-position: 200% 0;
+    }
+}

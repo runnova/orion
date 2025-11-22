@@ -184,7 +184,12 @@ function attachWsHandlers() {
                     const node = document.querySelector(
                         `.message[data-id="${CSS.escape(mid)}"]`,
                     );
-                    if (node) node.remove();
+                    if (node) {
+                        if (!window.parent.settings.get("ori_msg_lgger"))
+                            node.remove()
+                        else 
+                            node.style.color = "red";
+                    };
 
                     document
                         .querySelectorAll(`.reply-excerpt[data-ref="${CSS.escape(mid)}"]`)
@@ -963,12 +968,13 @@ function updateTypingIndicator() {
     const users = [...typingMap.keys()];
 
     if (users.length === 0) {
-        typingEl.textContent = "...";
         typingEl.style.opacity = "0";
+        setTimeout(
+            typingEl.textContent = "...", 200)
         return;
     }
 
-    typingEl.style.opacity = "1";
+    typingEl.style.opacity = ".8";
 
     let text = "";
     if (users.length === 1) {
@@ -1012,7 +1018,8 @@ function watchForStopTyping() {
 }
 
 function sendTyping() {
-    ws.send(JSON.stringify({ cmd: 'typing', channel: state.currentChannel }));
+    if (window.parent.settings.get("send_typing"))
+        ws.send(JSON.stringify({ cmd: 'typing', channel: state.currentChannel }));
 }
 
 window.addEventListener("DOMContentLoaded", () => {
