@@ -1018,7 +1018,7 @@ function watchForStopTyping() {
 }
 
 function sendTyping() {
-    if (window.parent.settings.get("send_typing"))
+    if (!window.parent.settings.get("send_typing"))
         ws.send(JSON.stringify({ cmd: 'typing', channel: state.currentChannel }));
 }
 

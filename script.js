@@ -8,7 +8,7 @@ var curtheme = localStorage.getItem("orion-theme") || "default";
 var accent = "#39335b";
 var oriloaderstatic = document.getElementsByClassName("oriloaderstatic")[0];
 
-const settings = {
+var settings = {
 	data: JSON.parse(localStorage.getItem("orion_settings") || "{}"),
 	get(k) { return this.data[k]; },
 	set(k, v) {
@@ -489,6 +489,6 @@ startupLoader.mark_complete("1")
 document.addEventListener('keydown', function(e) {
     if (e.ctrlKey && e.key === 's') {
         e.preventDefault();
-        document.getElementById('settings').showModal();
+        document.getElementById('settingsd').showModal();
     }
 });

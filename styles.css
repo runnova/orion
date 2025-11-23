@@ -629,7 +629,7 @@ div#toastdiv {
     }
 }
 
-dialog#settings {
+dialog#settingsd {
     aspect-ratio: 4/3;
     max-height: 80%;
     border-radius: 1em;
