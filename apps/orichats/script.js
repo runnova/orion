@@ -444,7 +444,7 @@ function formatMessageContent(raw) {
     ];
     headingRegex.forEach(f => raw = raw.replace(f.r, f.t));
 
-    raw = raw.replace(/@(\w+)/g, `<span class="mention" onclick="window.parent.launchSideBarApp('contacts', { name: '$1' })">@$1</span>`);
+    raw = raw.replace(/@(\w+)/g, `<span class="mention" onclick="window.parent.launchSideBarApp('profile', { name: '$1' })">@$1</span>`);
 
     const urlRegex = /(https?:\/\/[^\s]+)/g;
     let out = "";
@@ -604,7 +604,7 @@ function renderMessage(message) {
 			`.trim();
         } else {
             const userColor = getUserColor(message["user"]);
-            let olkscr = `window.parent.launchSideBarApp('contacts', { name: '${escapeHTML(message["user"])}' })`;
+            let olkscr = `window.parent.launchSideBarApp('profile', { name: '${escapeHTML(message["user"])}' })`;
             html = `
 			<div class="sing_msg" data-id="${escapeHTML(message.id || "")}" data-user="${escapeHTML(message["user"])}">
 						${replyBlock}
@@ -827,7 +827,7 @@ function renderMembers() {
             const uname = u.username;
             const entry = document.createElement("div");
             entry.onclick = () => {
-                window.parent.launchSideBarApp("contacts", { name: uname })
+                window.parent.launchSideBarApp("profile", { name: uname })
             }
             entry.className = "profile_card" + (opts.offline ? " offline" : "");
             const color = getUserColor(uname);

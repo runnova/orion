@@ -102,7 +102,7 @@ function recalculatepaycheck() {
             } else if (i === 1) {
                 td.innerHTML = `<span class="un">${v}</span>`;
                 td.onclick = () => {
-                    window.parent.launchSideBarApp('contacts', { name: v });
+                    window.parent.launchSideBarApp('profile', { name: v });
                 }
             }
             tr.appendChild(td);

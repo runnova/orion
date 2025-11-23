@@ -11,35 +11,36 @@
 </head>
 
 <body>
-    <div id="glloader">
-        <div id="loader"></div>
-    </div>
-    <div class="card">
-        <div class="profhead">
-            <div id="prof_banner"></div>
-            <img src="" id="prof_pfp" alt="Profile Picture">
-            <div id="prof_name">darkdot</div>
-            <div id="prof_more"> &bull; NovaOS &bull; He/Him</div>
-        </div>
-        <div class="subcard">
-            <div class="label">About Me</div>
-            <p id="prof_abtme">This user apparently has a very long about me.</p>
-        </div>
-        <div class="subcard">
-            <div class="label">Activity</div>
-            <p><a id="prof_crds">200</a> <img src="roturiconmono.svg"> &bull; Married to <a id="prof_marry">bank</a> &bull; <a id="prof_flwrs">1</a> followers</p>
-        </div>
-        <div class="subcard">
-            <div class="label">Badges</div>
-            <div id="prof_badges">
-                <div class="sing_badge">
-                    <div class="badge_svg"></div>
-                    <div class="badge_tooltip">NovaOS</div>
+    <div class="mainUI">
+        <div class="topNav">
+            <div class="searchContainer">
+                <input placeholder="Search a username..." id="usersearchbar">
+                <div class="button" onclick="makeSearch()">
+                    <span class="material-symbols-rounded">
+                        search
+                    </span>
                 </div>
             </div>
+            <div class="filterBtns">
+            <div class="btn">All</div>
+            <div class="btn">Friends</div>
         </div>
+        </div>
+        
+        <div id="contactsList">
+            <div class="sing_contact">
+                <div class="pfp">
+                    <img src="../../oclogo.png" alt="">
+                </div>
+                <div class="data">
+                    <div class="name">darkdot</div>
+                    <div class="noteDisplay">This is a note</div>
+                </div>
+                <div class="gobtn material-symbols-rounded">chevron_right</div>
+            </div>
+        </div>
+
     </div>
-    <canvas id="c"></canvas>
 
     <script src="script.js"></script>
 </body>

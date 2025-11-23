@@ -7,6 +7,7 @@ var persohome = document.getElementById("persohome");
 var curtheme = localStorage.getItem("orion-theme") || "default";
 var accent = "#39335b";
 var oriloaderstatic = document.getElementsByClassName("oriloaderstatic")[0];
+var oriloaderstatic2 = document.getElementsByClassName("oriloaderstatic")[1];
 
 var settings = {
 	data: JSON.parse(localStorage.getItem("orion_settings") || "{}"),
@@ -423,7 +424,9 @@ function launchSideBarApp(name, data) {
 	sidebarCont.style.display = 'flex';
 	setTimeout(() => sidebarCont.style.flex = '2', 50);
 	sidebarappframe.src = "apps/" + name;
+		oriloaderstatic2.style.display = "block"
 	sidebarappframe.onload = () => {
+		oriloaderstatic2.style.display = "none"
 		try { sidebarappframe.contentWindow.greenflag({ data }) } catch { }
 	}
 }
