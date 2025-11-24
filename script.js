@@ -422,6 +422,7 @@ sidebarCont.style.overflow = 'hidden';
 
 function launchSideBarApp(name, data) {
 	sidebarCont.style.display = 'flex';
+	document.getElementById("sidebarappname").innerText = name;
 	setTimeout(() => sidebarCont.style.flex = '2', 50);
 	sidebarappframe.src = "apps/" + name;
 		oriloaderstatic2.style.display = "block"
@@ -495,3 +496,12 @@ document.addEventListener('keydown', function(e) {
         document.getElementById('settingsd').showModal();
     }
 });
+
+const z = 1 / (window.devicePixelRatio || 1);
+const m = document.querySelector('meta[name=viewport]') || (() => {
+  const t = document.createElement('meta');
+  t.name = 'viewport';
+  document.head.appendChild(t);
+  return t;
+})();
+m.setAttribute('content', `initial-scale=${z}, maximum-scale=${z}, minimum-scale=${z}, width=device-width`);

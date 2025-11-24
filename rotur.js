@@ -1722,7 +1722,6 @@ async function roturTWEventCall(data) {
                 roturExtension.login_prompt({ STYLE_URL: "https://runnova.github.io/NovaOS/libs/roturstyle.css" });
             }
 
-
             const params = new URLSearchParams(location.search)
             const s = params.get('s')
             if (s) openApp(s)
@@ -1737,4 +1736,10 @@ async function roturTWEventCall(data) {
     }
 }
 
-attemptConnection();
+const params = new URLSearchParams(location.search)
+const s = params.get('s')
+if (s != "dont") attemptConnection();
+else {
+    startupLoader.mark_complete("4")
+        persohome.classList.remove("disp");
+}

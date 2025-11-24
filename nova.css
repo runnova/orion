@@ -189,5 +189,5 @@ textarea::placeholder {
 }
 
 .material-symbols-rounded {
-	font-weight: normal !important;
+	font-weight: 300 !important;
 }

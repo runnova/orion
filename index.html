@@ -41,26 +41,31 @@
         </div>
     </div>
     <div id="sidebar">
-        <img src="../../oclogo.png" height="50" id="orionIconCol">
-        <div id="mainHead">OrionClient</div>
-        <div id="persohome">
-            <div class="grid">
-                <div class="onebtn" data-name="home"><i class="material-symbols-rounded">home</i> <a>Home</a></div>
-                <div class="onebtn" data-name="claw"><i class="material-symbols-rounded">crowdsource</i><a>Claw</a>
-                </div>
-                <div class="onebtn" data-name="orichats"><i class="material-symbols-rounded">tag</i><a>OriginChats</a>
-                </div>
-                <div class="onebtn" data-name="credits"><i
-                        class="material-symbols-rounded">attach_money</i><a>Credits</a></div>
-                <div class="onebtn" data-name="calls"><i class="material-symbols-rounded">call</i><a>Calls</a></div>
-                <div class="onebtn" data-name="mail"><i class="material-symbols-rounded">mail</i><a>Mail</a></div>
-                <!-- <div class="onebtn" data-name="contacts"><i class="material-symbols-rounded">contacts</i><a>Contacts</a></div> -->
+        <div class="navsnav">
+            <img src="../../oclogo.png" height="50" id="orionIconCol">
+            <div class="btn" onclick="sidebartoggle()"><i class="material-symbols-rounded">left_panel_close</i></div>
             </div>
-            <div class="actBtns">
-                <div class="btn" onclick="document.getElementById('settingsd').showModal()"><i
-                        class="material-symbols-rounded">tune</i></div>
-                <div class="divider"></div>
-                <div class="btn" onclick="sidebartoggle()"><i class="material-symbols-rounded">left_panel_close</i>
+            <div id="persohome">
+                <div class="grid">
+                    <div class="onebtn" data-name="home"><i class="material-symbols-rounded">home</i> <a>Home</a></div>
+                    <div class="onebtn" data-name="claw"><i class="material-symbols-rounded">crowdsource</i><a>Claw</a>
+                    </div>
+                    <div class="onebtn" data-name="orichats"><i
+                            class="material-symbols-rounded">tag</i><a>OriginChats</a>
+                    </div>
+                    <div class="onebtn" data-name="credits"><i
+                            class="material-symbols-rounded">attach_money</i><a>Credits</a></div>
+                    <div class="onebtn" data-name="calls"><i class="material-symbols-rounded">call</i><a>Calls</a></div>
+                    <div class="onebtn" data-name="mail"><i class="material-symbols-rounded">mail</i><a>Mail</a></div>
+                    <!-- <div class="onebtn" data-name="contacts"><i class="material-symbols-rounded">contacts</i><a>Contacts</a></div> -->
+                </div>
+                <div class="actBtns">
+                    <div class="userChip username_display" onclick="launchSideBarApp('profile', { name: roturExtension.user.username });">
+
+                    </div>
+                    <div class="divider"></div>
+                    <div class="btn" onclick="document.getElementById('settingsd').showModal()"><i
+                            class="material-symbols-rounded">tune</i></div>
                 </div>
             </div>
         </div>
@@ -150,8 +155,8 @@
             <p>Thanks <a>rotur.dev</a> for maintaining RoturTW. Special thanks to the developers and their community. OrionClient runs code from the open-source web-system, <a>NovaOS Web</a>.</p>
         </div>
     </dialog>
-    <script src="rotur.js"></script>
     <script src="script.js"></script>
+    <script src="rotur.js"></script>
 </body>
 
 </html>

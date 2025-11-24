@@ -188,41 +188,49 @@ div#toastdiv {
     gap: 5px;
     transition: .3s;
     border-right: 1px solid var(--box-crisp-col);
-    width: 200px;
+    width: 260px;
+    background-color: var(--col-bg2);
     height: 100%;
 
     &>#orionIconCol {
-        display: none;
         margin-top: 2em;
+        display: block;
+        height: 30px;
+        width: 30px;
+    }
+
+    & .userChip {
+        flex: 1;
     }
 
     &.collapsed {
-        width: fit-content;
+        width: 3em;
         align-items: center;
 
-        & .actBtns {
-            min-width: 4.5em;
-            flex-direction: column;
-            height: 2em;
-            margin: 0 .5em;
-        }
-
-        &>#orionIconCol {
-            display: block;
-            height: 30px;
-            width: 30px;
-        }
-
-        &>#mainHead {
+        & .userChip,
+        .divider {
             display: none;
         }
 
+        &>.navsnav {
+            flex-direction: column-reverse;
+        }
+
+        & .actBtns {
+            flex-direction: column;
+            height: 2em;
+            width: fit-content;
+        }
+
+
         & .grid {
-            padding: 0;
+            align-items: center;
 
             & .onebtn {
                 display: flex;
                 justify-content: center;
+                padding: .5em;
+                width: fit-content;
 
                 a {
                     display: none;
@@ -236,50 +244,19 @@ div#toastdiv {
     }
 }
 
-#sidebar .grid {
-    gap: .2em;
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-start;
-    width: fit-content;
-
-    .onebtn {
-        padding: .2em 1em;
-        border-radius: 2em;
-        transition: .2s;
-        width: calc(100% - 2.4em);
-        background-color: transparent;
-        justify-content: flex-start;
-
-        a {
-            font-size: 1em;
-            transition: .5s;
-            width: fit-content;
-        }
-
-        &:hover {
-            a {
-                transform: scale(1.2);
-            }
-
-            background-color: var(--col-bg2);
-        }
-    }
-}
-
 .grid {
     display: flex;
     flex-direction: column;
     gap: .2em;
-    padding: 1em;
-    width: fit-content;
+    padding: .5em;
+    width: calc(100% - 1em);
     justify-content: flex-start;
     margin: 0 auto;
     justify-items: stretch;
 
     .onebtn {
         padding: 0em 1em;
-        border-radius: 1em;
+        border-radius: .7em;
         transition: .2s;
         width: calc(100% - 2.4em);
         background-color: transparent;
@@ -293,24 +270,32 @@ div#toastdiv {
             pointer-events: none;
         }
 
+        &>i {
+            opacity: .5;
+        }
+
         a {
             font-size: 1em;
             transition: .5s;
-            margin: 1em;
+            margin: .8em;
         }
 
         &:hover {
-            a {
-                transform: scale(1.2);
-            }
-
-            background-color: var(--bg4);
+            background-color: var(--col-bg3);
             outline: var(--box-crisp);
+
+            &>i {
+                opacity: 1;
+            }
         }
 
         &.active {
             outline: var(--box-crisp);
-            background-color: var(--col-bg2) !important;
+            background-color: var(--col-bg3) !important;
+
+            &>i {
+                opacity: .8;
+            }
         }
     }
 }
@@ -354,7 +339,7 @@ div#toastdiv {
 #sidebarapp {
     flex: 2;
     width: 300px;
-    border-radius: 1em;
+    border-radius: .7em;
     display: flex;
     flex-direction: column;
     border: var(--box-crisp);
@@ -447,7 +432,7 @@ div#toastdiv {
     display: flex;
     flex-direction: column;
     gap: 1em;
-    margin-top: 2em;
+    margin-top: 0em;
     height: 100%;
     justify-content: space-between;
     padding-bottom: 1em;
@@ -609,7 +594,6 @@ div#toastdiv {
     &>.btn {
         padding: 5px;
         display: flex;
-        flex: 1;
         justify-content: center;
         cursor: pointer;
 
@@ -632,7 +616,7 @@ div#toastdiv {
 dialog#settingsd {
     aspect-ratio: 4/3;
     max-height: 80%;
-    border-radius: 1em;
+    border-radius: .7em;
     border: 0;
     background-color: var(--col-bg2);
     border: var(--box-crisp);
@@ -727,7 +711,7 @@ dialog {
     width: 3em;
     height: 1.5em;
     background: #6b6b6b;
-    border-radius: 1em;
+    border-radius: .7em;
     display: flex;
     align-items: center;
     padding: 3px 5px;
@@ -803,4 +787,31 @@ dialog {
 
 pre {
     white-space: normal;
+}
+
+.navsnav {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: nowrap;
+    flex-direction: row;
+    align-items: center;
+    margin: .5em;
+
+    &>* {
+        aspect-ratio: 1/1;
+        display: flex;
+        height: 1.5em;
+        align-items: center;
+        justify-content: center;
+        padding: .5em;
+        border-radius: .7em;
+
+        &:hover {
+            background: var(--col-bg3);
+        }
+
+        &.btn>i {
+            opacity: .8;
+        }
+    }
 }
