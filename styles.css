@@ -225,6 +225,7 @@ div#toastdiv {
 
         & .grid {
             align-items: center;
+    margin: auto 0;
 
             & .onebtn {
                 display: flex;
