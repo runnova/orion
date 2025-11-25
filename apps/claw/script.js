@@ -4,7 +4,7 @@ async function attachthings(obj) {
     attachments = "&attachment=" + await window.parent.ask('Enter a URL to your file:' || '')
     obj.innerHTML = `
                         <span>Re-attach</span>
-                        <span class="material-symbols-rounded">
+                        <span class="bicn material-symbols-rounded">
 refresh
 </span>`
 }
@@ -196,6 +196,7 @@ async function loadFeed(type = 'claw', obj, useOffset = false, torefresh = false
 
             const heartIcon = document.createElement("span");
             heartIcon.classList.add("material-symbols-rounded");
+            heartIcon.classList.add("bicn");
             heartIcon.innerText = "favorite";
 
             const likesNumber = document.createElement("span");
@@ -222,6 +223,7 @@ async function loadFeed(type = 'claw', obj, useOffset = false, torefresh = false
                 }
                 const msgIcon = document.createElement("span");
                 msgIcon.classList.add("material-symbols-rounded");
+                msgIcon.classList.add("bicn");
                 msgIcon.innerText = "chat";
 
                 const repliesNumber = document.createElement("span");
@@ -430,6 +432,7 @@ function createReplyElement(reply) {
 
     const heartIcon = document.createElement("span");
     heartIcon.classList.add("material-symbols-rounded");
+    heartIcon.classList.add("bicn");
     heartIcon.innerText = "favorite";
 
     const likesNumber = document.createElement("span");

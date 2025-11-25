@@ -43,28 +43,28 @@
     <div id="sidebar">
         <div class="navsnav">
             <img src="../../oclogo.png" height="50" id="orionIconCol">
-            <div class="btn" onclick="sidebartoggle()"><i class="material-symbols-rounded">left_panel_close</i></div>
+            <div class="btn bWicn" onclick="sidebartoggle()"><i class="material-symbols-rounded">left_panel_close</i></div>
             </div>
             <div id="persohome">
                 <div class="grid">
-                    <div class="onebtn" data-name="home"><i class="material-symbols-rounded">home</i> <a>Home</a></div>
-                    <div class="onebtn" data-name="claw"><i class="material-symbols-rounded">crowdsource</i><a>Claw</a>
+                    <div class="onebtn bWicn" data-name="home"><i class="material-symbols-rounded">home</i> <a>Home</a></div>
+                    <div class="onebtn bWicn" data-name="claw"><i class="material-symbols-rounded">crowdsource</i><a>Claw</a>
                     </div>
-                    <div class="onebtn" data-name="orichats"><i
+                    <div class="onebtn bWicn" data-name="orichats"><i
                             class="material-symbols-rounded">tag</i><a>OriginChats</a>
                     </div>
-                    <div class="onebtn" data-name="credits"><i
+                    <div class="onebtn bWicn" data-name="credits"><i
                             class="material-symbols-rounded">attach_money</i><a>Credits</a></div>
-                    <div class="onebtn" data-name="calls"><i class="material-symbols-rounded">call</i><a>Calls</a></div>
-                    <div class="onebtn" data-name="mail"><i class="material-symbols-rounded">mail</i><a>Mail</a></div>
-                    <!-- <div class="onebtn" data-name="contacts"><i class="material-symbols-rounded">contacts</i><a>Contacts</a></div> -->
+                    <div class="onebtn bWicn" data-name="calls"><i class="material-symbols-rounded">call</i><a>Calls</a></div>
+                    <div class="onebtn bWicn" data-name="mail"><i class="material-symbols-rounded">mail</i><a>Mail</a></div>
+                    <!-- <div class="onebtn bWicn" data-name="contacts"><i class="material-symbols-rounded">contacts</i><a>Contacts</a></div> -->
                 </div>
                 <div class="actBtns">
                     <div class="userChip username_display" onclick="launchSideBarApp('profile', { name: roturExtension.user.username });">
 
                     </div>
                     <div class="divider"></div>
-                    <div class="btn" onclick="document.getElementById('settingsd').showModal()"><i
+                    <div class="btn bWicn" onclick="document.getElementById('settingsd').showModal()"><i
                             class="material-symbols-rounded">tune</i></div>
                 </div>
             </div>
@@ -85,7 +85,7 @@
         <img src="oclogo.png" class="oriloaderstatic">
         <div class="sidebarheader">
             <div class="name" id="sidebarappname">Contacts</div>
-            <i class="material-symbols-rounded" onclick="closeSideBar()">right_panel_close</i>
+            <i class="material-symbols-rounded bicn" onclick="closeSideBar()">right_panel_close</i>
         </div>
         <iframe id="sidebarappframe" src="apps/contacts"></iframe>
     </div>
@@ -102,7 +102,7 @@
             <div class="tit">
                 Settings
             </div>
-            <div onclick="document.getElementById('settingsd').close()" class="closebtn material-symbols-rounded">
+            <div onclick="document.getElementById('settingsd').close()" class="closebtn material-symbols-rounded bicn">
                 close
             </div>
         </div>
