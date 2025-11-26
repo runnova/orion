@@ -492,6 +492,7 @@ class RoturExtension {
             this.authenticated = false;
             startupLoader.mark_error(3)
             say("<h1>Rotur is down. </h1>Looks like RoturTW's servers or their providers are down. Try again in a few minutes.", "failed")
+            startupLoader.dead();
             throw new Error(`Failed to login: ${error.message}`);
         }
     }
@@ -1738,8 +1739,8 @@ async function roturTWEventCall(data) {
 
 const params = new URLSearchParams(location.search)
 const s = params.get('s')
-if (s != "dont") attemptConnection();
+if (s != "dont") { attemptConnection(); }
 else {
     startupLoader.mark_complete("4")
-        persohome.classList.remove("disp");
+    persohome.classList.remove("disp");
 }

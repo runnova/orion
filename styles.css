@@ -816,3 +816,14 @@ pre {
         }
     }
 }
+
+a {
+    color: var(--col-txth);
+    background: var(--col-bgh);
+    padding: 2px 7px;
+    margin-top: .5em;
+    display: inline-block;
+    border-radius: .5em;
+    text-decoration: none;
+    font-weight: bold;
+}

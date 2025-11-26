@@ -425,7 +425,7 @@ function launchSideBarApp(name, data) {
 	document.getElementById("sidebarappname").innerText = name;
 	setTimeout(() => sidebarCont.style.flex = '2', 50);
 	sidebarappframe.src = "apps/" + name;
-		oriloaderstatic2.style.display = "block"
+	oriloaderstatic2.style.display = "block"
 	sidebarappframe.onload = () => {
 		oriloaderstatic2.style.display = "none"
 		try { sidebarappframe.contentWindow.greenflag({ data }) } catch { }
@@ -474,7 +474,7 @@ var startupLoader = {
 	cl: () => {
 		startupLoaderElement.style.display = "none";
 	},
-	mark_complete: (process)=> {
+	mark_complete: (process) => {
 		if (process == 4) {
 			startupLoader.cl();
 			return
@@ -483,25 +483,32 @@ var startupLoader = {
 		ele.innerHTML = `<i class="material-symbols-rounded">check</i>`;
 		ele.parentElement.classList.add("done")
 	},
-	mark_error: (process)=> {
-		var ele = document.querySelector(`[startup-loader="${process}"]`)[0];
+	mark_error: (process) => {
+		var ele = document.querySelector(`[startup-loader="${process}"]`);
 		ele.innerHTML = `<i class="material-symbols-rounded" style="color: red">close</i>`
+	},
+	dead: () => {
+		document.getElementById("oriFullPLoader").style = `
+    width: 250px;
+    padding: 1em;`
+		iframe.src = "https://rotur.dev/status";
+		document.getElementById("flashText").innerHTML = `Contact <a href="https://github.com/orgs/RoturTW/people">Rotur Team</a>`;
 	}
 }
 startupLoader.mark_complete("1")
 
-document.addEventListener('keydown', function(e) {
-    if (e.ctrlKey && e.key === 's') {
-        e.preventDefault();
-        document.getElementById('settingsd').showModal();
-    }
+document.addEventListener('keydown', function (e) {
+	if (e.ctrlKey && e.key === 's') {
+		e.preventDefault();
+		document.getElementById('settingsd').showModal();
+	}
 });
 
 const z = 1 / (window.devicePixelRatio || 1);
 const m = document.querySelector('meta[name=viewport]') || (() => {
-  const t = document.createElement('meta');
-  t.name = 'viewport';
-  document.head.appendChild(t);
-  return t;
+	const t = document.createElement('meta');
+	t.name = 'viewport';
+	document.head.appendChild(t);
+	return t;
 })();
 m.setAttribute('content', `initial-scale=${z}, maximum-scale=${z}, minimum-scale=${z}, width=device-width`);
