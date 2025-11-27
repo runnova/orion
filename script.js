@@ -107,7 +107,7 @@ var inView = false;
 
 function openApp(name) {
 	iframe.style.opacity = 0;
-	oriloaderstatic.style.display = "block"
+	oriloaderstatic.style.display = "block";
 	setTimeout(() => {
 		iframe.src = "apps/" + name;
 	}, 300);
@@ -115,11 +115,15 @@ function openApp(name) {
 
 iframe.onload = () => {
 	setTheme(curtheme, iframe.contentDocument.documentElement);
+	const s = iframe.contentDocument.createElement("script");
+	s.src = "scripts/bob.js";
+	iframe.contentDocument.body.appendChild(s);
 	setTimeout(() => {
 		iframe.style.opacity = 1;
-		oriloaderstatic.style.display = "none"
+		oriloaderstatic.style.display = "none";
 	}, 500);
 }
+
 
 function clearActive() {
 	[...document.getElementsByClassName("onebtn")].forEach(element => { element.classList.remove("active"); })
@@ -492,7 +496,7 @@ var startupLoader = {
     width: 250px;
     padding: 1em;`
 		iframe.src = "https://rotur.dev/status";
-		document.getElementById("flashText").innerHTML = `Contact <a href="https://github.com/orgs/RoturTW/people">Rotur Team</a>`;
+		document.getElementById("flashText").innerHTML = `Contact <a class="link" href="https://github.com/orgs/RoturTW/people">Rotur Team</a>`;
 	}
 }
 startupLoader.mark_complete("1")
