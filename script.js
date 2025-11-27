@@ -115,15 +115,11 @@ function openApp(name) {
 
 iframe.onload = () => {
 	setTheme(curtheme, iframe.contentDocument.documentElement);
-	const s = iframe.contentDocument.createElement("script");
-	s.src = "scripts/bob.js";
-	iframe.contentDocument.body.appendChild(s);
 	setTimeout(() => {
 		iframe.style.opacity = 1;
-		oriloaderstatic.style.display = "none";
+		oriloaderstatic.style.display = "none"
 	}, 500);
 }
-
 
 function clearActive() {
 	[...document.getElementsByClassName("onebtn")].forEach(element => { element.classList.remove("active"); })
