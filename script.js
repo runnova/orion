@@ -462,12 +462,22 @@ document.querySelectorAll(".textInput").forEach(item => {
 });
 
 
-function sidebartoggle() {
+async function sidebartoggle() {
 	sidebar.classList.toggle("collapsed");
+	if (sidebar.classList.contains("collapsed")) {
+		settings.set("sidebarCollapse", 1)
+	} else {
+		settings.set("sidebarCollapse", 0)
+	}
+
+}
+
+if (settings.get("sidebarCollapse")) {
+	sidebartoggle();
 }
 
 var startupLoaderElement = document.getElementById("oriFullPLoader");
-var loaderTexts = ["Add ?=claw in url to open claw", "Add ?=orichats in url to open OriginChats", "Add ?=credits in url to open credits dashboard", "Click on the originchats loader if its stuck", "ctrl+s brings up orion settings"];
+var loaderTexts = ["Add ?s=claw in url to open claw", "Add ?s=orichats in url to open OriginChats", "Add ?s=credits in url to open credits dashboard", "Click on the originchats loader if its stuck", "ctrl+s brings up orion settings","Add ?s=dont in url to prevent rotur connection"];
 document.getElementById("flashText").innerText = loaderTexts[Math.floor(Math.random() * loaderTexts.length)];
 
 var startupLoader = {

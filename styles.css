@@ -225,13 +225,32 @@ div#toastdiv {
 
         & .grid {
             align-items: center;
-    margin: auto 0;
+            margin: auto 0;
+
+            &:hover .onebtn a {
+                display: block;
+                position: absolute;
+                left: 3em;
+                z-index: 99;
+                background: var(--col-bg3);
+                padding: 2px 8px;
+                border-radius: .5em;
+                box-shadow: 0 3px 10px #00000069;
+                opacity: 0;
+                transition: opacity .3s;
+            }
 
             & .onebtn {
                 display: flex;
                 justify-content: center;
                 padding: .5em;
                 width: fit-content;
+
+                &:hover {
+                    &>a {
+                        opacity: 1;
+                    }
+                }
 
                 a {
                     display: none;

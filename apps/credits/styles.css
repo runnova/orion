@@ -421,3 +421,11 @@ select {
     background-color: var(--col-bg3);
     cursor: pointer;
 }
+
+iframe#kycframe {
+    height: 100%;
+    border: 0;
+    outline: none;
+    border-radius: .5em;
+    filter: invert(1);
+}
