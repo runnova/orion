@@ -1,4 +1,3 @@
-var loader = document.getElementById("glloader");
 async function renderProfile(name) {
     console.log(67, name)
     const res = await fetch(`https://api.rotur.dev/profile?name=${encodeURIComponent(name)}&include_posts=0`);
@@ -39,7 +38,6 @@ async function renderProfile(name) {
 
     const theme = data.theme;
     document.querySelector('#prof_banner').style.background = theme.accent;
-    loader.style.display = "none";
 }
 function renderICN(code, canvas) {
     const ctx = canvas.getContext('2d');
@@ -165,10 +163,8 @@ function renderICN(code, canvas) {
     ctx.restore();
 }
 
-loader.style.display = "flex";
 
 function greenflag(myWindow) {
-loader.style.display = "flex";
     console.log(88, myWindow.data)
     if (myWindow) {
         renderProfile(myWindow.data.name);
@@ -176,3 +172,83 @@ loader.style.display = "flex";
         renderProfile(window.parent.roturExtension.user.username)
     }
 }
+class ContactToggle {
+  constructor(root, {imgSrc, name, note}) {
+    this.root = root
+    this.item = document.createElement('div')
+    this.item.className = 'sing_contact'
+
+    // Header
+    this.head = document.createElement('div')
+    this.head.className = 'contactsDefVisSec'
+
+    const pfp = document.createElement('div')
+    pfp.className = 'pfp'
+    const img = document.createElement('img')
+    img.src = imgSrc
+    pfp.appendChild(img)
+
+    const data = document.createElement('div')
+    data.className = 'data'
+    const nameEl = document.createElement('div')
+    nameEl.className = 'name'
+    nameEl.textContent = name
+    const noteEl = document.createElement('div')
+    noteEl.className = 'noteDisplay'
+    noteEl.textContent = note
+    data.appendChild(nameEl)
+    data.appendChild(noteEl)
+
+    this.icon = document.createElement('div')
+    this.icon.className = 'gobtn material-symbols-rounded'
+    this.icon.textContent = 'chevron_right'
+
+    this.head.appendChild(pfp)
+    this.head.appendChild(data)
+    this.head.appendChild(this.icon)
+
+    // More section
+    this.more = document.createElement('div')
+    this.more.className = 'contactsMoreSec'
+    this.more.style.display = 'none'
+
+    const actions = [
+      {icon: 'person', text: 'View profile'},
+      {icon: 'person_add', text: 'Add friend'},
+      {icon: 'send_money', text: 'Send credits'},
+      {icon: 'Edit_note', text: 'Edit note'},
+      {icon: 'delete_forever', text: 'Delete contact'}
+    ]
+
+    actions.forEach(a => {
+      const btn = document.createElement('div')
+      btn.className = 'big btn'
+      const icn = document.createElement('div')
+      icn.className = 'icn material-symbols-rounded'
+      icn.textContent = a.icon
+      const span = document.createElement('span')
+      span.textContent = a.text
+      btn.appendChild(icn)
+      btn.appendChild(span)
+      this.more.appendChild(btn)
+    })
+
+    this.item.appendChild(this.head)
+    this.item.appendChild(this.more)
+    this.root.appendChild(this.item)
+
+    this.bind()
+  }
+
+  bind() {
+    this.head.addEventListener('click', () => {
+      const open = this.more.style.display === 'none'
+      this.more.style.display = open ? 'flex' : 'none'
+      this.icon.style.transform = open ? 'rotate(90deg)' : 'rotate(0deg)'
+    })
+  }
+}
+
+const container = document.getElementById('contactsList')
+new ContactToggle(container, {imgSrc: '../../oclogo.png', name: 'darkdot', note: 'This is a note'})
+new ContactToggle(container, {imgSrc: '../../oclogo.png', name: 'mist', note: 'This is not a note'})

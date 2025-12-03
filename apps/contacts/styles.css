@@ -139,3 +139,10 @@ body {
         }
     }
 }
+
+.gobtn {
+  transition: transform .2s;
+}
+.contactsMoreSec {
+  display: none;
+}
