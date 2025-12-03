@@ -1680,8 +1680,8 @@ async function attemptConnection() {
 }
 
 async function logoutofrtr() {
-    if (document.getElementById('settings').open) {
-        document.getElementById('settings').close();
+    if (document.getElementById('settingsd').open) {
+        document.getElementById('settingsd').close();
     }
     localStorage.setItem("orion-rotur", "")
     await roturExtension.logout();
