@@ -142,6 +142,7 @@ textarea {
 div#paymentscreen {
     justify-content: center;
     align-items: center;
+    display: flex;
 
     &>input,
     button {

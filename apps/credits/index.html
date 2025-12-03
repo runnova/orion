@@ -135,40 +135,39 @@
         </div>
 
         <div class="screen" id="kyc">
-            <iframe id="kycframe" 
+            <iframe id="kycframe"
                 src="https://docs.google.com/spreadsheets/d/e/2PACX-1vSauPl4Tf0F4FlNaXf6em1-i6rNn7mS5JwYoYrHm1nVE63tSmJpAEGIutRBfN6xAoNkEz2ET93orNcp/pubhtml?gid=0&amp;single=true&amp;widget=true&amp;headers=false"></iframe>
         </div>
-    </div>
+        <div class="screen" id="paymentscreen">
+            <div class="nothing">
+                <i class="material-symbols-rounded">check</i>
+                <span>You have no active payments.</span>
+                <small>Type in a username in the above input.</small>
+            </div>
+            <div class="active_payment">
+                <small id="sendmoneystat">Sending <span id="sendmoneyusrchip">darkdot</span>:</small>
+                <input id="sendmoneyvalue" onkeyup="recalculatepaycheck()" value="01.00" placeholder="01.00">
+                <div id="note_abt_tax">
+                    +1 <div class="rtr"></div> taxes
+                </div>
+                <div class="aboutotsend">
+                    <input id="sendmoneynote" placeholder="Note...">
+                    <button id="sendmoneybtn" onclick="sendmoneyfr()">
+                        <span class="totalPaymentdisp">Pay <span id="totalpaymentfr">no</span>
+                            <div class="rtr"></div>
+                        </span>
+                        <span class="material-symbols-rounded">
+                            arrow_forward
+                        </span></button>
+                </div>
+                <button class="sendmoneycancel" onclick="cancelpayment()">
+                    Cancel</button>
+            </div>
+        </div>
+        <div class="screen" id="donescreen">
+            Paid!
+        </div>
 
-    <div class="screen" id="paymentscreen">
-        <div class="nothing">
-            <i class="material-symbols-rounded">check</i>
-            <span>You have no active payments.</span>
-            <small>Type in a username in the above input.</small>
-        </div>
-        <div class="active_payment">
-            <small id="sendmoneystat">Sending <span id="sendmoneyusrchip">darkdot</span>:</small>
-            <input id="sendmoneyvalue" onkeyup="recalculatepaycheck()" value="01.00" placeholder="01.00">
-            <div id="note_abt_tax">
-                +1 <div class="rtr"></div> taxes
-            </div>
-            <div class="aboutotsend">
-                <input id="sendmoneynote" placeholder="Note...">
-                <button id="sendmoneybtn" onclick="sendmoneyfr()">
-                    <span class="totalPaymentdisp">Pay <span id="totalpaymentfr">no</span>
-                        <div class="rtr"></div>
-                    </span>
-                    <span class="material-symbols-rounded">
-                        arrow_forward
-                    </span></button>
-            </div>
-            <button class="sendmoneycancel" onclick="cancelpayment()">
-                Cancel</button>
-        </div>
-    </div>
-    <div class="screen" id="donescreen">
-        Paid!
-    </div>
     </div>
 
     <script src="script.js" defer></script>

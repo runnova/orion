@@ -37,55 +37,105 @@ body {
             padding: .5em 1em;
         }
     }
+}
 
-    &>.filterBtns {
-        display: flex;
-        flex-direction: row;
-        gap: .5em;
-        margin-top: .5em;
+.filterBtns {
+    display: flex;
+    flex-direction: row;
+    gap: .5em;
+    margin-bottom: .5em;
 
-        &>.btn {
-            background-color: var(--col-bg2);
-            border: var(--box-crisp);
-            border-radius: .5em;
-            padding: .2em .5em;
-        }
+    &>.btn {
+        background-color: var(--col-bg2);
+        border: var(--box-crisp);
+        border-radius: .5em;
+        padding: .2em .5em;
     }
 }
 
-#contactsList {
+.contactsListMaster {
     padding: .5em;
+    max-width: 700px;
+    margin: auto;
+    width: 100%;
+}
+
+#contactsList {
     padding-top: 0;
 }
 
 .sing_contact {
     display: flex;
-    align-items: center;
-    flex-direction: row;
-    padding: .5em;
+    align-items: stretch;
+    flex-direction: column;
     background-color: var(--col-bg2);
     border-radius: .5em;
-    gap: .5em;
+    overflow: hidden;
+    border: var(--box-crisp);
 
-    &>.data {
-        flex: 1;
+    & .contactsDefVisSec {
+        display: flex;
+        padding: .5em;
+        align-items: center;
+        flex-direction: row;
+        gap: .5em;
 
-        &>.name {
-            font-size: 1.1em;
+        &>.data {
+            flex: 1;
+
+            &>.name {
+                font-size: 1.1em;
+            }
+
+            &>.noteDisplay {
+                opacity: .7;
+            }
         }
 
-        &>.noteDisplay {
-            opacity: .7;
+        &>.pfp {
+            height: 40px;
+
+            &>img {
+                height: 100%;
+                aspect-ratio: 1/1;
+                border-radius: .2em;
+            }
         }
     }
 
-    &>.pfp {
-        height: 40px;
+    &>.contactsMoreSec {
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+        justify-content: flex-start;
+        gap: 5px;
+        background-color: var(--col-bg1);
+        padding: .5em;
 
-        &>img {
-            height: 100%;
-            aspect-ratio: 1/1;
-            border-radius: .2em;
+        &>.big.btn {
+            padding: .5em;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            gap: .5em;
+            font-size: 0.9em;
+            width: 0;
+            white-space: nowrap;
+            flex: 1;
+            border-radius: .5em;
+            min-width: 80px;
+            max-width: calc(50% - 1em);
+
+            &:hover {
+                background-color: var(--col-bg3);
+            }
+
+            &>span {
+                width: 100%;
+                overflow: hidden;
+                text-overflow: ellipsis;
+            }
         }
     }
 }

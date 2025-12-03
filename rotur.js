@@ -1697,6 +1697,15 @@ async function roturTWEventCall(data) {
             element.innerText = roturExtension.user.username;
         })
         startupLoader.mark_complete("4");
+        let userSystem = await roturExtension.getkey("system") || "rotur";
+        if (userSystem != "orion") {
+            if (!settings.get("showedBadgeAd")) {
+                document.getElementById('orionBadgeAlert').showModal();
+                document.getElementById('alreadyinsystem').innerText = userSystem;
+                settings.set("showedBadgeAd", true, 2592000000);
+                // thats a month
+            }
+        }
         if (settings.get("auto_daily") == true) {
             fetch("https://social.rotur.dev/claim_daily?auth=" + roturExtension.userToken).then((response) => {
                 if (response.ok) {
@@ -1738,9 +1747,13 @@ async function roturTWEventCall(data) {
 }
 
 const params = new URLSearchParams(location.search)
-const s = params.get('s')
+const s = params.get('rtr')
 if (s != "dont") { attemptConnection(); }
 else {
     startupLoader.mark_complete("4")
     persohome.classList.remove("disp");
+
+    const params = new URLSearchParams(location.search)
+    const s = params.get('s')
+    if (s) openApp(s)
 }

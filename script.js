@@ -11,9 +11,18 @@ var oriloaderstatic2 = document.getElementsByClassName("oriloaderstatic")[1];
 
 var settings = {
 	data: JSON.parse(localStorage.getItem("orion_settings") || "{}"),
-	get(k) { return this.data[k]; },
-	set(k, v) {
-		this.data[k] = v;
+	get(k) {
+		let e = this.data[k];
+		if (!e) return undefined;
+		if (e.exp && Date.now() > e.exp) {
+			delete this.data[k];
+			localStorage.setItem("orion_settings", JSON.stringify(this.data));
+			return undefined;
+		}
+		return e.val;
+	},
+	set(k, v, ttl) {
+		this.data[k] = { val: v, exp: ttl ? Date.now() + ttl : null };
 		localStorage.setItem("orion_settings", JSON.stringify(this.data));
 	}
 };
@@ -23,9 +32,9 @@ var theme = {
 		"--col-bg1": "#101010",
 		"--col-bg2": "#171717",
 		"--col-bg3": "#262626",
-		"--col-bgh": "#39335b",
+		"--col-bgh": "#43281d",
 		"--col-txt1": "#FFFFFF",
-		"--col-txth": "#aa9bff"
+		"--col-txth": "#ff946f"
 	},
 	"light": {
 		"--col-bg1": "#fffbf2",
@@ -105,14 +114,6 @@ persohome.classList.toggle("disp");
 
 var inView = false;
 
-function openApp(name) {
-	iframe.style.opacity = 0;
-	oriloaderstatic.style.display = "block";
-	setTimeout(() => {
-		iframe.src = "apps/" + name;
-	}, 300);
-}
-
 iframe.onload = () => {
 	setTheme(curtheme, iframe.contentDocument.documentElement);
 	setTimeout(() => {
@@ -123,6 +124,15 @@ iframe.onload = () => {
 
 function clearActive() {
 	[...document.getElementsByClassName("onebtn")].forEach(element => { element.classList.remove("active"); })
+}
+
+
+function openApp(name) {
+	iframe.style.opacity = 0;
+	oriloaderstatic.style.display = "block";
+	setTimeout(() => {
+		iframe.src = "apps/" + name;
+	}, 300);
 }
 
 [...document.getElementsByClassName("onebtn")].forEach(element => {
@@ -477,7 +487,7 @@ if (settings.get("sidebarCollapse")) {
 }
 
 var startupLoaderElement = document.getElementById("oriFullPLoader");
-var loaderTexts = ["Add ?s=claw in url to open claw", "Add ?s=orichats in url to open OriginChats", "Add ?s=credits in url to open credits dashboard", "Click on the originchats loader if its stuck", "ctrl+s brings up orion settings","Add ?s=dont in url to prevent rotur connection"];
+var loaderTexts = ["Add ?s=claw in url to open claw", "Add ?s=orichats in url to open OriginChats", "Add ?s=credits in url to open credits dashboard", "Click on the originchats loader if its stuck", "ctrl+s brings up orion settings","Add ?rtr=dont in url to prevent rotur connection"];
 document.getElementById("flashText").innerText = loaderTexts[Math.floor(Math.random() * loaderTexts.length)];
 
 var startupLoader = {

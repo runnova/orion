@@ -373,6 +373,4 @@ function openScreen(id) {
     })
     document.querySelectorAll(`[opener='${id}']`)[0].classList.add("active")
 }
-
-openScreen("home")
-document.querySelector("#paymentscreen > .active_payment").style.display = "none";
+cancelpayment();
