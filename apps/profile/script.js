@@ -5,7 +5,7 @@ async function renderProfile(name) {
     const data = await res.json();
     document.querySelector('#prof_pfp').src = data.pfp;
     document.querySelector('#prof_name').textContent = data.username;
-    document.querySelector('#prof_more').innerHTML = `<a>${data.private ? '<i class="material-symbols-rounded">lock</i> Private' : '<i class="material-symbols-rounded">public</i> Public'}</a> • <a class="${(data.system == "orion") ? 'special':''}">${data.system}</a> • <a>${data.pronouns}</a>`;
+    document.querySelector('#prof_more').innerHTML = `<a>${data.private ? '<i class="material-symbols-rounded">lock</i> Private' : '<i class="material-symbols-rounded">public</i> Public'}</a> • <a class="${(data.system == "orion") ? 'special' : ''}">${data.system}</a> • <a>${data.pronouns}</a>`;
     document.querySelector('#prof_abtme').textContent = data.bio.replace(/\n/g, ' ');
     document.querySelector('#prof_crds').textContent = data.currency;
     document.querySelector('#prof_flwrs').textContent = data.followers;
@@ -38,7 +38,12 @@ async function renderProfile(name) {
     });
 
     const theme = data.theme;
-    document.querySelector('#prof_banner').style.background = theme.accent;
+    if (data.banner) {
+        document.querySelector('#prof_banner').style.backgroundImage = `url("${data.banner}")`;
+    } else {
+        document.querySelector('#prof_banner').style.backgroundColor = theme.accent;
+
+    }
     loader.style.display = "none";
 }
 function renderICN(code, canvas) {
@@ -70,14 +75,14 @@ function renderICN(code, canvas) {
 
         else if (cmd === 'line') {
             const x1 = TX(parseFloat(cmds[++i])), y1 = TY(parseFloat(cmds[++i])),
-                  x2 = TX(parseFloat(cmds[++i])), y2 = TY(parseFloat(cmds[++i]));
+                x2 = TX(parseFloat(cmds[++i])), y2 = TY(parseFloat(cmds[++i]));
             ctx.beginPath();
             ctx.strokeStyle = color;
             ctx.lineWidth = weight;
             ctx.moveTo(x1, y1);
             ctx.lineTo(x2, y2);
             ctx.stroke();
-            last = { x: parseFloat(cmds[i-1]), y: parseFloat(cmds[i]) };
+            last = { x: parseFloat(cmds[i - 1]), y: parseFloat(cmds[i]) };
         }
 
         else if (cmd === 'cont') {
@@ -93,11 +98,11 @@ function renderICN(code, canvas) {
 
         else if (cmd === 'square') {
             const x = parseFloat(cmds[++i]), y = parseFloat(cmds[++i]),
-                  w = parseFloat(cmds[++i]), h = parseFloat(cmds[++i]);
+                w = parseFloat(cmds[++i]), h = parseFloat(cmds[++i]);
             ctx.beginPath();
             ctx.strokeStyle = color;
             ctx.lineWidth = weight;
-            ctx.strokeRect(TX(x) - S(w/2), TY(y) - S(h/2), S(w), S(h));
+            ctx.strokeRect(TX(x) - S(w / 2), TY(y) - S(h / 2), S(w), S(h));
         }
 
         else if (cmd === 'dot') {
@@ -114,15 +119,15 @@ function renderICN(code, canvas) {
             let angleICN = parseFloat(cmds[++i]);
             let filledICN = parseFloat(cmds[++i]);
             let circleAngle = (angleICN * 10) - filledICN;
-            let oldX = TX(x0) + Math.sin(circleAngle * Math.PI/180) * radius;
-            let oldY = TY(y0) - Math.cos(circleAngle * Math.PI/180) * radius;
+            let oldX = TX(x0) + Math.sin(circleAngle * Math.PI / 180) * radius;
+            let oldY = TY(y0) - Math.cos(circleAngle * Math.PI / 180) * radius;
             const steps = Math.floor(filledICN / 3) + 1;
             ctx.strokeStyle = color;
             ctx.lineWidth = weight;
             for (let j = 0; j < steps - 1; j++) {
                 circleAngle += 6;
-                const newX = TX(x0) + Math.sin(circleAngle * Math.PI/180) * radius;
-                const newY = TY(y0) - Math.cos(circleAngle * Math.PI/180) * radius;
+                const newX = TX(x0) + Math.sin(circleAngle * Math.PI / 180) * radius;
+                const newY = TY(y0) - Math.cos(circleAngle * Math.PI / 180) * radius;
                 ctx.beginPath();
                 ctx.moveTo(oldX, oldY);
                 ctx.lineTo(newX, newY);
@@ -134,8 +139,8 @@ function renderICN(code, canvas) {
 
         else if (cmd === 'ellipse') {
             const x = parseFloat(cmds[++i]), y = parseFloat(cmds[++i]),
-                  width = parseFloat(cmds[++i]), hm = parseFloat(cmds[++i]),
-                  dir = parseFloat(cmds[++i]) * Math.PI / 180;
+                width = parseFloat(cmds[++i]), hm = parseFloat(cmds[++i]),
+                dir = parseFloat(cmds[++i]) * Math.PI / 180;
             ctx.save();
             ctx.translate(TX(x), TY(y));
             ctx.rotate(dir);
@@ -143,22 +148,22 @@ function renderICN(code, canvas) {
             ctx.strokeStyle = color;
             ctx.lineWidth = weight;
             ctx.scale(1, hm);
-            ctx.arc(0, 0, S(width/2), 0, Math.PI * 2);
+            ctx.arc(0, 0, S(width / 2), 0, Math.PI * 2);
             ctx.stroke();
             ctx.restore();
         }
 
         else if (cmd === 'curve') {
             const x1 = TX(parseFloat(cmds[++i])), y1 = TY(parseFloat(cmds[++i])),
-                  x2 = TX(parseFloat(cmds[++i])), y2 = TY(parseFloat(cmds[++i])),
-                  cx = TX(parseFloat(cmds[++i])), cy = TY(parseFloat(cmds[++i]));
+                x2 = TX(parseFloat(cmds[++i])), y2 = TY(parseFloat(cmds[++i])),
+                cx = TX(parseFloat(cmds[++i])), cy = TY(parseFloat(cmds[++i]));
             ctx.beginPath();
             ctx.strokeStyle = color;
             ctx.lineWidth = weight;
             ctx.moveTo(x1, y1);
             ctx.quadraticCurveTo(cx, cy, x2, y2);
             ctx.stroke();
-            last = { x: parseFloat(cmds[i-1]), y: parseFloat(cmds[i]) };
+            last = { x: parseFloat(cmds[i - 1]), y: parseFloat(cmds[i]) };
         }
     }
 
@@ -168,7 +173,7 @@ function renderICN(code, canvas) {
 loader.style.display = "flex";
 
 function greenflag(myWindow) {
-loader.style.display = "flex";
+    loader.style.display = "flex";
     console.log(88, myWindow.data)
     if (myWindow) {
         renderProfile(myWindow.data.name);

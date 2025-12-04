@@ -969,8 +969,7 @@ function updateTypingIndicator() {
 
     if (users.length === 0) {
         typingEl.style.opacity = "0";
-        setTimeout(
-            typingEl.textContent = "...", 200)
+        setTimeout(typingEl.textContent = "...", 500)
         return;
     }
 
@@ -985,7 +984,7 @@ function updateTypingIndicator() {
         text = `${users.length} people are typing...`;
     }
 
-    typingEl.textContent = text;
+    typingEl.innerHTML = `<div class="loader2"></div>`+escapeHTML(text);
 }
 function handleMessageNotification() {
 

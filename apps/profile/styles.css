@@ -3,6 +3,7 @@ body {
     height: 100%;
     overflow: hidden;
 }
+
 .card {
     display: flex;
     flex-direction: column;
@@ -24,37 +25,44 @@ body {
         min-height: fit-content;
 
         & .label {
-    opacity: .5;
-    font-size: .8em;
-    text-decoration: underline;
-    text-underline-offset: 2px;
-}
+            opacity: .5;
+            font-size: .8em;
+            text-decoration: underline;
+            text-underline-offset: 2px;
+        }
 
         &>p {
             margin: 0;
-             & img {
-    object-position: center center;
-    object-fit: cover;
-    aspect-ratio: 1 / 1;
-    height: 13px;
-    width: 13px;
-}
+
+            & img {
+                object-position: center center;
+                object-fit: cover;
+                aspect-ratio: 1 / 1;
+                height: 13px;
+                width: 13px;
+            }
         }
     }
 
-   
+
 }
+
 .profhead {
-    position: relative;
-    width: 100%;
-    border-radius: 1em;
-    overflow: hidden;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    min-height: fit-content;
-    padding-top: 2em;
+        min-height: 20em;
+        height: 10px;
+        width: 100%;
+        border-radius: 1em;
+        position: relative;
+        overflow: hidden;
+
+    &>.prof_head_data {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        transform: translateY(-5em);
+    }
 }
+
 #prof_name {
     font-size: 2em;
     padding-bottom: .3em;
@@ -67,26 +75,29 @@ body {
     border-radius: 2em;
     border: var(--box-crisp);
     margin-bottom: .5em;
+    box-shadow: 0 0 10px #000000ab;
 }
 
-#prof_more {    
+#prof_more {
     display: flex;
     align-items: center;
     flex-wrap: wrap;
     gap: .5em;
     justify-content: center;
+
     & i.material-symbols-rounded {
         font-size: 15px;
     }
 }
 
 #prof_banner {
-    height: 7em;
     background: purple;
     width: 100%;
-    position: absolute;
-    top: 0;
     z-index: -1;
+    background-position: center;
+    background-size: contain;
+    aspect-ratio: 3 / 1;
+
 }
 
 .sing_badge {
@@ -172,16 +183,21 @@ body {
 }
 
 .special {
-  font-weight: 800;
-  background: linear-gradient(90deg, #9a5fff, #d400ff, #ff3cac, #00b7ff, #b082ff);
-  background-size: 400%;
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  animation: slide 2.5s linear infinite alternate;
-  text-shadow: 0 0 8px rgba(106, 0, 255, 0.6);
+    font-weight: 800;
+    background: linear-gradient(90deg, #9a5fff, #d400ff, #ff3cac, #00b7ff, #b082ff);
+    background-size: 400%;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: slide 2.5s linear infinite alternate;
+    text-shadow: 0 0 8px rgba(106, 0, 255, 0.6);
 }
 
 @keyframes slide {
-  0% { background-position: 0% }
-  100% { background-position: 100% }
+    0% {
+        background-position: 0%
+    }
+
+    100% {
+        background-position: 100%
+    }
 }

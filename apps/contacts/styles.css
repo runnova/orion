@@ -68,17 +68,35 @@ body {
     display: flex;
     align-items: stretch;
     flex-direction: column;
-    background-color: var(--col-bg2);
     border-radius: .5em;
     overflow: hidden;
+    margin-bottom: .5em;
     border: var(--box-crisp);
+    height: 66px;
+    transition: height .3s;
+
+    &.moresecshw {
+        height: 150px;
+    }
+
 
     & .contactsDefVisSec {
         display: flex;
         padding: .5em;
         align-items: center;
+        background-color: var(--col-bg2);
         flex-direction: row;
         gap: .5em;
+        transition: .3s;
+
+
+        &:hover {
+            filter: brightness(120%);
+
+            & .gobtn {
+                background-color: var(--col-bg3);
+            }
+        }
 
         &>.data {
             flex: 1;
@@ -112,6 +130,16 @@ body {
         background-color: var(--col-bg1);
         padding: .5em;
 
+        &:hover {
+            &>.big.btn {
+                opacity: .8;
+
+                &:hover {
+                    opacity: 1;
+                }
+            }
+        }
+
         &>.big.btn {
             padding: .5em;
             display: flex;
@@ -128,7 +156,7 @@ body {
             max-width: calc(50% - 1em);
 
             &:hover {
-                background-color: var(--col-bg3);
+                background-color: var(--col-bg2);
             }
 
             &>span {
@@ -140,9 +168,9 @@ body {
     }
 }
 
-.gobtn {
-  transition: transform .2s;
-}
-.contactsMoreSec {
-  display: none;
+.gobtn.material-symbols-rounded {
+    transition: .3s;
+    padding: 8px;
+    border-radius: 1em;
+    background-color: var(--col-bg2);
 }

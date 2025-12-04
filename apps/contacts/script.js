@@ -4,7 +4,7 @@ async function renderProfile(name) {
     const data = await res.json();
     document.querySelector('#prof_pfp').src = data.pfp;
     document.querySelector('#prof_name').textContent = data.username;
-    document.querySelector('#prof_more').innerHTML = `<a>${data.private ? '<i class="material-symbols-rounded">lock</i> Private' : '<i class="material-symbols-rounded">public</i> Public'}</a> • <a class="${(data.system == "orion") ? 'special':''}">${data.system}</a> • <a>${data.pronouns}</a>`;
+    document.querySelector('#prof_more').innerHTML = `<a>${data.private ? '<i class="material-symbols-rounded">lock</i> Private' : '<i class="material-symbols-rounded">public</i> Public'}</a> • <a class="${(data.system == "orion") ? 'special' : ''}">${data.system}</a> • <a>${data.pronouns}</a>`;
     document.querySelector('#prof_abtme').textContent = data.bio.replace(/\n/g, ' ');
     document.querySelector('#prof_crds').textContent = data.currency;
     document.querySelector('#prof_flwrs').textContent = data.followers;
@@ -68,14 +68,14 @@ function renderICN(code, canvas) {
 
         else if (cmd === 'line') {
             const x1 = TX(parseFloat(cmds[++i])), y1 = TY(parseFloat(cmds[++i])),
-                  x2 = TX(parseFloat(cmds[++i])), y2 = TY(parseFloat(cmds[++i]));
+                x2 = TX(parseFloat(cmds[++i])), y2 = TY(parseFloat(cmds[++i]));
             ctx.beginPath();
             ctx.strokeStyle = color;
             ctx.lineWidth = weight;
             ctx.moveTo(x1, y1);
             ctx.lineTo(x2, y2);
             ctx.stroke();
-            last = { x: parseFloat(cmds[i-1]), y: parseFloat(cmds[i]) };
+            last = { x: parseFloat(cmds[i - 1]), y: parseFloat(cmds[i]) };
         }
 
         else if (cmd === 'cont') {
@@ -91,11 +91,11 @@ function renderICN(code, canvas) {
 
         else if (cmd === 'square') {
             const x = parseFloat(cmds[++i]), y = parseFloat(cmds[++i]),
-                  w = parseFloat(cmds[++i]), h = parseFloat(cmds[++i]);
+                w = parseFloat(cmds[++i]), h = parseFloat(cmds[++i]);
             ctx.beginPath();
             ctx.strokeStyle = color;
             ctx.lineWidth = weight;
-            ctx.strokeRect(TX(x) - S(w/2), TY(y) - S(h/2), S(w), S(h));
+            ctx.strokeRect(TX(x) - S(w / 2), TY(y) - S(h / 2), S(w), S(h));
         }
 
         else if (cmd === 'dot') {
@@ -112,15 +112,15 @@ function renderICN(code, canvas) {
             let angleICN = parseFloat(cmds[++i]);
             let filledICN = parseFloat(cmds[++i]);
             let circleAngle = (angleICN * 10) - filledICN;
-            let oldX = TX(x0) + Math.sin(circleAngle * Math.PI/180) * radius;
-            let oldY = TY(y0) - Math.cos(circleAngle * Math.PI/180) * radius;
+            let oldX = TX(x0) + Math.sin(circleAngle * Math.PI / 180) * radius;
+            let oldY = TY(y0) - Math.cos(circleAngle * Math.PI / 180) * radius;
             const steps = Math.floor(filledICN / 3) + 1;
             ctx.strokeStyle = color;
             ctx.lineWidth = weight;
             for (let j = 0; j < steps - 1; j++) {
                 circleAngle += 6;
-                const newX = TX(x0) + Math.sin(circleAngle * Math.PI/180) * radius;
-                const newY = TY(y0) - Math.cos(circleAngle * Math.PI/180) * radius;
+                const newX = TX(x0) + Math.sin(circleAngle * Math.PI / 180) * radius;
+                const newY = TY(y0) - Math.cos(circleAngle * Math.PI / 180) * radius;
                 ctx.beginPath();
                 ctx.moveTo(oldX, oldY);
                 ctx.lineTo(newX, newY);
@@ -132,8 +132,8 @@ function renderICN(code, canvas) {
 
         else if (cmd === 'ellipse') {
             const x = parseFloat(cmds[++i]), y = parseFloat(cmds[++i]),
-                  width = parseFloat(cmds[++i]), hm = parseFloat(cmds[++i]),
-                  dir = parseFloat(cmds[++i]) * Math.PI / 180;
+                width = parseFloat(cmds[++i]), hm = parseFloat(cmds[++i]),
+                dir = parseFloat(cmds[++i]) * Math.PI / 180;
             ctx.save();
             ctx.translate(TX(x), TY(y));
             ctx.rotate(dir);
@@ -141,22 +141,22 @@ function renderICN(code, canvas) {
             ctx.strokeStyle = color;
             ctx.lineWidth = weight;
             ctx.scale(1, hm);
-            ctx.arc(0, 0, S(width/2), 0, Math.PI * 2);
+            ctx.arc(0, 0, S(width / 2), 0, Math.PI * 2);
             ctx.stroke();
             ctx.restore();
         }
 
         else if (cmd === 'curve') {
             const x1 = TX(parseFloat(cmds[++i])), y1 = TY(parseFloat(cmds[++i])),
-                  x2 = TX(parseFloat(cmds[++i])), y2 = TY(parseFloat(cmds[++i])),
-                  cx = TX(parseFloat(cmds[++i])), cy = TY(parseFloat(cmds[++i]));
+                x2 = TX(parseFloat(cmds[++i])), y2 = TY(parseFloat(cmds[++i])),
+                cx = TX(parseFloat(cmds[++i])), cy = TY(parseFloat(cmds[++i]));
             ctx.beginPath();
             ctx.strokeStyle = color;
             ctx.lineWidth = weight;
             ctx.moveTo(x1, y1);
             ctx.quadraticCurveTo(cx, cy, x2, y2);
             ctx.stroke();
-            last = { x: parseFloat(cmds[i-1]), y: parseFloat(cmds[i]) };
+            last = { x: parseFloat(cmds[i - 1]), y: parseFloat(cmds[i]) };
         }
     }
 
@@ -173,82 +173,86 @@ function greenflag(myWindow) {
     }
 }
 class ContactToggle {
-  constructor(root, {imgSrc, name, note}) {
-    this.root = root
-    this.item = document.createElement('div')
-    this.item.className = 'sing_contact'
+    constructor(root, { imgSrc, name, note }) {
+        this.root = root
+        this.item = document.createElement('div')
+        this.item.className = 'sing_contact'
 
-    // Header
-    this.head = document.createElement('div')
-    this.head.className = 'contactsDefVisSec'
+        this.head = document.createElement('div')
+        this.head.className = 'contactsDefVisSec'
 
-    const pfp = document.createElement('div')
-    pfp.className = 'pfp'
-    const img = document.createElement('img')
-    img.src = imgSrc
-    pfp.appendChild(img)
+        const pfp = document.createElement('div')
+        pfp.className = 'pfp'
+        const img = document.createElement('img')
+        img.src = imgSrc
+        pfp.appendChild(img)
 
-    const data = document.createElement('div')
-    data.className = 'data'
-    const nameEl = document.createElement('div')
-    nameEl.className = 'name'
-    nameEl.textContent = name
-    const noteEl = document.createElement('div')
-    noteEl.className = 'noteDisplay'
-    noteEl.textContent = note
-    data.appendChild(nameEl)
-    data.appendChild(noteEl)
+        const data = document.createElement('div')
+        data.className = 'data'
+        const nameEl = document.createElement('div')
+        nameEl.className = 'name'
+        nameEl.textContent = name
+        const noteEl = document.createElement('div')
+        noteEl.className = 'noteDisplay'
+        noteEl.textContent = note
+        data.appendChild(nameEl)
+        data.appendChild(noteEl)
 
-    this.icon = document.createElement('div')
-    this.icon.className = 'gobtn material-symbols-rounded'
-    this.icon.textContent = 'chevron_right'
+        this.icon = document.createElement('div')
+        this.icon.className = 'gobtn material-symbols-rounded'
+        this.icon.textContent = 'chevron_right'
 
-    this.head.appendChild(pfp)
-    this.head.appendChild(data)
-    this.head.appendChild(this.icon)
+        this.head.appendChild(pfp)
+        this.head.appendChild(data)
+        this.head.appendChild(this.icon)
 
-    // More section
-    this.more = document.createElement('div')
-    this.more.className = 'contactsMoreSec'
-    this.more.style.display = 'none'
+        this.more = document.createElement('div')
+        this.more.className = 'contactsMoreSec'
+        this.more.style.display = 'none'
+        const actions = [
+            { icon: 'person', text: 'View profile', fn() { window.parent.launchSideBarApp('profile', { name: name }) } },
+            { icon: 'person_add', text: 'Add friend', fn() { console.log('add') } },
+            { icon: 'send_money', text: 'Send credits', fn() { console.log('send') } },
+            { icon: 'Edit_note', text: 'Edit note', fn() { console.log('edit') } },
+            { icon: 'delete_forever', text: 'Delete contact', fn() { console.log('delete') } }
+        ]
 
-    const actions = [
-      {icon: 'person', text: 'View profile'},
-      {icon: 'person_add', text: 'Add friend'},
-      {icon: 'send_money', text: 'Send credits'},
-      {icon: 'Edit_note', text: 'Edit note'},
-      {icon: 'delete_forever', text: 'Delete contact'}
-    ]
+        actions.forEach(a => {
+            const btn = document.createElement('div')
+            btn.className = 'big btn'
+            const icn = document.createElement('div')
+            icn.className = 'icn material-symbols-rounded'
+            icn.textContent = a.icon
+            const span = document.createElement('span')
+            span.textContent = a.text
+            btn.appendChild(icn)
+            btn.appendChild(span)
+            btn.onclick = a.fn
+            this.more.appendChild(btn)
+        })
 
-    actions.forEach(a => {
-      const btn = document.createElement('div')
-      btn.className = 'big btn'
-      const icn = document.createElement('div')
-      icn.className = 'icn material-symbols-rounded'
-      icn.textContent = a.icon
-      const span = document.createElement('span')
-      span.textContent = a.text
-      btn.appendChild(icn)
-      btn.appendChild(span)
-      this.more.appendChild(btn)
-    })
+        this.item.appendChild(this.head)
+        this.item.appendChild(this.more)
+        this.root.appendChild(this.item)
 
-    this.item.appendChild(this.head)
-    this.item.appendChild(this.more)
-    this.root.appendChild(this.item)
+        this.bind()
+    }
 
-    this.bind()
-  }
-
-  bind() {
-    this.head.addEventListener('click', () => {
-      const open = this.more.style.display === 'none'
-      this.more.style.display = open ? 'flex' : 'none'
-      this.icon.style.transform = open ? 'rotate(90deg)' : 'rotate(0deg)'
-    })
-  }
+    bind() {
+        this.head.addEventListener('click', () => {
+            const open = this.more.style.display === 'none'
+            this.more.style.display = open ? 'flex' : 'none'
+            this.icon.style.transform = open ? 'rotate(90deg)' : 'rotate(0deg)'
+            this.item.classList.toggle("moresecshw")
+        })
+    }
 }
 
-const container = document.getElementById('contactsList')
-new ContactToggle(container, {imgSrc: '../../oclogo.png', name: 'darkdot', note: 'This is a note'})
-new ContactToggle(container, {imgSrc: '../../oclogo.png', name: 'mist', note: 'This is not a note'})
+const container = document.getElementById('contactsList');
+
+document.addEventListener("DOMContentLoaded", async () => {
+    let list = JSON.parse(await window.parent.roturExtension.getFriendList());
+    list.forEach((friend) => {
+        new ContactToggle(container, { imgSrc: "https://avatars.rotur.dev/" + friend, name: friend, note: 'This is not a note' })
+    })
+})

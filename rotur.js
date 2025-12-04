@@ -1706,12 +1706,13 @@ async function roturTWEventCall(data) {
                 // thats a month
             }
         }
-        if (settings.get("auto_daily") == true) {
-            fetch("https://social.rotur.dev/claim_daily?auth=" + roturExtension.userToken).then((response) => {
-                if (response.ok) {
-                    notify(`You got the daily credit!`)
+        if (settings.get("auto_daily") === true && !settings.get("claimed_daily")) {
+            fetch("https://social.rotur.dev/claim_daily?auth=" + roturExtension.userToken).then(r => {
+                if (r.ok) {
+                    notify("You got the daily credit!")
+                    settings.set("claimed_daily", true, 24 * 60 * 60 * 1000)
                 } else {
-                    throw new Error('Failed to claim daily reward');
+                    throw new Error("Failed to claim daily reward")
                 }
             })
         }
