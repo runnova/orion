@@ -314,6 +314,114 @@ function recalculatepaycheck() {
 
     document.getElementById("volatilityChart").style.height = "200px";
 
+    function dayKey(d) {
+        const x = new Date(d);
+        x.setHours(0, 0, 0, 0);
+        return x.toISOString().slice(0, 10);
+    }
+
+    function lastNDays(n) {
+        const arr = [];
+        const now = new Date();
+        for (let i = 0; i < n; i++) {
+            const d = new Date(now);
+            d.setDate(now.getDate() - i);
+            arr.push(dayKey(d));
+        }
+        return arr.reverse();
+    }
+
+    function sumByDay(data, days) {
+        const map = {};
+        days.forEach(k => map[k] = 0);
+        data.forEach(d => {
+            const k = dayKey(d.timestamp);
+            if (map[k] !== undefined) map[k] += d.amount;
+        });
+        return days.map(k => map[k]);
+    }
+
+    const daysThis = lastNDays(7);
+    const daysLast = lastNDays(14).slice(0, 7);
+
+    const dataThisWeek = sumByDay(
+        dataPoints.filter(d => new Date(d.timestamp) >= new Date(daysThis[0])),
+        daysThis
+    );
+
+    const dataLastWeek = sumByDay(
+        dataPoints.filter(d => {
+            const t = new Date(d.timestamp);
+            return t >= new Date(daysLast[0]) && t <= new Date(daysLast[6]);
+        }),
+        daysLast
+    );
+
+    new Chart(document.getElementById("weekCompareChart").getContext("2d"), {
+        type: "line",
+        data: {
+            labels: daysThis,
+            datasets: [
+                {
+                    label: "This Week",
+                    data: dataThisWeek,
+                    borderColor: "#27ae60",
+                    backgroundColor: window.parent.accent,
+                    fill: true,
+                    tension: 0.2
+                },
+                {
+                    label: "Last Week",
+                    data: dataLastWeek,
+                    borderColor: "#bdc3c7",
+                    borderDash: [6, 3],
+                    tension: 0.2
+                }
+            ]
+        },
+        options: {
+            responsive: true
+        }
+    }); function aggregateReasonTypes(data) {
+        const map = {};
+        data.forEach(d => {
+            const k = d.note || "unknown";
+            if (!map[k]) map[k] = { sum: 0, type: d.amount < 0 ? "to" : "from" };
+            map[k].sum += Math.abs(d.amount);
+        });
+        return map;
+    }
+
+    function topReasonsAllTime(data) {
+        const map = aggregateReasonTypes(data);
+        const arr = Object.entries(map)
+            .map(([k, v]) => [k, v.sum, v.type])
+            .sort((a, b) => b[1] - a[1])
+            .slice(0, 6);
+        return arr;
+    }
+
+    const r = topReasonsAllTime(dataPoints);
+
+    const colors = r.map(e => {
+        return e[2] === "to" ? "#d44343" : "#5be45b";
+    });
+
+    new Chart(document.getElementById("topReasonsChart").getContext("2d"), {
+        type: "pie",
+        data: {
+            labels: r.map(e => e[0]),
+            datasets: [{
+                data: r.map(e => e[1]),
+                backgroundColor: colors
+            }]
+        },
+        options: {
+            responsive: true
+        }
+    });
+
+
 
     document.getElementById("pfponnav").src = "https://avatars.rotur.dev/" + window.parent.roturExtension.user.username;
 })();
@@ -355,10 +463,10 @@ var loader = {
 }
 
 function sendmoneyfr() {
-    window.parent.roturExtension.transferCurrency({ AMOUNT: Number(payment_screen_amt.value), USER:target_un_inp.value, NOTE: payment_screen_note.value }).then((result) => {
+    window.parent.roturExtension.transferCurrency({ AMOUNT: Number(payment_screen_amt.value), USER: target_un_inp.value, NOTE: payment_screen_note.value }).then((result) => {
         if (result == "Success") {
             openScreen("donescreen");
-    target_un_inp.value = '';
+            target_un_inp.value = '';
         }
     })
 }
