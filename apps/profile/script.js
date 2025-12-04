@@ -37,12 +37,14 @@ async function renderProfile(name) {
         badgesContainer.appendChild(badge);
     });
 
-    const theme = data.theme;
     if (data.banner) {
         document.querySelector('#prof_banner').style.backgroundImage = `url("${data.banner}")`;
+        document.querySelector('#prof_banner').style.filter = "blur(0em)";
+        document.querySelector('#prof_banner').style.backgroundSize = "contain";
     } else {
-        document.querySelector('#prof_banner').style.backgroundColor = theme.accent;
-
+        document.querySelector('#prof_banner').style.backgroundImage = `url(${data.pfp})`;
+        document.querySelector('#prof_banner').style.filter = "blur(2em)";
+        document.querySelector('#prof_banner').style.backgroundSize = "cover";
     }
     loader.style.display = "none";
 }

@@ -22,3 +22,13 @@ body {
         border-radius: .5em;
     }
 }
+
+a {
+    font-weight: bold;
+    color: var(--col-txth);
+    cursor: pointer;
+    background-color: var(--col-bgh);
+    padding: 3px 7px;
+    border-radius: .5em;
+    border: var(--box-crisp);
+}
