@@ -175,6 +175,8 @@ function greenflag(myWindow) {
 class ContactToggle {
     constructor(root, { imgSrc, name, note }) {
         this.root = root
+        this.name = name
+
         this.item = document.createElement('div')
         this.item.className = 'sing_contact'
 
@@ -209,12 +211,26 @@ class ContactToggle {
         this.more = document.createElement('div')
         this.more.className = 'contactsMoreSec'
         this.more.style.display = 'none'
+
+        this.item.appendChild(this.head)
+        this.item.appendChild(this.more)
+        this.root.appendChild(this.item)
+
+        this.renderActions()
+        this.bind()
+    }
+
+    renderActions() {
+        this.more.innerHTML = ''
+        const exists = window.parent.roturExtension.friends.list.includes(this.name)
         const actions = [
-            { icon: 'person', text: 'View profile', fn() { window.parent.launchSideBarApp('profile', { name: name }) } },
-            { icon: 'person_add', text: 'Add friend', fn() { console.log('add') } },
-            { icon: 'send_money', text: 'Send credits', fn() { console.log('send') } },
-            { icon: 'Edit_note', text: 'Edit note', fn() { console.log('edit') } },
-            { icon: 'delete_forever', text: 'Delete contact', fn() { console.log('delete') } }
+            { icon: 'person', text: 'View profile', fn: () => window.parent.launchSideBarApp('profile', { name: this.name }) },
+            exists
+                ? { icon: 'person_remove', text: 'Remove friend', fn: () => window.parent.roturExtension.removeFriend({ FRIEND: this.name }) }
+                : { icon: 'person_add', text: 'Add friend', fn: () => window.parent.roturExtension.addFriend({ FRIEND: this.name }) },
+            { icon: 'send_money', text: 'Send credits', fn: () => console.log('send') },
+            { icon: 'Edit_note', text: 'Edit note', fn: () => console.log('edit') },
+            { icon: 'delete_forever', text: 'Delete contact', fn: () => console.log('delete') }
         ]
 
         actions.forEach(a => {
@@ -227,15 +243,12 @@ class ContactToggle {
             span.textContent = a.text
             btn.appendChild(icn)
             btn.appendChild(span)
-            btn.onclick = a.fn
+            btn.onclick = () => {
+                a.fn()
+                if (a.text === 'Add friend' || a.text === 'Remove friend') this.renderActions()
+            }
             this.more.appendChild(btn)
         })
-
-        this.item.appendChild(this.head)
-        this.item.appendChild(this.more)
-        this.root.appendChild(this.item)
-
-        this.bind()
     }
 
     bind() {
@@ -251,8 +264,26 @@ class ContactToggle {
 const container = document.getElementById('contactsList');
 
 document.addEventListener("DOMContentLoaded", async () => {
-    let list = JSON.parse(await window.parent.roturExtension.getFriendList());
-    list.forEach((friend) => {
-        new ContactToggle(container, { imgSrc: "https://avatars.rotur.dev/" + friend, name: friend, note: 'This is not a note' })
-    })
-})
+    let localObj = window.parent.settings.get("contacts_list");
+    let obj = {}, list = [];
+    if (localObj) {
+        obj = localObj;
+        list = Object.keys(obj);
+    } else {
+        list = JSON.parse(await window.parent.roturExtension.getFriendList());
+        window.parent.toast("Added " + list.length + " friends from Rotur");
+    }
+    list.forEach(f => {
+        obj[f] = { imgSrc: "https://avatars.rotur.dev/" + f, note: "Rotur account" };
+        new ContactToggle(container, { imgSrc: obj[f].imgSrc, name: f, note: obj[f].note });
+    });
+    if (!localObj) window.parent.settings.set("contacts_list", obj);
+
+});
+
+function makeSearch() {
+    let q = document.getElementById("usersearchbar").value;
+    if (q.length > 0) {
+        window.parent.launchSideBarApp('profile', { name: q })
+    }
+}

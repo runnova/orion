@@ -142,65 +142,63 @@ function openApp(name) {
 		openApp(element.getAttribute("data-name"))
 	};
 });
+let toastInProgress = false
+let toastQueue = []
+const soloDuration = 5000
+const queuedDuration = 3000
 
-let toastInProgress = false;
-let totalDuration = 0;
-const maxToastDuration = 5000;
-let toastQueue = [];
-
-function notify(text, duration = 5000) {
-	let displayDuration = Math.min(duration, maxToastDuration);
-
+function notify(text) {
 	if (toastInProgress) {
-		toastQueue.push({ text, duration: displayDuration });
+		toastQueue.push(text)
 	} else {
-		totalDuration = displayDuration;
-		toastInProgress = true;
-		displayToast(text, displayDuration);
+		toastInProgress = true
+		const d = toastQueue.length > 0 ? queuedDuration : soloDuration
+		displayToast(text, d)
 	}
 }
 
-function toast(text, duration = 5000) {
-	notify(text, duration)
+function toast(text) {
+	notify(text)
 }
 
 function displayToast(text, duration) {
-	var titleb = document.getElementById('toastdivtext');
-	if (titleb) {
-		titleb.innerText = text;
-		document.getElementById("toastdiv").style.zIndex = 5;
-		document.getElementById("toastdiv").classList.add('notifpullanim');
-		document.getElementById("toastdiv").style.display = "block";
+	const t = document.getElementById('toastdivtext')
+	if (!t) return
+	t.innerText = text
+	const el = document.getElementById('toastdiv')
+	el.style.zIndex = 5
+	el.classList.add('notifpullanim')
+	el.style.display = 'block'
 
-		setTimeout(function () {
-			document.getElementById("toastdiv").classList.remove('closeEffect');
-		}, 200);
+	setTimeout(function () {
+		el.classList.remove('closeEffect')
+	}, 200)
 
-		document.getElementById("toastdiv").onclick = function () {
-			document.getElementById("toastdiv").classList.add('closeEffect');
-			document.getElementById("toastdiv").style.display = "none";
-			toastInProgress = false;
-			if (toastQueue.length > 0) {
-				const nextToast = toastQueue.shift();
-				displayToast(nextToast.text, nextToast.duration);
-			}
-		};
-
-		setTimeout(function () {
-			document.getElementById("toastdiv").classList.add('closeEffect');
-			setTimeout(function () {
-				document.getElementById("toastdiv").style.display = "none";
-				toastInProgress = false;
-				if (toastQueue.length > 0) {
-					const nextToast = toastQueue.shift();
-					displayToast(nextToast.text, nextToast.duration);
-				}
-			}, 200);
-		}, duration);
-	} else {
-		console.error("DOM elements not found.");
+	el.onclick = function () {
+		el.classList.add('closeEffect')
+		el.style.display = 'none'
+		toastInProgress = false
+		if (toastQueue.length > 0) {
+			const next = toastQueue.shift()
+			const d = toastQueue.length > 0 ? queuedDuration : soloDuration
+			displayToast(next, d)
+		}
 	}
+
+	setTimeout(function () {
+		el.classList.add('closeEffect')
+		setTimeout(function () {
+			el.style.display = 'none'
+			toastInProgress = false
+			if (toastQueue.length > 0) {
+				const next = toastQueue.shift()
+				const d = toastQueue.length > 0 ? queuedDuration : soloDuration
+				displayToast(next, d)
+			}
+		}, 200)
+	}, duration)
 }
+
 
 function makedialogclosable(ok) {
 	const myDialog = gid(ok);
@@ -487,7 +485,7 @@ if (settings.get("sidebarCollapse")) {
 }
 
 var startupLoaderElement = document.getElementById("oriFullPLoader");
-var loaderTexts = ["Add ?s=claw in url to open claw", "Add ?s=orichats in url to open OriginChats", "Add ?s=credits in url to open credits dashboard", "Click on the originchats loader if its stuck", "ctrl+s brings up orion settings","Add ?rtr=dont in url to prevent rotur connection"];
+var loaderTexts = ["Add ?s=claw in url to open claw", "Add ?s=orichats in url to open OriginChats", "Add ?s=credits in url to open credits dashboard", "Click on the originchats loader if its stuck", "ctrl+s brings up orion settings", "Add ?rtr=dont in url to prevent rotur connection"];
 document.getElementById("flashText").innerText = loaderTexts[Math.floor(Math.random() * loaderTexts.length)];
 
 var startupLoader = {

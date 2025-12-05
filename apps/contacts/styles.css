@@ -19,6 +19,8 @@ body {
         background-color: var(--col-bg2);
         border: var(--box-crisp);
         border-radius: .5em;
+        max-width: 1000px;
+        margin: auto;
 
         &>.button>.material-symbols-rounded {
             opacity: .5;
