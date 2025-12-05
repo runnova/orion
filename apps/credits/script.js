@@ -482,3 +482,10 @@ function openScreen(id) {
     document.querySelectorAll(`[opener='${id}']`)[0].classList.add("active")
 }
 cancelpayment();
+
+function greenflag(myWindow) {
+    if (myWindow) {
+        target_un_inp.value = myWindow.data.name;
+        makepayment();
+    }
+}

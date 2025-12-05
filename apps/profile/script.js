@@ -183,3 +183,13 @@ function greenflag(myWindow) {
         renderProfile(window.parent.roturExtension.user.username)
     }
 }
+
+const profhead = document.querySelector('.profhead');
+
+function adjustHeight() {
+  const contentHeight = profhead.scrollHeight;
+  profhead.style.height = `calc(${contentHeight}px - 70px)`;
+}
+
+adjustHeight();
+new ResizeObserver(adjustHeight).observe(profhead);

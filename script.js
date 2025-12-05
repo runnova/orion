@@ -114,25 +114,25 @@ persohome.classList.toggle("disp");
 
 var inView = false;
 
-iframe.onload = () => {
-	setTheme(curtheme, iframe.contentDocument.documentElement);
-	setTimeout(() => {
-		iframe.style.opacity = 1;
-		oriloaderstatic.style.display = "none"
-	}, 500);
-}
-
 function clearActive() {
 	[...document.getElementsByClassName("onebtn")].forEach(element => { element.classList.remove("active"); })
 }
 
 
-function openApp(name) {
+function openApp(name, data) {
 	iframe.style.opacity = 0;
 	oriloaderstatic.style.display = "block";
 	setTimeout(() => {
 		iframe.src = "apps/" + name;
 	}, 300);
+	iframe.onload = () => {
+		try { iframe.contentWindow.greenflag({ data }) } catch { }
+		setTheme(curtheme, iframe.contentDocument.documentElement);
+		setTimeout(() => {
+			iframe.style.opacity = 1;
+			oriloaderstatic.style.display = "none"
+		}, 500);
+	}
 }
 
 [...document.getElementsByClassName("onebtn")].forEach(element => {
@@ -363,31 +363,23 @@ function hexToRGBA(hex, alpha = 1) {
 	const b = num & 255;
 	return `rgba(${r},${g},${b},${alpha})`;
 }
-
 async function applyBgSts() {
 	let x = settings.get("img_bg");
 	if (!x) return;
 	const proxyUrl = `https://proxy.mistium.com/?url=${encodeURIComponent(x)}`;
-	const cacheKey = `bgCache_${btoa(x)}`;
-	let cached = localStorage.getItem(cacheKey);
-	if (cached) {
-		document.body.style.backgroundImage = `url(${cached})`;
-		return;
-	}
 	try {
 		const res = await fetch(proxyUrl);
 		const blob = await res.blob();
 		const reader = new FileReader();
 		reader.onloadend = () => {
-			const dataUrl = reader.result;
-			localStorage.setItem(cacheKey, dataUrl);
-			document.body.style.backgroundImage = `url(${dataUrl})`;
+			document.body.style.backgroundImage = `url(${reader.result})`;
 		};
 		reader.readAsDataURL(blob);
 	} catch (e) {
 		console.error("Failed to load background:", e);
 	}
 }
+
 
 setTheme(curtheme);
 applyBgSts();
@@ -412,7 +404,7 @@ divider.addEventListener('mousedown', e => {
 document.addEventListener('mousemove', e => {
 	if (!isDragging) return;
 	const dx = startX - e.clientX;
-	let newWidth = startWidth + dx;
+	let newWidth = (startWidth + dx)/2;
 	if (newWidth < 0) newWidth = 0;
 	sidebarCont.style.flexBasis = newWidth + 'px';
 });

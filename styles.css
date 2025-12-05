@@ -329,7 +329,6 @@ div#toastdiv {
 }
 
 .appwindow {
-    flex: 1;
     height: 100%;
     overflow: hidden;
     transition: .3s;
@@ -355,8 +354,8 @@ div#toastdiv {
 }
 
 #sidebarapp {
-    flex: 2;
     width: 300px;
+    max-width: 600px;
     border-radius: .7em;
     display: flex;
     flex-direction: column;

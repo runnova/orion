@@ -48,26 +48,24 @@ body {
 }
 
 .profhead {
-        min-height: 20em;
-        height: 10px;
-        width: 100%;
-        border-radius: 1em;
-        position: relative;
-        overflow: hidden;
+    min-height: 20em;
+    height: 10px;
+    width: 100%;
+    border-radius: 1em;
+    position: relative;
+    overflow: hidden;
 
     &>.prof_head_data {
         display: flex;
+        padding-left: 1em;
         flex-direction: column;
-        align-items: center;
+        align-items: flex-start;
         transform: translateY(-5em);
     }
 }
 
 #prof_name {
     font-size: 2em;
-    padding-bottom: .3em;
-    margin-bottom: .5em;
-    border-bottom: 1px solid var(--box-crisp-col);
 }
 
 #prof_pfp {
@@ -84,6 +82,7 @@ body {
     flex-wrap: wrap;
     gap: .5em;
     justify-content: center;
+    pointer-events: none;
 
     & i.material-symbols-rounded {
         font-size: 15px;
@@ -94,10 +93,10 @@ body {
     background: purple;
     width: 100%;
     z-index: -1;
-    background-position: center;
-    background-size: contain;
+    background-position: left;
+    background-repeat: no-repeat;
     aspect-ratio: 3 / 1;
-
+    background-size: 100% 100%;
 }
 
 .sing_badge {
@@ -110,7 +109,6 @@ body {
     margin: .2em;
     padding: 5px 5px;
 }
-
 
 #loader {
     width: 50px;
@@ -199,5 +197,57 @@ body {
 
     100% {
         background-position: 100%
+    }
+}
+
+.namesection {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    gap: .5em;
+    justify-content: space-between;
+}
+
+.btnGrp {
+    cursor: pointer;
+    display: flex;
+    flex-direction: row;
+    gap: 1px;
+    overflow: visible;
+    height: fit-content;
+
+    &>button {
+        padding: .3em .8em;
+        background-color: var(--col-bgh);
+        border: var(--box-crisp);
+        border: 0;
+        display: flex;
+        min-width: 0;
+        border-radius: .5em 0 0 .5em;
+
+        &:nth-child(2) {
+            display: flex;
+            border-radius: 0 .5em .5em 0;
+            width: 10px;
+            justify-content: center;
+        }
+    }
+}
+
+.dropdown {
+    position: relative;
+
+    &>.dropdownitems {
+                position: absolute;
+        right: 0;
+        bottom: 2.3em;
+        background: var(--col-bg2);
+        border-radius: .5em;
+        box-shadow: 0 0 10px #000000ab;
+        width: 100%;
+
+        &>.item {
+            padding: .5em;
+        }
     }
 }

@@ -1697,7 +1697,7 @@ async function roturTWEventCall(data) {
             element.innerText = roturExtension.user.username;
         })
         startupLoader.mark_complete("4");
-        let userSystem = await roturExtension.getkey("system") || "rotur";
+        let userSystem = await roturExtension.getkey({"KEY":"system"}) || "rotur";
         if (userSystem != "orion") {
             if (!settings.get("showedBadgeAd")) {
                 document.getElementById('orionBadgeAlert').showModal();
