@@ -23,13 +23,28 @@
             </div>
         </div>
         <div class="contactsListMaster">
-
             <div class="filterBtns">
-                <div class="btn">All</div>
-                <div class="btn">Friends</div>
+                <div class="btn" onclick="importFriendsFromRotur()">
+                    <i class="material-symbols-rounded">person_check</i>
+                    Import friends
+                </div>
+                <div class="btn cant" onclick="">
+                    <i class="material-symbols-rounded">download</i>
+                    Import Contacts
+                </div>
+                <div class="btn cant" onclick="">
+                    <i class="material-symbols-rounded">save_as</i>
+                    Export Contacts
+                </div>
+            </div>
+            <div class="contact-header">
+                <i class="material-symbols-rounded">keep</i>
+            </div>
+            <div id="pinned">
+                <div class="nothingtext">No pinned contacts</div>
             </div>
             <div id="contactsList">
-                
+
             </div>
         </div>
 

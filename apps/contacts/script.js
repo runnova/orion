@@ -52,13 +52,15 @@ class ContactToggle {
         const actions = [
             { icon: 'person', text: 'View profile', fn: () => window.parent.launchSideBarApp('profile', { name: this.name }) },
             exists
-                ? { icon: 'person_remove', text: 'Remove friend', fn: async () => {
-                    if (await window.parent.justConfirm("Remove " + this.name + "as friend?")) {
-                        window.parent.roturExtension.removeFriend({ FRIEND: this.name });
-                    } else {
-                        window.parent.toast("You kept them as a friend!")
+                ? {
+                    icon: 'person_remove', text: 'Remove friend', fn: async () => {
+                        if (await window.parent.justConfirm("Remove " + this.name + "as friend?")) {
+                            window.parent.roturExtension.removeFriend({ FRIEND: this.name });
+                        } else {
+                            window.parent.toast("You kept them as a friend!")
+                        }
                     }
-                } }
+                }
                 : { icon: 'person_add', text: 'Add friend', fn: () => window.parent.roturExtension.sendFriendRequest({ FRIEND: this.name }) },
             { icon: 'send_money', text: 'Send credits', fn: () => window.parent.openApp('credits', { name: this.name }) },
             { icon: 'edit_note', text: 'Edit note', fn: () => editNote(this.name) },
@@ -92,56 +94,67 @@ class ContactToggle {
         })
     }
 }
-
 const container = document.getElementById('contactsList');
 
-document.addEventListener("DOMContentLoaded", async () => {
+let localObj = {};
+let obj = {};
 
-    let localObj = {}, obj = {}, list = [];
+async function importFriendsFromRotur() {
+    const list = JSON.parse(await window.parent.roturExtension.getFriendList());
+    window.parent.toast("Added " + list.length + " friends from Rotur");
+    list.forEach(f => {
+        if (!obj[f]) obj[f] = { imgSrc: "https://avatars.rotur.dev/" + f, note: "Rotur account" };
+    });
+    renderContactsList();
+    return obj;
+}
 
-    async function renderContactsList() {
-        container.innerHTML = ``;
-        localObj = window.parent.settings.get("contacts_list") || {};
+async function renderContactsList() {
+    container.innerHTML = ``;
+    localObj = window.parent.settings.get("contacts_list") || {};
+    obj = { ...localObj };
 
-        if (Object.keys(localObj).length > 0) {
-            obj = { ...localObj };
-            list = Object.keys(obj);
-        } else {
-            list = JSON.parse(await window.parent.roturExtension.getFriendList());
-            window.parent.toast("Added " + list.length + " friends from Rotur");
-            list.forEach(f => {
-                obj[f] = { imgSrc: "https://avatars.rotur.dev/" + f, note: "Rotur account" };
-            });
-        }
-
-        const renderContact = f => {
-            obj[f] = obj[f] || { imgSrc: "https://avatars.rotur.dev/" + f, note: "Rotur account" };
-            new ContactToggle(container, { imgSrc: obj[f].imgSrc, name: f, note: obj[f].note });
-        };
-
-        list.forEach(renderContact);
-        window.parent.settings.set("contacts_list", obj);
+    if (Object.keys(obj).length === 0) {
+        obj = await importFriendsFromRotur();
     }
 
-    renderContactsList();
+    let list = Object.keys(obj).sort((a, b) => a.localeCompare(b));
 
-    window.deleteContact = (name) => {
-        if (obj[name]) {
-            delete obj[name];
-            window.parent.settings.set("contacts_list", obj);
-            renderContactsList();
+    let current = "";
+    list.forEach(f => {
+        const letter = f[0].toUpperCase();
+        if (letter !== current) {
+            current = letter;
+            const h = document.createElement("div");
+            h.textContent = current;
+            h.className = "contact-header";
+            container.appendChild(h);
         }
-    };
+        if (!obj[f].imgSrc) obj[f].imgSrc = "https://avatars.rotur.dev/" + f;
+        new ContactToggle(container, { imgSrc: obj[f].imgSrc, name: f, note: obj[f].note });
+    });
 
-    window.editNote = async (name) => {
-        if (obj[name]) {
-            let newNote = await window.parent.ask("Enter a new note for " + name);
-            obj[name].note = newNote;
-            window.parent.settings.set("contacts_list", obj);
-            renderContactsList();
-        }
-    };
-});
+    window.parent.settings.set("contacts_list", obj);
+}
+
+renderContactsList();
+
+window.deleteContact = name => {
+    if (obj[name]) {
+        delete obj[name];
+        window.parent.settings.set("contacts_list", obj);
+        renderContactsList();
+    }
+};
+
+window.editNote = async name => {
+    if (obj[name]) {
+        let newNote = await window.parent.ask("Enter a new note for " + name);
+        obj[name].note = newNote;
+        window.parent.settings.set("contacts_list", obj);
+        renderContactsList();
+    }
+};
 
 var mainSearchBox = document.getElementById("usersearchbar");
 function makeSearch() {
@@ -155,3 +168,13 @@ mainSearchBox.addEventListener("keydown", (event) => {
         makeSearch();
     }
 });
+
+function greenflag(myWindow) {
+    if (myWindow && myWindow.data.type == "addc") {
+        let currentUser = myWindow.data.name;
+        const s = new Date().toISOString();
+        obj[currentUser] = { imgSrc: "https://avatars.rotur.dev/" + currentUser, note: "Added " + s };
+        window.parent.settings.set("contacts_list", obj);
+        renderContactsList();
+    }
+}

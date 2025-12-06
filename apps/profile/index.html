@@ -24,7 +24,7 @@
                         <button id="followBtn">Add friend</button>
                         <button id="dropdwnbtn"><i class="material-symbols-rounded">more_vert</i></button>
                         <div id="followDropDown" class="dropdownitems">
-                            <div class="item">Add contact</div>
+                            <div class="item" onclick="window.parent.openApp('contacts', { 'type':'addc', name: currentUser })">Add contact</div>
                             <div class="item">Block user</div>
                         </div>
                     </div>
@@ -35,6 +35,11 @@
         <div class="subcard">
             <div class="label">About Me</div>
             <p id="prof_abtme">This user apparently has a very long about me.</p>
+        </div>
+        <div class="subcard">
+            <div class="editbtn" onclick="editNote()"><i class="material-symbols-rounded">edit</i></div>
+            <div class="label">Note (only visible to you)</div>
+            <p id="prof_nte"></p>
         </div>
         <div class="subcard">
             <div class="label">Activity</div>

@@ -36,15 +36,28 @@ async function renderProfile(name) {
 
         badgesContainer.appendChild(badge);
     });
+    const checkBanner = async () => {
+        const res = await fetch(data.banner);
+        const size = res.headers.get('Content-Length');
+        const big = size && Number(size) > 1024;
 
-    if (data.banner) {
-        document.querySelector('#prof_banner').style.backgroundImage = `url("${data.banner}")`;
-        document.querySelector('#prof_banner').style.filter = "blur(0em)";
-        document.querySelector('#prof_banner').style.backgroundSize = "contain";
+        if (big) {
+            document.querySelector('#prof_banner').style.backgroundImage = `url("${data.banner}")`;
+            document.querySelector('#prof_banner').style.filter = "blur(0em)";
+            document.querySelector('#prof_banner').style.backgroundSize = "contain";
+        } else {
+            document.querySelector('#prof_banner').style.backgroundImage = `url(${data.pfp})`;
+            document.querySelector('#prof_banner').style.filter = "blur(2em)";
+            document.querySelector('#prof_banner').style.backgroundSize = "cover";
+        }
+    };
+
+    checkBanner();
+    var obj = window.parent.settings.get("contacts_list");
+    if (obj[name]) {
+        document.getElementById("prof_nte").innerText = obj[name].note;
     } else {
-        document.querySelector('#prof_banner').style.backgroundImage = `url(${data.pfp})`;
-        document.querySelector('#prof_banner').style.filter = "blur(2em)";
-        document.querySelector('#prof_banner').style.backgroundSize = "cover";
+        document.getElementById("prof_nte").parentElement.remove();
     }
     loader.style.display = "none";
 }
@@ -173,23 +186,46 @@ function renderICN(code, canvas) {
 }
 
 loader.style.display = "flex";
-
+var currentUser;
 function greenflag(myWindow) {
     loader.style.display = "flex";
     console.log(88, myWindow.data)
     if (myWindow) {
-        renderProfile(myWindow.data.name);
+        currentUser = myWindow.data.name;
+        renderProfile(currentUser);
     } else {
         renderProfile(window.parent.roturExtension.user.username)
     }
 }
-
 const profhead = document.querySelector('.profhead');
 
 function adjustHeight() {
-  const contentHeight = profhead.scrollHeight;
-  profhead.style.height = `calc(${contentHeight}px - 70px)`;
+    profhead.style.height = `${profhead.scrollHeight - 70}px`;
 }
 
-adjustHeight();
 new ResizeObserver(adjustHeight).observe(profhead);
+
+const mo = new MutationObserver(adjustHeight);
+mo.observe(profhead, { childList: true, subtree: true, characterData: true });
+
+window.addEventListener('resize', adjustHeight);
+
+setTimeout(() => {
+    adjustHeight();
+}, 2500);
+
+var dropdownBtn = document.getElementById("dropdwnbtn");
+dropdownBtn.addEventListener("click", () => {
+    dropdownBtn.parentElement.classList.toggle("active");
+})
+
+window.editNote = async () => {
+    let name = currentUser;
+    var obj = window.parent.settings.get("contacts_list");
+    if (obj[name]) {
+        let newNote = await window.parent.ask("Enter a new note for " + name);
+        obj[name].note = newNote;
+        window.parent.settings.set("contacts_list", obj);
+        renderProfile(currentUser);
+    }
+};

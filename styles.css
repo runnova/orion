@@ -348,7 +348,7 @@ div#toastdiv {
 }
 
 .sidebar-transition {
-    transition: flex 0.2s ease, width 0.2s ease;
+    transition: width 0.2s var(--time1);
     overflow: hidden;
     white-space: nowrap;
 }

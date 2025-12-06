@@ -5,9 +5,6 @@ body {
 }
 
 .card {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
     height: 100vh;
     overflow-y: auto;
     padding: 1em;
@@ -21,8 +18,26 @@ body {
         border-radius: 1em;
         display: flex;
         flex-direction: column;
-        width: 100%;
+        width: calc(100% - 1em);
+        position: relative;
         min-height: fit-content;
+
+        &>.editbtn {
+            display: none;
+            position: absolute;
+            right: -5px;
+            top: -5px;
+            background: var(--col-bg3);
+            border-radius: .5em;
+            padding: 5px;
+            align-items: center;
+            justify-content: center;
+            z-index: 5;
+        }
+
+        &:hover .editbtn {
+            display: flex;
+        }
 
         & .label {
             opacity: .5;
@@ -48,12 +63,12 @@ body {
 }
 
 .profhead {
-    min-height: 20em;
-    height: 10px;
+    height: fit-content;
     width: 100%;
     border-radius: 1em;
     position: relative;
     overflow: hidden;
+    transition: height .3s;
 
     &>.prof_head_data {
         display: flex;
@@ -208,6 +223,22 @@ body {
     justify-content: space-between;
 }
 
+@media screen and (max-width: 400px) {
+    div.namesection {
+        flex-direction: column;
+        width: 100%;
+        margin-bottom: 1em;
+    }
+
+    .profhead {
+        height: fit-content !important;
+
+        & .btnGrp>button:first-child {
+            width: 100%;
+        }
+    }
+}
+
 .btnGrp {
     cursor: pointer;
     display: flex;
@@ -237,17 +268,28 @@ body {
 .dropdown {
     position: relative;
 
+    &.active .dropdownitems {
+        display: block;
+    }
+
     &>.dropdownitems {
-                position: absolute;
+        position: absolute;
+        display: none;
         right: 0;
         bottom: 2.3em;
         background: var(--col-bg2);
         border-radius: .5em;
         box-shadow: 0 0 10px #000000ab;
         width: 100%;
+        max-width: 200px;
 
         &>.item {
             padding: .5em;
+            border-radius: .5em;
+
+            &:hover {
+                background-color: var(--col-bg3);
+            }
         }
     }
 }

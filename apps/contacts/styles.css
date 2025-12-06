@@ -51,7 +51,14 @@ body {
         background-color: var(--col-bg2);
         border: var(--box-crisp);
         border-radius: .5em;
-        padding: .2em .5em;
+        display: flex;
+        padding: .3em;
+        gap: .5em;
+
+        &.cant {
+            opacity: .5;
+            pointer-events: none;
+        }
     }
 }
 
@@ -175,4 +182,29 @@ body {
     padding: 8px;
     border-radius: 1em;
     background-color: var(--col-bg2);
+}
+
+.contact-header {
+    margin: .5em;
+    margin-top: 1em;
+    font-size: 1em;
+    background-image: linear-gradient(0deg, transparent 45%, var(--box-crisp-col), transparent 55%);
+    background-size: calc(100% - 1.5em);
+    background-repeat: no-repeat;
+    background-position: right;
+
+    &>i {
+        font-size: 1.3em;
+        display: flex;
+        transform: translateX(-4px);
+    }
+}
+
+#pinned {
+    &>.nothingtext {
+    opacity: .5;
+    margin: auto;
+    width: fit-content;
+    margin-top: 1em;
+}
 }

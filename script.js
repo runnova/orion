@@ -404,9 +404,9 @@ divider.addEventListener('mousedown', e => {
 document.addEventListener('mousemove', e => {
 	if (!isDragging) return;
 	const dx = startX - e.clientX;
-	let newWidth = (startWidth + dx)/2;
+	let newWidth = (startWidth + dx);
 	if (newWidth < 0) newWidth = 0;
-	sidebarCont.style.flexBasis = newWidth + 'px';
+	sidebarCont.style.width = newWidth + 'px';
 });
 
 document.addEventListener('mouseup', e => {
@@ -416,14 +416,13 @@ document.addEventListener('mouseup', e => {
 	document.body.style.userSelect = '';
 });
 
-sidebarCont.style.flex = '0 0 0';
 sidebarCont.style.overflow = 'hidden';
 
 
 function launchSideBarApp(name, data) {
 	sidebarCont.style.display = 'flex';
 	document.getElementById("sidebarappname").innerText = name;
-	setTimeout(() => sidebarCont.style.flex = '2', 50);
+	setTimeout(() => sidebarCont.style.width = "500px");
 	sidebarappframe.src = "apps/" + name;
 	oriloaderstatic2.style.display = "block"
 	sidebarappframe.onload = () => {
@@ -433,9 +432,10 @@ function launchSideBarApp(name, data) {
 }
 
 function closeSideBar() {
-	sidebarCont.style.flex = '0';
+	sidebarCont.style.width = "0px";
 	setTimeout(() => sidebarCont.style.display = 'none', 200);
 }
+closeSideBar();
 
 document.querySelectorAll(".checkbox").forEach(item => {
 	const key = item.getAttribute("data-setting");
@@ -522,3 +522,13 @@ const m = document.querySelector('meta[name=viewport]') || (() => {
 	return t;
 })();
 m.setAttribute('content', `initial-scale=${z}, maximum-scale=${z}, minimum-scale=${z}, width=device-width`);
+
+function changeSysToNva() {
+	roturExtension.setKey({KEY: "system", VALUE: "orion"});
+	toast("🫵😎 "+roturExtension.user.username+" upgraded to orion");
+	document.getElementById('orionBadgeAlert').close();
+}
+
+function dontchsysnva() {
+	document.getElementById('orionBadgeAlert').close();
+}
