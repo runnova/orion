@@ -122,6 +122,8 @@ function clearActive() {
 function openApp(name, data) {
 	iframe.style.opacity = 0;
 	oriloaderstatic.style.display = "block";
+	oriloaderstatic.innerHTML = `<i class="material-symbols-rounded">${document.querySelectorAll("[data-name='claw']>i").innerHTML}</i>`;
+
 	setTimeout(() => {
 		iframe.src = "apps/" + name;
 	}, 300);

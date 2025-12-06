@@ -128,6 +128,7 @@ function attachWsHandlers() {
                     JSON.stringify({
                         cmd: "messages_get",
                         channel: state.currentChannel,
+                        limit: 500
                     }),
                 );
                 setTimeout(loader.hide, 500);

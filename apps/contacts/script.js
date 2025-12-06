@@ -25,13 +25,32 @@ class ContactToggle {
         noteEl.textContent = note
         data.appendChild(nameEl)
         data.appendChild(noteEl)
+        let pinnedNames = window.parent.settings.get("contacts_pinned_list");
 
+        this.pinBtn = document.createElement('div')
+        this.pinBtn.className = 'gobtn material-symbols-rounded'
+        if (!pinnedNames.includes(name)) {
+            this.pinBtn.textContent = 'keep';
+            this.pinBtn.onclick = () => {
+                pinnedNames.push(name);
+                window.parent.settings.set("contacts_pinned_list", pinnedNames);
+                renderContactsList();
+            }
+        } else {
+            this.pinBtn.textContent = 'keep_off';
+            this.pinBtn.onclick = () => {
+                pinnedNames = pinnedNames.filter(x => x !== name);
+                window.parent.settings.set("contacts_pinned_list", pinnedNames);
+                renderContactsList();
+            }
+        }
         this.icon = document.createElement('div')
         this.icon.className = 'gobtn material-symbols-rounded'
         this.icon.textContent = 'chevron_right'
 
         this.head.appendChild(pfp)
         this.head.appendChild(data)
+        this.head.appendChild(this.pinBtn)
         this.head.appendChild(this.icon)
 
         this.more = document.createElement('div')
@@ -40,8 +59,10 @@ class ContactToggle {
 
         this.item.appendChild(this.head)
         this.item.appendChild(this.more)
-        this.root.appendChild(this.item)
-
+        if (!pinnedNames.includes(name))
+            this.root.appendChild(this.item)
+        else
+            document.getElementById("pinned").appendChild(this.item)
         this.renderActions()
         this.bind()
     }
@@ -111,6 +132,8 @@ async function importFriendsFromRotur() {
 
 async function renderContactsList() {
     container.innerHTML = ``;
+
+    document.getElementById("pinned").innerHTML = '';
     localObj = window.parent.settings.get("contacts_list") || {};
     obj = { ...localObj };
 
@@ -121,15 +144,23 @@ async function renderContactsList() {
     let list = Object.keys(obj).sort((a, b) => a.localeCompare(b));
 
     let current = "";
+    var pinnedNames = window.parent.settings.get("contacts_pinned_list");
+    if (pinnedNames.length < 1) {
+        document.getElementById("pinned").innerHTML = `
+                <div class="nothingtext">No pinned contacts</div>`;
+    }
     list.forEach(f => {
-        const letter = f[0].toUpperCase();
-        if (letter !== current) {
-            current = letter;
-            const h = document.createElement("div");
-            h.textContent = current;
-            h.className = "contact-header";
-            container.appendChild(h);
+        if (!pinnedNames.includes(f)) {
+            const letter = f[0].toUpperCase();
+            if (letter !== current) {
+                current = letter;
+                const h = document.createElement("div");
+                h.textContent = current;
+                h.className = "contact-header";
+                container.appendChild(h);
+            }
         }
+
         if (!obj[f].imgSrc) obj[f].imgSrc = "https://avatars.rotur.dev/" + f;
         new ContactToggle(container, { imgSrc: obj[f].imgSrc, name: f, note: obj[f].note });
     });
@@ -178,3 +209,26 @@ function greenflag(myWindow) {
         renderContactsList();
     }
 }
+
+async function renderSearchedList() {
+    const q = document.getElementById("usersearchbar").value.toLowerCase();
+    if (q == "") {
+        document.getElementById("pinned").style.display = "block";
+        document.getElementById("pinnedHeader").style.display = "block";
+        renderContactsList();
+    } else {
+        document.getElementById("pinned").style.display = "none";
+        document.getElementById("pinnedHeader").style.display = "none";
+
+        const container = document.getElementById("contactsList");
+        const localObj = window.parent.settings.get("contacts_list") || {};
+        const obj = { ...localObj };
+        const list = Object.keys(obj).filter(n => n.toLowerCase().includes(q));
+        list.sort((a, b) => a.localeCompare(b)).forEach(f => {
+            if (!obj[f].imgSrc) obj[f].imgSrc = "https://avatars.rotur.dev/" + f;
+            new ContactToggle(container, { imgSrc: obj[f].imgSrc, name: f, note: obj[f].note });
+        });
+    }
+}
+
+document.getElementById("usersearchbar").addEventListener("keyup", renderSearchedList);
