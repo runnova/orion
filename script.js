@@ -524,7 +524,7 @@ const m = document.querySelector('meta[name=viewport]') || (() => {
 m.setAttribute('content', `initial-scale=${z}, maximum-scale=${z}, minimum-scale=${z}, width=device-width`);
 
 function changeSysToNva() {
-	roturExtension.setKey({KEY: "system", VALUE: "orion"});
+	roturExtension.setkey({KEY: "system", VALUE: "orion"});
 	toast("🫵😎 "+roturExtension.user.username+" upgraded to orion");
 	document.getElementById('orionBadgeAlert').close();
 }
