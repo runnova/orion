@@ -886,6 +886,9 @@ function listMessages(messageList) {
     lazier.end();
     attemptResolveAllMissingReplies();
     hljs.highlightAll();
+    setTimeout(() => {
+        lazyRenderMessages(); 
+    }, 2000);
 }
 
 function addMessage(messagePacket) {
@@ -902,6 +905,9 @@ function addMessage(messagePacket) {
             updateChannelUnread(ch);
         }
     }
+    setTimeout(() => {
+        lazyRenderMessages(); 
+    }, 2000);
 }
 
 
@@ -1256,4 +1262,38 @@ function toggleEmojiMenu() {
     } else {
         picker.style.display = "none"
     }
+}
+
+function lazyRenderMessages(selector = '.sing_msg') {
+  if (lazyRenderMessages._observer) return;
+
+  const messages = document.querySelectorAll(selector);
+
+  messages.forEach(msg => {
+    if (msg.dataset.lazyInit) return;
+    const placeholder = document.createElement('div');
+    placeholder.style.height = msg.scrollHeight + 'px';
+    msg.dataset.content = msg.innerHTML;
+    msg.innerHTML = '';
+    msg.appendChild(placeholder);
+    msg.dataset.lazyInit = 'true';
+  });
+
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+      const msg = entry.target;
+      if (entry.isIntersecting) {
+        msg.innerHTML = msg.dataset.content;
+      } else {
+        if (!msg.dataset.lazyInit) return;
+        const placeholder = document.createElement('div');
+        placeholder.style.height = msg.scrollHeight + 'px';
+        msg.innerHTML = '';
+        msg.appendChild(placeholder);
+      }
+    });
+  }, { threshold: 0.1 });
+
+  messages.forEach(msg => observer.observe(msg));
+  lazyRenderMessages._observer = observer;
 }

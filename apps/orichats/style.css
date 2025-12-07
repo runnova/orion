@@ -731,3 +731,7 @@ div.blockedheader>a {
     border-radius: .5em;
     }
 }
+
+a {
+    color: dodgerblue;
+}
