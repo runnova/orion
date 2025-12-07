@@ -188,7 +188,7 @@ function attachWsHandlers() {
                     if (node) {
                         if (!window.parent.settings.get("ori_msg_lgger"))
                             node.remove()
-                        else 
+                        else
                             node.style.color = "red";
                     };
 
@@ -569,8 +569,131 @@ function updateChannelUnread(channelName) {
         link.appendChild(badge);
     }
 }
+async function fetchMetadata(url) {
+    const proxy = 'https://proxy.mistium.com/?url=';
+    try {
+        const res = await fetch(proxy + url);
+        const html = await res.text();
+        const doc = new DOMParser().parseFromString(html, 'text/html');
 
-var lastmsgid = null;
+        const meta = {};
+        const tags = doc.querySelectorAll('meta[property^="og:"], meta[name^="twitter:"]');
+        tags.forEach(tag => {
+            const key = tag.getAttribute('property') || tag.getAttribute('name');
+            meta[key] = tag.getAttribute('content');
+        });
+
+        return meta;
+    } catch {
+        return {};
+    }
+}
+
+function decodeHtml(html) {
+    const txt = document.createElement('textarea');
+    txt.innerHTML = html;
+    return txt.value;
+}
+
+async function attachEmbed(container, url) {
+    let data = null;
+    const oembedProviders = ['youtube.com', 'vimeo.com', 'twitter.com', 'flickr.com', 'twitch.tv'];
+
+    const provider = oembedProviders.find(site => url.includes(site));
+    if (provider) {
+        const apiMap = {
+            'youtube.com': `https://www.youtube.com/oembed?url=${encodeURIComponent(url)}&format=json`,
+            'vimeo.com': `https://vimeo.com/api/oembed.json?url=${encodeURIComponent(url)}`,
+            'twitter.com': `https://publish.twitter.com/oembed?url=${encodeURIComponent(url)}`,
+            'flickr.com': `https://www.flickr.com/services/oembed?url=${encodeURIComponent(url)}&format=json`,
+            'twitch.tv': `https://proxy.mistium.com/?url=https://api.twitch.tv/oembed?url=${encodeURIComponent(url)}`
+        };
+        try {
+            const res = await fetch(apiMap[provider]);
+            data = await res.json();
+        } catch {
+            data = null;
+        }
+    }
+
+    const meta = !data ? await fetchMetadata(url) : {};
+
+    const wrap = document.createElement("div");
+    wrap.classList.add("oembed_embed");
+
+    const title = data?.title || meta['og:title'] || meta['twitter:title'];
+    const author = data?.author_name || meta['og:site_name'] || meta['twitter:site'];
+    const html = data?.html || meta['og:video'] || meta['twitter:player'];
+    const img = data?.thumbnail_url || meta['og:image'] || meta['twitter:image'];
+
+    if (author) {
+        console.log(32)
+        const ch = document.createElement("div");
+        ch.classList.add("oembed_author");
+        ch.textContent = author;
+        wrap.appendChild(ch);
+    }
+
+    if (title) {
+        console.log(37)
+        const ti = document.createElement("div");
+        ti.classList.add("oembed_title");
+        ti.textContent = title;
+        wrap.appendChild(ti);
+    }
+
+    function decodeHtml(html) {
+        const txt = document.createElement('textarea');
+        txt.innerHTML = html;
+        return txt.value;
+    }
+
+    function isUrl(str) {
+        try {
+            new URL(str);
+            return true;
+        } catch {
+            return false;
+        }
+    }
+
+    if (html) {
+        const decoded = decodeHtml(html).trim();
+        if (isUrl(decoded)) {
+            const iframe = document.createElement('iframe');
+            iframe.src = decoded;
+            iframe.width = '560';
+            iframe.height = '315';
+            iframe.allow = 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture';
+            iframe.allowFullscreen = true;
+            wrap.appendChild(iframe);
+        } else {
+            const div = document.createElement("div");
+            div.innerHTML = decoded;
+            wrap.appendChild(div);
+        }
+    } else if (img) {
+        const imgEl = document.createElement("img");
+        imgEl.src = img;
+        wrap.appendChild(imgEl);
+    } else if (url) {
+        const a = document.createElement("a");
+        a.href = url;
+        a.textContent = url;
+        a.target = "_blank";
+        wrap.appendChild(a);
+    }
+
+
+    container.appendChild(wrap);
+}
+
+function detectEmbeds(messageDiv, text) {
+    const urls = [...text.matchAll(/https?:\/\/[^\s]+/g)].map(m => m[0]);
+    urls.forEach(url => attachEmbed(messageDiv, url));
+}
+
+
 function renderMessage(message) {
     if (message && message.id) {
         const mid = message.id;
@@ -580,139 +703,176 @@ function renderMessage(message) {
 
     const prevmsg = state.messages[lastmsgid] ?? null;
     lastmsgid = message.id;
-    const self = message["user"] === state.user.username;
-    const blocked = !self && (state.user_keys["sys.blocked"] ?? []).includes(message["user"]);
+
+    const self = message.user === state.user.username;
+    const blocked = !self && (state.user_keys["sys.blocked"] ?? []).includes(message.user);
     if (blocked && !state.show_blocked_msgs) return;
 
-    function actuallyRender() {
-        const timestamp = message["timestamp"];
-        const date = new Date(timestamp * 1000);
-        const shouldGroup = !blocked && message["user"] === (prevmsg ?? { user: "" })["user"];
-        const mdText = formatMessageContent(message["content"]);
-        const replyBlock = renderReplyExcerpt(message);
-        let html;
-        if (shouldGroup) {
-            html = `
-			<div class="sing_msg extra">
-					${replyBlock}
-					<div class="msg_ctnt extra">
-				<div class="time" title="${date.toLocaleString()}">${escapeHTML(date.toLocaleString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true }))}</div>
-				<div class="data">
-					<p>${mdText}</p>${message.edited ? '<span class="edited-tag">(edited)</span>' : ""}
-				</div>
-				</div>
-			</div>
-			`.trim();
-        } else {
-            const userColor = getUserColor(message["user"]);
-            let olkscr = `window.parent.launchSideBarApp('profile', { name: '${escapeHTML(message["user"])}' })`;
-            html = `
-			<div class="sing_msg" data-id="${escapeHTML(message.id || "")}" data-user="${escapeHTML(message["user"])}">
-						${replyBlock}
-						<div class="msg_ctnt">
-            <img class="pfp" src="https://avatars.rotur.dev/${encodeURIComponent(message["user"])}" alt="${escapeHTML(message["user"])}" onclick="${olkscr}">
+    const node = blocked ? renderBlocked(message, prevmsg) : renderVisible(message, prevmsg);
+
+    if (!blocked) detectEmbeds(node, message.content || "");
+
+    return node;
+}
+
+
+var lastmsgid = null;
+
+function renderVisible(message, prevmsg) {
+    const html = buildMessageHTML(message, prevmsg);
+    const wrapper = document.createElement("div");
+    wrapper.innerHTML = html;
+    const msg = wrapper.firstElementChild;
+    msg.classList.add("message");
+    msg.appendChild(buildActions(message));
+    return msg;
+}
+
+function renderBlocked(message, prevmsg) {
+    const div = document.createElement("div");
+    const header = document.createElement("div");
+    header.classList.add("blockedheader");
+
+    const icon = document.createElement("span");
+    icon.classList.add("symb");
+    icon.textContent = "block";
+
+    const text = document.createElement("span");
+    text.textContent = "Blocked message —";
+
+    const link = document.createElement("a");
+    link.textContent = "Show";
+    link.href = "#";
+
+    let node;
+
+    link.addEventListener("click", e => {
+        e.preventDefault();
+        if (node) {
+            link.textContent = "Show";
+            header.scrollIntoView();
+            node.remove();
+            node = undefined;
+            return;
+        }
+        node = renderVisible(message, prevmsg);
+        div.appendChild(node);
+        link.textContent = "Hide";
+        node.scrollIntoView();
+    });
+
+    header.appendChild(icon);
+    header.appendChild(text);
+    header.appendChild(link);
+    div.appendChild(header);
+    return div;
+}
+
+function buildMessageHTML(message, prevmsg) {
+    const date = new Date(message.timestamp * 1000);
+    const grouped = message.user === (prevmsg ?? { user: "" }).user;
+    const md = formatMessageContent(message.content);
+    const reply = renderReplyExcerpt(message);
+
+    if (grouped) {
+        return `
+        <div class="sing_msg extra">
+            ${reply}
+            <div class="msg_ctnt extra">
+                <div class="time" title="${date.toLocaleString()}">${escapeHTML(date.toLocaleString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true }))}</div>
+                <div class="data">
+                    <p>${md}</p>${message.edited ? '<span class="edited-tag">(edited)</span>' : ""}
+                </div>
+            </div>
+        </div>
+        `.trim();
+    }
+
+    const color = getUserColor(message.user);
+    const scr = `window.parent.launchSideBarApp('profile',{name:'${escapeHTML(message.user)}'})`;
+
+    return `
+    <div class="sing_msg" data-id="${escapeHTML(message.id || "")}" data-user="${escapeHTML(message.user)}">
+        ${reply}
+        <div class="msg_ctnt">
+            <img class="pfp" src="https://avatars.rotur.dev/${encodeURIComponent(message.user)}" alt="${escapeHTML(message.user)}" onclick="${scr}">
             <div class="data">
                 <div class="header">
-                    <div class="name" onclick="${olkscr}" style="color:${userColor}">${escapeHTML(message["user"])}</div>
-							<div class="time" title="${date.toLocaleString()}">${escapeHTML(date.toLocaleString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true }))}</div>
-						</div>
-					<p>${mdText}</p>${message.edited ? '<span class="edited-tag">(edited)</span>' : ""}
-				</div>
-				</div>
-			</div>
-			`.trim();
-        }
-        const wrapper = document.createElement("div");
-        wrapper.innerHTML = html;
-        let repllkbtns = document.createElement("div");
-        repllkbtns.classList.add("msg_actions");
-        let replybtn = document.createElement("div");
-        replybtn.classList.add("button");
-        replybtn.classList.add("symb");
-        replybtn.innerText = "reply"
-        repllkbtns.appendChild(replybtn);
-        replybtn.onclick = () => {
-            if (state.editing) cancelEdit();
-            state.reply_to[state.currentChannel] = message;
-            if (canSend(state.currentChannel)) showreplyPrompt(message);
-        }
+                    <div class="name" onclick="${scr}" style="color:${color}">${escapeHTML(message.user)}</div>
+                    <div class="time" title="${date.toLocaleString()}">${escapeHTML(date.toLocaleString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true }))}</div>
+                </div>
+                <p>${md}</p>${message.edited ? '<span class="edited-tag">(edited)</span>' : ""}
+            </div>
+        </div>
+    </div>
+    `.trim();
+}
 
-        if (message["user"] == state.user.username) {
-            let deletebtn = document.createElement("div");
-            deletebtn.classList.add("button");
-            deletebtn.classList.add("symb");
-            deletebtn.innerText = "delete"
-            repllkbtns.appendChild(deletebtn);
-            deletebtn.onclick = () => {
-                ws.send(
-                    JSON.stringify({
-                        cmd: "message_delete",
-                        channel: state.currentChannel,
-                        id: message.id,
-                    }),
-                );
-            }
-        }
-        let copybtn = document.createElement("div");
-        copybtn.classList.add("button");
-        copybtn.classList.add("symb");
-        copybtn.innerText = "content_copy"
-        repllkbtns.appendChild(copybtn);
-        copybtn.onclick = () => {
-            navigator.clipboard?.writeText(message.content || "").catch(() => { });
-        }
+function buildActions(message) {
+    const wrap = document.createElement("div");
+    wrap.classList.add("msg_actions");
 
-        const messageDiv = wrapper.firstElementChild;
-        messageDiv.classList.add("message");
-        messageDiv.appendChild(repllkbtns);
-        return messageDiv;
+    const reply = document.createElement("div");
+    reply.classList.add("button", "symb");
+    reply.innerText = "reply";
+    reply.onclick = () => {
+        if (state.editing) cancelEdit();
+        state.reply_to[state.currentChannel] = message;
+        if (canSend(state.currentChannel)) showreplyPrompt(message);
+    };
+    wrap.appendChild(reply);
+
+    if (message.user === state.user.username) {
+        const del = document.createElement("div");
+        del.classList.add("button", "symb");
+        del.innerText = "delete";
+        del.onclick = () => {
+            ws.send(JSON.stringify({ cmd: "message_delete", channel: state.currentChannel, id: message.id }));
+        };
+        wrap.appendChild(del);
     }
 
-    if (blocked) {
-        const blockedDiv = document.createElement("div");
-        const blockedHeader = document.createElement("div");
-        blockedHeader.classList.add("blockedheader");
+    const copy = document.createElement("div");
+    copy.classList.add("button", "symb");
+    copy.innerText = "content_copy";
+    copy.onclick = () => navigator.clipboard?.writeText(message.content || "").catch(() => { });
+    wrap.appendChild(copy);
 
-        const blockedIcon = document.createElement('span');
-        blockedIcon.classList.add("symb");
-        blockedIcon.textContent = "block";
-        blockedHeader.appendChild(blockedIcon);
+    return wrap;
+}
 
-        const blockedText = document.createElement("span");
-        blockedText.textContent = "Blocked message —";
-        blockedHeader.appendChild(blockedText);
+function attachYouTubeEmbed(container, url) {
+    const api = `https://www.youtube.com/oembed?url=${encodeURIComponent(url)}&format=json`;
+    fetch(api)
+        .then(r => r.json())
+        .then(d => {
+            const wrap = document.createElement("div");
+            wrap.classList.add("yt_embed");
 
-        const blockedShowLink = document.createElement("a");
-        blockedShowLink.textContent = "Show";
+            const ch = document.createElement("div");
+            ch.classList.add("yt_channel");
+            ch.textContent = d.author_name;
 
-        let node;
-        blockedShowLink.addEventListener("click", ev => {
-            ev.preventDefault();
+            const ti = document.createElement("div");
+            ti.classList.add("yt_title");
+            ti.textContent = d.title;
 
-            if (node) {
-                blockedShowLink.textContent = "Show";
-                blockedHeader.scrollIntoView();
-                node.remove();
-                node = undefined;
-                return;
-            }
+            const iframe = document.createElement("iframe");
+            iframe.src = url.replace("watch?v=", "embed/");
+            iframe.allowFullscreen = true;
+            iframe.loading = "lazy";
 
-            node = actuallyRender();
-            if (node) {
-                blockedDiv.appendChild(node);
-                blockedShowLink.textContent = "Hide";
-                node.scrollIntoView();
-            }
+            wrap.appendChild(ch);
+            wrap.appendChild(ti);
+            wrap.appendChild(iframe);
+            container.appendChild(wrap);
         })
+        .catch(() => { });
+}
 
-        blockedShowLink.href = "#";
-        blockedHeader.appendChild(blockedShowLink);
-
-        blockedDiv.appendChild(blockedHeader);
-        return blockedDiv;
-    }
-
-    return actuallyRender();
+function detectYouTubeEmbeds(messageDiv, text) {
+    const urls = [...text.matchAll(/https?:\/\/(?:www\.)?youtube\.com\/watch\?v=[\w-]+/g)].map(m => m[0]);
+    for (const u of urls) attachYouTubeEmbed(messageDiv, u);
 }
 
 function listMessages(messageList) {
@@ -985,7 +1145,7 @@ function updateTypingIndicator() {
         text = `${users.length} people are typing...`;
     }
 
-    typingEl.innerHTML = `<div class="loader2"></div>`+escapeHTML(text);
+    typingEl.innerHTML = `<div class="loader2"></div>` + escapeHTML(text);
 }
 function handleMessageNotification() {
 

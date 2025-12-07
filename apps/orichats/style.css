@@ -495,18 +495,34 @@ hr {
 }
 
 .loader2 {
-  width: 15px;
-  transform: scale(0.5);
-  margin: 0 .5em;
-  aspect-ratio: 1;
-  border-radius: 50%;
-  animation: l5 1s infinite linear alternate;
+    width: 15px;
+    transform: scale(0.5);
+    margin: 0 .5em;
+    aspect-ratio: 1;
+    border-radius: 50%;
+    animation: l5 1s infinite linear alternate;
 }
+
 @keyframes l5 {
-    0%  {box-shadow: 20px 0 #fff, -20px 0 #fff2;background: #fff }
-    33% {box-shadow: 20px 0 #fff, -20px 0 #fff2;background: #fff2}
-    66% {box-shadow: 20px 0 #fff2,-20px 0 #fff; background: #fff2}
-    100%{box-shadow: 20px 0 #fff2,-20px 0 #fff; background: #fff }
+    0% {
+        box-shadow: 20px 0 #fff, -20px 0 #fff2;
+        background: #fff
+    }
+
+    33% {
+        box-shadow: 20px 0 #fff, -20px 0 #fff2;
+        background: #fff2
+    }
+
+    66% {
+        box-shadow: 20px 0 #fff2, -20px 0 #fff;
+        background: #fff2
+    }
+
+    100% {
+        box-shadow: 20px 0 #fff2, -20px 0 #fff;
+        background: #fff
+    }
 }
 
 #orion {
@@ -664,7 +680,7 @@ div.blockedheader>a {
 }
 
 #typing {
-    background: linear-gradient(90deg, rgba(255,255,255,0.5) 0%, rgba(255,255,255,1) 50%, rgba(255,255,255,0.5) 100%);
+    background: linear-gradient(90deg, rgba(255, 255, 255, 0.5) 0%, rgba(255, 255, 255, 1) 50%, rgba(255, 255, 255, 0.5) 100%);
     background-size: 150% 100%;
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
@@ -681,10 +697,37 @@ div.blockedheader>a {
     0% {
         background-position: 200% 0;
     }
+
     50% {
         background-position: 0% 0;
     }
+
     100% {
         background-position: 200% 0;
+    }
+}
+
+.oembed_embed {
+    padding: 1em;
+    background: var(--col-bg2);
+    border-radius: .5em;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    border: var(--box-crisp);
+    margin-left: 3em;
+    max-width: 350px;
+    border-left: 3px solid var(--col-bgh);
+
+    &>.oembed_title {
+        color: dodgerblue;
+    }
+
+    & iframe {
+        width: 100%;
+        aspect-ratio: 9/6;
+    height: auto;
+    border: var(--box-crisp);
+    border-radius: .5em;
     }
 }

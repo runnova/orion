@@ -237,7 +237,7 @@ class RoturExtension {
                                 }
                                 break;
                             case "omail_received":
-                                roturTWEventCall("roturEXT_whenMailReceived");
+                                roturTWEventCall("roturEXT_whenMailReceived", packet.val.payload);
                                 break;
                             case "account_update":
                                 roturTWEventCall("roturEXT_whenAccountUpdate");
@@ -268,9 +268,6 @@ class RoturExtension {
                                         packet.val = null;
                                     }
                                 }
-                                break;
-                            case "omail_received":
-                                roturTWEventCall("roturEXT_whenMailReceived");
                                 break;
                             case "account_update":
                                 roturTWEventCall("roturEXT_whenAccountUpdate");
@@ -1688,7 +1685,7 @@ async function logoutofrtr() {
     roturExtension.disconnect();
 }
 
-async function roturTWEventCall(data) {
+async function roturTWEventCall(data, payload) {
     if (data == "roturEXT_whenAuthenticated") {
         startupLoader.mark_complete("3");
         notify(`Logged in ${roturExtension.user.username}, welcome back!`)
@@ -1744,6 +1741,8 @@ async function roturTWEventCall(data) {
     } else if (data == "roturEXT_whenDisconnected") {
         await say("Disconnected, click ok to reconnect")
         attemptConnection();
+    } else if (data == "roturEXT_whenMailReceived") {
+        toast("✉️ New: "+payload.info.title)
     }
 }
 

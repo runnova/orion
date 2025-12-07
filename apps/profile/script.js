@@ -6,7 +6,7 @@ async function renderProfile(name) {
     document.querySelector('#prof_pfp').src = data.pfp;
     document.querySelector('#prof_name').textContent = data.username;
     document.querySelector('#prof_more').innerHTML = `<a>${data.private ? '<i class="material-symbols-rounded">lock</i> Private' : '<i class="material-symbols-rounded">public</i> Public'}</a> • <a class="${(data.system == "orion") ? 'special' : ''}">${data.system}</a> • <a>${data.pronouns}</a>`;
-    document.querySelector('#prof_abtme').textContent = data.bio.replace(/\n/g, ' ');
+    document.querySelector('#prof_abtme').innerHTML = escapeHTML(data.bio).replace(/\n/g, '<br>');
     document.querySelector('#prof_crds').textContent = data.currency;
     document.querySelector('#prof_flwrs').textContent = data.followers;
     document.querySelector('#prof_marry').textContent = data.married_to || 'Nobody';
@@ -229,3 +229,13 @@ window.editNote = async () => {
         renderProfile(currentUser);
     }
 };
+
+function escapeHTML(str) {
+    if (str == null) return "";
+    return String(str)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#39;");
+}

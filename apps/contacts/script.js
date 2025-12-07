@@ -25,7 +25,7 @@ class ContactToggle {
         noteEl.textContent = note
         data.appendChild(nameEl)
         data.appendChild(noteEl)
-        let pinnedNames = window.parent.settings.get("contacts_pinned_list");
+        let pinnedNames = window.parent.settings.get("contacts_pinned_list") || [];
 
         this.pinBtn = document.createElement('div')
         this.pinBtn.className = 'gobtn material-symbols-rounded'
@@ -144,7 +144,7 @@ async function renderContactsList() {
     let list = Object.keys(obj).sort((a, b) => a.localeCompare(b));
 
     let current = "";
-    var pinnedNames = window.parent.settings.get("contacts_pinned_list");
+    let pinnedNames = window.parent.settings.get("contacts_pinned_list") || [];
     if (pinnedNames.length < 1) {
         document.getElementById("pinned").innerHTML = `
                 <div class="nothingtext">No pinned contacts</div>`;
@@ -213,14 +213,14 @@ function greenflag(myWindow) {
 async function renderSearchedList() {
     const q = document.getElementById("usersearchbar").value.toLowerCase();
     if (q == "") {
-        document.getElementById("pinned").style.display = "block";
-        document.getElementById("pinnedHeader").style.display = "block";
         renderContactsList();
+        document.getElementById("pinnedHeadIcn").innerText = "keep";
     } else {
-        document.getElementById("pinned").style.display = "none";
-        document.getElementById("pinnedHeader").style.display = "none";
 
         const container = document.getElementById("contactsList");
+        container.innerHTML = ``;
+        document.getElementById("pinned").innerHTML = '';
+        document.getElementById("pinnedHeadIcn").innerText = "search";
         const localObj = window.parent.settings.get("contacts_list") || {};
         const obj = { ...localObj };
         const list = Object.keys(obj).filter(n => n.toLowerCase().includes(q));

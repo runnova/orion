@@ -18,7 +18,7 @@ async function listMails() {
         const mailUserData = document.createElement("div");
         mailUserData.classList.add("mailuserdata");
         mailUserData.onclick = () => {
-            viewprofile(m.from);
+            window.parent.launchSideBarApp('profile', { name: m.from })
         };
 
         const mailUserAvatar = document.createElement("div");
