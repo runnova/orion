@@ -554,29 +554,26 @@ class RoturExtension {
             return "";
         }
     }
-
     setkey(args) {
-        // this is server side, removing this does nothing other than make the server reject the request
-        if (args.VALUE.length > 1000) return "Key Too Long, Limit is 1000 Characters";
-        if (!this.is_connected) return "Not Connected";
-        if (!this.authenticated) return "Not Logged In";
+        if (args.VALUE.length > 1000) return "Key Too Long, Limit is 1000 Characters"
+        if (!this.is_connected) return "Not Connected"
+        if (!this.authenticated) return "Not Logged In"
 
-        return this.handlePromise({
-            cmd: "pmsg",
-            val: {
-                command: "update",
-                client: this.my_client,
-                id: ":3",
-                payload: [args.KEY, args.VALUE],
-            },
-            id: this.accounts,
-        },
-            (packet, resolve) => {
-                if (packet.val.payload === "Account Updated Successfully") {
-                    this.user[args.KEY] = args.VALUE;
-                }
-                resolve(packet.val.payload);
-            });
+        const url = "https://api.rotur.dev/users"
+
+        return fetch(url, {
+            method: "POST",
+            headers: {
+                auth: this.userToken,
+                key: args.KEY,
+                value: args.VALUE
+            }
+        })
+            .then(r => r.text())
+            .then(t => {
+                if (t === "Account Updated Successfully") this.user[args.KEY] = args.VALUE
+                return t
+            })
     }
 
     keyExists(args) {
@@ -1694,7 +1691,7 @@ async function roturTWEventCall(data, payload) {
             element.innerText = roturExtension.user.username;
         })
         startupLoader.mark_complete("4");
-        let userSystem = await roturExtension.getkey({"KEY":"system"}) || "my current system";
+        let userSystem = await roturExtension.getkey({ "KEY": "system" }) || "my current system";
         if (userSystem != "orion") {
             if (!settings.get("showedBadgeAd")) {
                 document.getElementById('orionBadgeAlert').showModal();
@@ -1742,7 +1739,7 @@ async function roturTWEventCall(data, payload) {
         await say("Disconnected, click ok to reconnect")
         attemptConnection();
     } else if (data == "roturEXT_whenMailReceived") {
-        toast("✉️ New: "+payload.info.title)
+        toast("✉️ New: " + payload.info.title)
     }
 }
 
