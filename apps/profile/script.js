@@ -38,19 +38,33 @@ async function renderProfile(name) {
     });
     const checkBanner = async () => {
         const res = await fetch(data.banner);
-        const size = res.headers.get('Content-Length');
-        const big = size && Number(size) > 1024;
+        const blob = await res.blob();
+        const big = blob.size > 1500;
+
+        const el = document.querySelector('#prof_banner');
+        const url = URL.createObjectURL(blob);
+
+        const img = new Image();
+        img.onload = () => {
+            adjustHeight();
+            URL.revokeObjectURL(url);
+        };
+        img.src = url;
 
         if (big) {
-            document.querySelector('#prof_banner').style.backgroundImage = `url("${data.banner}")`;
-            document.querySelector('#prof_banner').style.filter = "blur(0em)";
-            document.querySelector('#prof_banner').style.backgroundSize = "contain";
+            el.style.backgroundImage = `url("${url}")`;
+            el.style.filter = "blur(0em)";
+            el.style.backgroundSize = "contain";
         } else {
-            document.querySelector('#prof_banner').style.backgroundImage = `url(${data.pfp})`;
-            document.querySelector('#prof_banner').style.filter = "blur(2em)";
-            document.querySelector('#prof_banner').style.backgroundSize = "cover";
+            el.style.backgroundImage = `url("${data.pfp}")`;
+            el.style.filter = "blur(2em)";
+            el.style.backgroundSize = "cover";
         }
+        setTimeout(() => {
+            adjustHeight();
+        }, 1000);
     };
+
 
     checkBanner();
     var obj = window.parent.settings.get("contacts_list");
@@ -209,10 +223,6 @@ const mo = new MutationObserver(adjustHeight);
 mo.observe(profhead, { childList: true, subtree: true, characterData: true });
 
 window.addEventListener('resize', adjustHeight);
-
-setTimeout(() => {
-    adjustHeight();
-}, 2500);
 
 var dropdownBtn = document.getElementById("dropdwnbtn");
 dropdownBtn.addEventListener("click", () => {
