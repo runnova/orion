@@ -631,96 +631,94 @@ function decodeHtml(html) {
     txt.innerHTML = html;
     return txt.value;
 }
+async function detectType(url) {
+    try {
+        const r = await fetch(url, { method: 'HEAD' });
+        return r.headers.get('content-type') || "";
+    } catch {
+        return "";
+    }
+}
 
 async function attachEmbed(container, url) {
     let data = null;
-    const oembedProviders = ['youtube.com', 'vimeo.com', 'twitter.com', 'flickr.com', 'twitch.tv'];
+    const isTenor = url.includes('tenor.com');
 
-    const provider = oembedProviders.find(site => url.includes(site));
-    if (provider) {
-        const apiMap = {
-            'youtube.com': `https://www.youtube.com/oembed?url=${encodeURIComponent(url)}&format=json`,
-            'vimeo.com': `https://vimeo.com/api/oembed.json?url=${encodeURIComponent(url)}`,
-            'twitter.com': `https://publish.twitter.com/oembed?url=${encodeURIComponent(url)}`,
-            'flickr.com': `https://www.flickr.com/services/oembed?url=${encodeURIComponent(url)}&format=json`,
-            'twitch.tv': `https://proxy.mistium.com/?url=https://api.twitch.tv/oembed?url=${encodeURIComponent(url)}`
-        };
+    if (isTenor) {
+        const id = url.split('-').pop();
         try {
-            const res = await fetch(apiMap[provider]);
-            data = await res.json();
+            const r = await fetch(`https://tenor.googleapis.com/v2/posts?ids=${id}&key=AIzaSyD-1`);
+            const j = await r.json();
+            data = { html: `<img src="${j.results[0].media_formats.gif.url}">` };
         } catch {
             data = null;
         }
     }
 
-    const meta = !data ? await fetchMetadata(url) : {};
+    if (!data) {
+        const oembedProviders = ['youtube.com', 'vimeo.com', 'twitter.com', 'flickr.com'];
+        const provider = oembedProviders.find(s => url.includes(s));
+        if (provider) {
+            const api = {
+                'youtube.com': `https://www.youtube.com/oembed?url=${encodeURIComponent(url)}&format=json`,
+                'vimeo.com': `https://vimeo.com/api/oembed.json?url=${encodeURIComponent(url)}`,
+                'twitter.com': `https://publish.twitter.com/oembed?url=${encodeURIComponent(url)}`,
+                'flickr.com': `https://www.flickr.com/services/oembed?url=${encodeURIComponent(url)}&format=json`
+            };
+            try {
+                const r = await fetch(api[provider]);
+                data = await r.json();
+            } catch {
+                data = null;
+            }
+        }
+    }
 
+    const mime = data ? "" : await detectType(url);
     const wrap = document.createElement("div");
     wrap.classList.add("oembed_embed");
 
-    const title = data?.title || meta['og:title'] || meta['twitter:title'];
-    const author = data?.author_name || meta['og:site_name'] || meta['twitter:site'];
-    const html = data?.html || meta['og:video'] || meta['twitter:player'];
-    const img = data?.thumbnail_url || meta['og:image'] || meta['twitter:image'];
+    const html = data?.html;
+    const isImg = mime.startsWith("image/");
+    const isVid = mime.startsWith("video/");
 
-    if (author) {
-        console.log(32)
-        const ch = document.createElement("div");
-        ch.classList.add("oembed_author");
-        ch.textContent = author;
-        wrap.appendChild(ch);
+    function decode(h) {
+        const t = document.createElement('textarea');
+        t.innerHTML = h;
+        return t.value;
     }
 
-    if (title) {
-        console.log(37)
-        const ti = document.createElement("div");
-        ti.classList.add("oembed_title");
-        ti.textContent = title;
-        wrap.appendChild(ti);
-    }
-
-    function decodeHtml(html) {
-        const txt = document.createElement('textarea');
-        txt.innerHTML = html;
-        return txt.value;
-    }
-
-    function isUrl(str) {
-        try {
-            new URL(str);
-            return true;
-        } catch {
-            return false;
-        }
-    }
-
-    if (html) {
-        const decoded = decodeHtml(html).trim();
-        if (isUrl(decoded)) {
-            const iframe = document.createElement('iframe');
-            iframe.src = decoded;
-            iframe.width = '560';
-            iframe.height = '315';
-            iframe.allow = 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture';
-            iframe.allowFullscreen = true;
-            wrap.appendChild(iframe);
+    if (isImg) {
+        const el = document.createElement("img");
+        el.src = url;
+        wrap.appendChild(el);
+    } else if (isVid) {
+        const el = document.createElement("video");
+        el.src = url;
+        el.controls = true;
+        wrap.appendChild(el);
+    } else if (html) {
+        const d = decode(html).trim();
+        if (d.startsWith("http")) {
+            const f = document.createElement("iframe");
+            f.src = d;
+            f.width = '560';
+            f.height = '315';
+            f.allow = 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture';
+            f.allowFullscreen = true;
+            wrap.appendChild(f);
         } else {
             const div = document.createElement("div");
-            div.innerHTML = decoded;
+            div.innerHTML = d;
             wrap.appendChild(div);
         }
-    } else if (img) {
-        const imgEl = document.createElement("img");
-        imgEl.src = img;
-        wrap.appendChild(imgEl);
-    } else if (url) {
+    } else {
         const a = document.createElement("a");
         a.href = url;
         a.textContent = url;
         a.target = "_blank";
         wrap.appendChild(a);
     }
-
 
     container.appendChild(wrap);
 }
