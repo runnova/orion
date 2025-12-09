@@ -861,3 +861,39 @@ dialog#orionBadgeAlert {
     background: var(--col-bg1);
     color: inherit;
 }
+
+#switchSysAdBan {
+    padding: .5em 1em;
+    color: #ffd8a5;
+    margin: 1em;
+    border-radius: .5em;
+    box-shadow: 0 0 1em #ffd8a521;
+    border: 1px solid #665743;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    transition: .3s;
+    position: relative;
+    &:hover {
+        background-color: #ffd8a5;
+        color: black;
+        &>i {
+            font-size: 20px;
+        }
+    }
+    &>i {
+        font-size: 16px;
+    }
+    &>.clbtn {
+        position: absolute;
+        top: -8px;
+        left: -10px;
+        background: var(--col-bg3);
+        color: var(--col-txt1);
+        border-radius: 1em;
+        font-size: 15px;
+        padding: 3px;
+        border: var(--box-crisp);
+    }
+}

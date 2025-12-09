@@ -1018,14 +1018,17 @@ function changeChannel(channel) {
 }
 
 function getUserColor(username) {
-    const hex = state.users?.[username]?.color || "#888888";
+    console.log(username,)
+    const u = state?.users?.[username];
+    const hex = u?.color || "#888888";
     const r = parseInt(hex.slice(1, 3), 16) / 255;
     const g = parseInt(hex.slice(3, 5), 16) / 255;
     const b = parseInt(hex.slice(5, 7), 16) / 255;
     const max = Math.max(r, g, b), min = Math.min(r, g, b);
     let h, s, l = (max + min) / 2;
     if (max === min) {
-        h = s = 0;
+        h = 0;
+        s = 0;
     } else {
         const d = max - min;
         s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
@@ -1036,7 +1039,7 @@ function getUserColor(username) {
         }
         h *= 60;
     }
-    return `hsl(${Math.round(h)}, 60%, 75%)`;
+    return `hsl(${Math.round(h)}, ${Math.round(s * 80)}%, ${Math.round(l * 50)}%)`;
 }
 
 

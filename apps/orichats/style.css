@@ -110,11 +110,6 @@ body {
             display: flex;
             gap: .3em;
             align-items: center;
-
-            &>.role-pill {
-                font-size: 1em;
-                color: #ffba00;
-            }
         }
     }
 }
