@@ -447,7 +447,7 @@ body {
             visibility: visible;
         }
 
-        &>.time {
+        & .time {
             opacity: .5;
         }
     }

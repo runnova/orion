@@ -129,7 +129,7 @@ function attachWsHandlers() {
                     JSON.stringify({
                         cmd: "messages_get",
                         channel: state.currentChannel,
-                        limit: 150
+                        limit: 100
                     }),
                 );
                 setTimeout(loader.hide, 500);
@@ -280,6 +280,42 @@ function attachWsHandlers() {
                 if (uname && state.online_users[uname]) {
                     delete state.online_users[uname];
                     renderMembers();
+                }
+                break;
+            }
+            case 'message_react_add': {
+                if (!state.messages[data.channel]) break;
+                const message = state.messages[data.channel].find(m => m.id === data.id);
+                if (!message) break;
+
+                if (!message.reactions) message.reactions = {};
+                if (!message.reactions[data.emoji]) {
+                    message.reactions[data.emoji] = [];
+                }
+                if (!message.reactions[data.emoji].includes(data.from)) {
+                    message.reactions[data.emoji].push(data.from);
+                }
+
+                if (data.channel === state.currentChannel?.name) {
+                    updateMessageReactions(data.id);
+                }
+                break;
+            }
+            case 'message_react_remove': {
+                if (!state.messages[msg.channel]) break;
+                const message = state.messages[msg.channel].find(m => m.id === msg.id);
+                if (!message || !message.reactions || !message.reactions[msg.emoji]) break;
+
+                const users = message.reactions[msg.emoji];
+                const idx = users.indexOf(msg.from);
+                if (idx > -1) users.splice(idx, 1);
+
+                if (users.length === 0) {
+                    delete message.reactions[msg.emoji];
+                }
+
+                if (msg.channel === state.currentChannel?.name) {
+                    updateMessageReactions(msg.id);
                 }
                 break;
             }
@@ -777,7 +813,7 @@ function buildMessageHTML(message, prevmsg) {
 
     if (grouped) {
         return `
-        <div class="sing_msg extra">
+        <div class="sing_msg extra" data-id="${escapeHTML(message.id || "")}">
             ${reply}
             <div class="msg_ctnt extra">
                 <div class="time" title="${date.toLocaleString()}">${escapeHTML(date.toLocaleString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true }))}</div>
@@ -887,6 +923,8 @@ function makeLoadTrigger(channel, limit) {
         if (v && !seen) {
             seen = true;
             setTimeout(() => {
+                console.log("loading", channel, loadedCount);
+                state.additionalMessageLoad = true;
                 if (seen) {
                     ws.send(JSON.stringify({
                         cmd: "messages_get",
@@ -902,14 +940,19 @@ function makeLoadTrigger(channel, limit) {
     io.observe(t);
     return t;
 }
+function listMessages(messageList, channel = state.currentChannel, limit = 100) {
+    if (!messageList.length) return;
 
-function listMessages(messageList, channel = state.currentChannel, limit) {
+    state.additionalMessageLoad = false;
     const chatArea = document.getElementById("msgs_list");
     const prev = chatArea.scrollHeight;
 
-    const trigger = makeLoadTrigger(channel, limit);
     const frag = document.createDocumentFragment();
-    frag.appendChild(trigger);
+    if (chatArea.scrollHeight > chatArea.clientHeight || chatArea.firstChild) {
+        const trigger = makeLoadTrigger(channel, limit);
+        frag.appendChild(trigger);
+    }
+
     for (const m of messageList) {
         const n = renderMessage(m);
         if (n) frag.appendChild(n);
@@ -926,7 +969,7 @@ function listMessages(messageList, channel = state.currentChannel, limit) {
     lazier.end();
     attemptResolveAllMissingReplies();
     hljs.highlightAll();
-    setTimeout(lazyRenderMessages, 2000);
+    setTimeout(lazyRenderMessages, 100);
 }
 
 function addMessage(messagePacket) {
@@ -944,31 +987,36 @@ function addMessage(messagePacket) {
         }
     }
     setTimeout(() => {
-        lazyRenderMessages(); 
+        lazyRenderMessages();
     }, 2000);
 }
 
 
 function changeChannel(channel) {
     lastmsgid = null;
+    additionalMessageLoad = false;
     state.currentChannel = channel;
-    document
-        .querySelectorAll(".single_chnl")
-        .forEach((el) => {
-            if (el.id === `channel_${channel}`) el.classList.add("active");
-            else el.classList.remove("active");
-        });
+
+    document.querySelectorAll(".single_chnl").forEach((el) => {
+        el.classList.toggle("active", el.id === `channel_${channel}`);
+    });
 
     document.getElementsByClassName("channel_name")[0].innerText = channel;
     const mainTxtAr = document.getElementById("mainTxtAr");
     if (mainTxtAr) mainTxtAr.placeholder = `Message #${channel}`;
+
+    const chatArea = document.getElementById("msgs_list");
+    if (chatArea) chatArea.innerHTML = "";
+
     if (state.unread[channel]) {
         state.unread[channel] = 0;
         updateChannelUnread(channel);
     }
+
     updatemainTxtArPermissions();
-    renderMembers()
+    renderMembers();
 }
+
 function getUserColor(username) {
     const hex = state.users?.[username]?.color || "#888888";
     const r = parseInt(hex.slice(1, 3), 16) / 255;
@@ -1301,31 +1349,79 @@ function toggleEmojiMenu() {
         picker.style.display = "none"
     }
 }
-function lazyRenderMessages(selector='.sing_msg') {
-  if (lazyRenderMessages._observer) return;
-  const messages = document.querySelectorAll(selector);
+function lazyRenderMessages(selector = '.sing_msg') {
+    if (lazyRenderMessages._observer) return;
+    const messages = document.querySelectorAll(selector);
 
-  messages.forEach(msg => {
-    if (msg.dataset.lazyInit) return;
-    const h = msg.scrollHeight;
-    msg.dataset.h = h;
-    msg.dataset.content = msg.innerHTML;
-    msg.innerHTML = '<div style="height:'+h+'px"></div>';
-    msg.dataset.lazyInit = 'true';
-  });
-
-  const observer = new IntersectionObserver(entries => {
-    entries.forEach(entry => {
-      const msg = entry.target;
-      if (entry.isIntersecting) {
-        msg.innerHTML = msg.dataset.content;
-      } else {
-        const h = msg.dataset.h;
-        msg.innerHTML = '<div style="height:'+h+'px"></div>';
-      }
+    messages.forEach(msg => {
+        if (msg.dataset.lazyInit) return;
+        const h = msg.scrollHeight;
+        msg.dataset.h = h;
+        msg.dataset.content = msg.innerHTML;
+        msg.innerHTML = '<div style="height:' + h + 'px"></div>';
+        msg.dataset.lazyInit = 'true';
     });
-  }, { threshold: 0.1 });
 
-  messages.forEach(msg => observer.observe(msg));
-  lazyRenderMessages._observer = observer;
+    const observer = new IntersectionObserver(entries => {
+        entries.forEach(entry => {
+            const msg = entry.target;
+            if (entry.isIntersecting) {
+                msg.innerHTML = msg.dataset.content;
+            } else {
+                const h = msg.dataset.h;
+                msg.innerHTML = '<div style="height:' + h + 'px"></div>';
+            }
+        });
+    }, { threshold: 0.1, rootMargin: '200px 0px 200px 0px' });
+
+    messages.forEach(msg => observer.observe(msg));
+    lazyRenderMessages._observer = observer;
+}
+
+
+function renderReactions(msg, container) {
+    const existing = container.querySelector('.message-reactions');
+    if (existing) existing.remove();
+
+    const reactions = msg.reactions;
+    if (!reactions || Object.keys(reactions).length === 0) {
+        return;
+    }
+
+    const reactionsDiv = document.createElement('div');
+    reactionsDiv.className = 'message-reactions';
+
+    for (const [emoji, users] of Object.entries(reactions)) {
+        const count = users.length;
+        if (count === 0) continue;
+
+        const hasReacted = users.includes(state.currentUser?.username);
+
+        const reactionEl = document.createElement('span');
+        reactionEl.className = 'reaction' + (hasReacted ? ' reacted' : '');
+        reactionEl.innerHTML = `
+            <span class="reaction-emoji">${emoji}</span>
+            <span class="reaction-count">${count}</span>
+        `;
+        reactionEl.addEventListener('click', (e) => {
+            e.stopPropagation();
+            toggleReaction(msg.id, emoji);
+        });
+        reactionsDiv.appendChild(reactionEl);
+    }
+
+    container.appendChild(reactionsDiv);
+}
+
+function updateMessageReactions(msgId) {
+    const wrapper = document.querySelector(`[data-id="${msgId}"]`);
+    if (!wrapper) return;
+
+    const msg = state.messages[state.currentChannel.name]?.find(m => m.id === msgId);
+    if (!msg) return;
+
+    const groupContent = wrapper.querySelector('.data');
+    if (groupContent) {
+        renderReactions(msg, groupContent);
+    }
 }
