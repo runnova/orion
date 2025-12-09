@@ -35,7 +35,8 @@ let state = {
     get currentChannel() {
         return this._currentChannel;
     },
-    typingUsers: {}
+    typingUsers: {},
+    additionalMessageLoad: false
 };
 
 let emojis;
@@ -874,21 +875,58 @@ function detectYouTubeEmbeds(messageDiv, text) {
     const urls = [...text.matchAll(/https?:\/\/(?:www\.)?youtube\.com\/watch\?v=[\w-]+/g)].map(m => m[0]);
     for (const u of urls) attachYouTubeEmbed(messageDiv, u);
 }
+let loadedCount = 0;
 
-function listMessages(messageList) {
+function makeLoadTrigger(channel, limit) {
+    const t = document.createElement("div");
+    t.id = "load_trigger";
+    t.style.height = "1px";
+    let seen = false;
+    const io = new IntersectionObserver(e => {
+        const v = e[0].isIntersecting;
+        if (v && !seen) {
+            seen = true;
+            setTimeout(() => {
+                if (seen) {
+                    ws.send(JSON.stringify({
+                        cmd: "messages_get",
+                        channel,
+                        limit,
+                        start: loadedCount
+                    }));
+                }
+            }, 300);
+        }
+        if (!v) seen = false;
+    });
+    io.observe(t);
+    return t;
+}
+
+function listMessages(messageList, channel = state.currentChannel, limit) {
     const chatArea = document.getElementById("msgs_list");
-    chatArea.innerHTML = "";
-    for (let message of messageList) {
-        const node = renderMessage(message);
-        if (node) chatArea.appendChild(node);
+    const prev = chatArea.scrollHeight;
+
+    const trigger = makeLoadTrigger(channel, limit);
+    const frag = document.createDocumentFragment();
+    frag.appendChild(trigger);
+    for (const m of messageList) {
+        const n = renderMessage(m);
+        if (n) frag.appendChild(n);
     }
-    chatArea.scrollTop = chatArea.scrollHeight;
+
+    const first = chatArea.firstChild;
+    chatArea.insertBefore(frag, first);
+
+    const next = chatArea.scrollHeight;
+    chatArea.scrollTop += next - prev;
+
+    loadedCount += messageList.length;
+
     lazier.end();
     attemptResolveAllMissingReplies();
     hljs.highlightAll();
-    setTimeout(() => {
-        lazyRenderMessages(); 
-    }, 2000);
+    setTimeout(lazyRenderMessages, 2000);
 }
 
 function addMessage(messagePacket) {
@@ -1263,19 +1301,16 @@ function toggleEmojiMenu() {
         picker.style.display = "none"
     }
 }
-
-function lazyRenderMessages(selector = '.sing_msg') {
+function lazyRenderMessages(selector='.sing_msg') {
   if (lazyRenderMessages._observer) return;
-
   const messages = document.querySelectorAll(selector);
 
   messages.forEach(msg => {
     if (msg.dataset.lazyInit) return;
-    const placeholder = document.createElement('div');
-    placeholder.style.height = msg.scrollHeight + 'px';
+    const h = msg.scrollHeight;
+    msg.dataset.h = h;
     msg.dataset.content = msg.innerHTML;
-    msg.innerHTML = '';
-    msg.appendChild(placeholder);
+    msg.innerHTML = '<div style="height:'+h+'px"></div>';
     msg.dataset.lazyInit = 'true';
   });
 
@@ -1285,11 +1320,8 @@ function lazyRenderMessages(selector = '.sing_msg') {
       if (entry.isIntersecting) {
         msg.innerHTML = msg.dataset.content;
       } else {
-        if (!msg.dataset.lazyInit) return;
-        const placeholder = document.createElement('div');
-        placeholder.style.height = msg.scrollHeight + 'px';
-        msg.innerHTML = '';
-        msg.appendChild(placeholder);
+        const h = msg.dataset.h;
+        msg.innerHTML = '<div style="height:'+h+'px"></div>';
       }
     });
   }, { threshold: 0.1 });

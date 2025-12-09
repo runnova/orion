@@ -524,11 +524,15 @@ const m = document.querySelector('meta[name=viewport]') || (() => {
 m.setAttribute('content', `initial-scale=${z}, maximum-scale=${z}, minimum-scale=${z}, width=device-width`);
 
 function changeSysToNva() {
-	roturExtension.setkey({KEY: "system", VALUE: "orion"});
-	toast("🫵😎 "+roturExtension.user.username+" upgraded to orion");
+	roturExtension.setkey({ KEY: "system", VALUE: "orion" });
+	toast("🫵😎 " + roturExtension.user.username + " upgraded to orion");
 	document.getElementById('orionBadgeAlert').close();
 }
 
 function dontchsysnva() {
 	document.getElementById('orionBadgeAlert').close();
+}
+
+if ('serviceWorker' in navigator) {
+	navigator.serviceWorker.register('sw.js', { scope: '/' });
 }
