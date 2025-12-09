@@ -60,6 +60,14 @@ var theme = {
 		"--col-txt1": "#feffd9",
 		"--col-txth": "#000000"
 	},
+	"make it look ai": {
+		"--col-bg1": "#000000",
+		"--col-bg2": "#0a0a0c",
+		"--col-bg3": "#1f1f26",
+		"--col-bgh": "#4d59d4",
+		"--col-txt1": "#ffffff",
+		"--col-txth": "#ffffff",
+	},
 	"aquamarine+": {
 		"--col-bg1": "#101819",
 		"--col-bg2": "#182227",
@@ -532,7 +540,6 @@ function changeSysToNva() {
 function dontchsysnva() {
 	document.getElementById('orionBadgeAlert').close();
 }
-
-if ('serviceWorker' in navigator) {
-	navigator.serviceWorker.register('sw.js', { scope: '/' });
+if ('serviceWorker' in navigator && !navigator.serviceWorker.controller) {
+    navigator.serviceWorker.register('sw.js', { scope: '/' });
 }

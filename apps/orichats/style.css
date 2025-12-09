@@ -66,7 +66,7 @@ body {
 
     &.profile_card {
         padding: 3.5px;
-    justify-content: left;
+        justify-content: left;
     }
 
     &.open {
@@ -637,6 +637,20 @@ div.blockedheader>a {
     overflow-y: scroll;
     display: none;
 
+    & .tab-btn {
+        padding: 3px 8px;
+        border-radius: .5em;
+        border: none;
+            background-color: transparent;
+        &:hover {
+            background-color: var(--col-bg3);
+        }
+        &.active {
+            background-color: var(--col-bg3);
+            border: var(--box-crisp);
+        }
+    }
+
     & #emojiscrollable {
         display: grid;
         margin: 3.5em 0;
@@ -656,17 +670,6 @@ div.blockedheader>a {
             }
         }
     }
-}
-
-#emojiSearch {
-    width: calc(300px - 1.5em);
-    padding: .3em .5em;
-    background: var(--col-bg3);
-    color: inherit;
-    border: var(--box-crisp);
-    border-radius: .5em;
-    position: fixed;
-    box-shadow: 0 -8px 0px var(--col-bg2);
 }
 
 .msg_ctnt .name,
@@ -722,12 +725,93 @@ div.blockedheader>a {
     & iframe {
         width: 100%;
         aspect-ratio: 9/6;
-    height: auto;
-    border: var(--box-crisp);
-    border-radius: .5em;
+        height: auto;
+        border: var(--box-crisp);
+        border-radius: .5em;
     }
+}
+
+.tenor-gif-embed {
+    margin-left: 3em;
+    border-radius: 1em;
+    overflow: hidden;
+    width: 250px;
+    pointer-events: none;
 }
 
 a {
     color: dodgerblue;
+}
+
+.gif-search-bar {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    background: var(--col-bg1);
+    border-radius: .5em;
+    align-items: center;
+    border: var(--box-crisp);
+
+    &>input {
+        background: transparent;
+        color: inherit;
+        border: 0;
+        padding: .5em .7em;
+        flex: 1;
+    }
+
+    &>span {
+        padding: .3em;
+    }
+}
+
+#picker-content {
+    display: flex;
+    flex-direction: column;
+    margin-top: .5em;
+}
+
+div#gif-results {
+    overflow: hidden;
+    display: grid;
+    grid-template-columns: 50% 50%;
+    grid-template-rows: 150px auto 80px;
+    column-gap: .5em;
+    row-gap: .5em;
+    object-fit: scale-down;
+
+    &>.gif-item-wrapper {
+        position: relative;
+        padding: 5px;
+        border-radius: .5em;
+
+        &:hover {
+            background: var(--col-bg3);
+
+            &>button {
+                display: flex;
+            }
+        }
+
+        &>button {
+            position: absolute;
+            background: var(--col-bg3);
+            border: var(--box-crisp);
+            border-radius: .5em;
+            align-items: center;
+            display: none;
+            justify-content: center;
+            top: .5em;
+            left: .5em;
+            box-shadow: 0 0 5px #000000ab;
+            padding: 3px;
+        }
+    }
+
+    & img.gif-result {
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+        border-radius: .5em;
+    }
 }

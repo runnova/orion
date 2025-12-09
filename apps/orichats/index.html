@@ -70,11 +70,35 @@
                 </div>
                 <div class="msg_area">
                     <div class="floating" id="emojipicker">
-                        <input id="emojiSearch" placeholder="Search emojis..."></input>
-                        <div id="emojiscrollable">
+                        <div class="picker-header">
+                            <button class="tab-btn active" data-tab="emoji"
+                                onclick="switchPickerTab('emoji')">Emojis</button>
+                            <button class="tab-btn" data-tab="gif" onclick="switchPickerTab('gif')">GIFs</button>
+                        </div>
+
+                        <div id="picker-content">
+                            <div id="emoji-tab" class="picker-tab active">
+                                 <div class="gif-search-bar">
+                                    <input type="text" id="emojiSearch" placeholder="Search Emojis..."
+                                        autocomplete="off">
+                                    <span class="material-symbols-rounded">search</span>
+                                </div>
+                                <div id="emojiscrollable"></div>
+                            </div>
+
+                            <div id="gif-tab" class="picker-tab" style="display:none">
+                                <div class="gif-search-bar">
+                                    <input type="text" id="gif-search" placeholder="Search Tenor GIFs..."
+                                        autocomplete="off">
+                                    <span class="material-symbols-rounded">search</span>
+                                </div>
+                                <div id="gif-results"></div>
+                            </div>
                         </div>
                     </div>
-                    <div class="messagebar"><textarea type="text" placeholder="Message #General" id="mainTxtAr" rows="1"></textarea>
+
+                    <div class="messagebar"><textarea type="text" placeholder="Message #General" id="mainTxtAr"
+                            rows="1"></textarea>
 
                         <i class="material-symbols-rounded bicn" onclick="toggleEmojiMenu()">mood</i>
                         <i class="material-symbols-rounded bicn">send</i>

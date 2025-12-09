@@ -448,7 +448,6 @@ function replaceImageLinks(text) {
         "![]($1)",
     );
 }
-
 function formatMessageContent(raw) {
     if (typeof raw !== "string") raw = String(raw ?? "");
     raw = replaceEmojis(raw);
@@ -493,8 +492,7 @@ function formatMessageContent(raw) {
         const idx = m.index;
         if (idx > last) out += raw.slice(last, idx);
         const safeHref = encodeURI(url);
-        if (/\.(webp|png|jpe?g|gif|svg)$/i.test(url)) out += `<img src="${safeHref}" alt="${safeHref}">`;
-        else out += `<a href="${safeHref}" target="_blank" rel="noopener noreferrer">${safeHref}</a>`;
+        out += `<a href="${safeHref}" target="_blank" rel="noopener noreferrer">${safeHref}</a>`;
         last = idx + url.length;
     }
     if (last < raw.length) out += raw.slice(last);
@@ -639,38 +637,88 @@ async function detectType(url) {
         return "";
     }
 }
+async function detectType(url) {
+    try {
+        const r = await fetch(url, { method: 'HEAD' });
+        return r.headers.get('content-type') || "";
+    } catch {
+        return "";
+    }
+}
+
+async function attachTenor(container, url) {
+    const match = url.match(/tenor\.com\/view\/.*-(\d+)$/);
+    if (!match) return false;
+    const postId = match[1];
+    try {
+        const res = await fetch(`https://tenor.googleapis.com/v2/posts?ids=${postId}&key=YOUR_TENOR_API_KEY`);
+        const json = await res.json();
+        const gifUrl = json.results[0].media_formats.gif.url;
+        const img = document.createElement("img");
+        img.src = gifUrl;
+        container.appendChild(img);
+        return true;
+    } catch {
+        return false;
+    }
+}
+function embedTenor(container, url) {
+    const match = url.match(/tenor\.com\/view\/.*-(\d+)$/);
+    if (!match) return false;
+
+    const postId = match[1];
+
+    const div = document.createElement("div");
+    div.className = "tenor-gif-embed";
+    div.setAttribute("data-postid", postId);
+    div.setAttribute("data-share-method", "host");
+    div.setAttribute("data-aspect-ratio", "0.971888");
+    div.setAttribute("data-width", "250");
+    div.style.width = "auto";
+    div.innerHTML = `<a href="https://tenor.com/view/${postId}">GIF</a> from <a href="https://tenor.com/search/gifs">Tenor GIFs</a>`;
+
+    const script = document.createElement("script");
+    script.type = "text/javascript";
+    script.async = true;
+    script.src = "https://tenor.com/embed.js";
+
+    container.appendChild(div);
+    container.appendChild(script);
+
+    return true;
+}
+
+async function detectType(url) {
+    try {
+        const r = await fetch(url, { method: 'HEAD' });
+        return r.headers.get('content-type') || "";
+    } catch {
+        return "";
+    }
+}
 
 async function attachEmbed(container, url) {
-    let data = null;
-    const isTenor = url.includes('tenor.com');
-
-    if (isTenor) {
-        const id = url.split('-').pop();
-        try {
-            const r = await fetch(`https://tenor.googleapis.com/v2/posts?ids=${id}&key=AIzaSyD-1`);
-            const j = await r.json();
-            data = { html: `<img src="${j.results[0].media_formats.gif.url}">` };
-        } catch {
-            data = null;
-        }
+    if (url.includes("tenor.com")) {
+        const ok = embedTenor(container, url);
+        if (ok) return;
     }
 
-    if (!data) {
-        const oembedProviders = ['youtube.com', 'vimeo.com', 'twitter.com', 'flickr.com'];
-        const provider = oembedProviders.find(s => url.includes(s));
-        if (provider) {
-            const api = {
-                'youtube.com': `https://www.youtube.com/oembed?url=${encodeURIComponent(url)}&format=json`,
-                'vimeo.com': `https://vimeo.com/api/oembed.json?url=${encodeURIComponent(url)}`,
-                'twitter.com': `https://publish.twitter.com/oembed?url=${encodeURIComponent(url)}`,
-                'flickr.com': `https://www.flickr.com/services/oembed?url=${encodeURIComponent(url)}&format=json`
-            };
-            try {
-                const r = await fetch(api[provider]);
-                data = await r.json();
-            } catch {
-                data = null;
-            }
+    let data = null;
+    const oembedProviders = ['youtube.com', 'vimeo.com', 'twitter.com', 'flickr.com'];
+    const provider = oembedProviders.find(s => url.includes(s));
+
+    if (provider) {
+        const api = {
+            'youtube.com': `https://www.youtube.com/oembed?url=${encodeURIComponent(url)}&format=json`,
+            'vimeo.com': `https://vimeo.com/api/oembed.json?url=${encodeURIComponent(url)}`,
+            'twitter.com': `https://publish.twitter.com/oembed?url=${encodeURIComponent(url)}`,
+            'flickr.com': `https://www.flickr.com/services/oembed?url=${encodeURIComponent(url)}&format=json`
+        };
+        try {
+            const r = await fetch(api[provider]);
+            data = await r.json();
+        } catch {
+            data = null;
         }
     }
 
@@ -697,20 +745,40 @@ async function attachEmbed(container, url) {
         el.src = url;
         el.controls = true;
         wrap.appendChild(el);
-    } else if (html) {
-        const d = decode(html).trim();
-        if (d.startsWith("http")) {
-            const f = document.createElement("iframe");
-            f.src = d;
-            f.width = '560';
-            f.height = '315';
-            f.allow = 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture';
-            f.allowFullscreen = true;
-            wrap.appendChild(f);
-        } else {
-            const div = document.createElement("div");
-            div.innerHTML = d;
-            wrap.appendChild(div);
+    } else if (data) {
+        if (data.author_name) {
+            const ch = document.createElement("div");
+            ch.classList.add("oembed_author");
+            ch.textContent = data.author_name;
+            wrap.appendChild(ch);
+        }
+
+        if (data.title) {
+            const ti = document.createElement("div");
+            ti.classList.add("oembed_title");
+            ti.textContent = data.title;
+            wrap.appendChild(ti);
+        }
+
+        if (html) {
+            const d = decode(html).trim();
+            if (d.startsWith("http")) {
+                const f = document.createElement("iframe");
+                f.src = d;
+                f.width = '560';
+                f.height = '315';
+                f.allow = 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture';
+                f.allowFullscreen = true;
+                wrap.appendChild(f);
+            } else {
+                const div = document.createElement("div");
+                div.innerHTML = d;
+                wrap.appendChild(div);
+            }
+        } else if (data.thumbnail_url) {
+            const el = document.createElement("img");
+            el.src = data.thumbnail_url;
+            wrap.appendChild(el);
         }
     } else {
         const a = document.createElement("a");
@@ -722,6 +790,12 @@ async function attachEmbed(container, url) {
 
     container.appendChild(wrap);
 }
+
+function detectEmbeds(messageDiv, text) {
+    const urls = [...text.matchAll(/https?:\/\/[^\s]+/g)].map(m => m[0]);
+    urls.forEach(url => attachEmbed(messageDiv, url));
+}
+
 
 function detectEmbeds(messageDiv, text) {
     const urls = [...text.matchAll(/https?:\/\/[^\s]+/g)].map(m => m[0]);
@@ -1425,4 +1499,81 @@ function updateMessageReactions(msgId) {
     if (groupContent) {
         renderReactions(msg, groupContent);
     }
+}
+let currentPickerTab = 'emojis';
+let gifSearchTimer = null;
+let favoriteGifs = [];
+function switchPickerTab(tab) {
+    currentPickerTab = tab;
+
+    const tabButtons = document.querySelectorAll('.tab-btn');
+    const tabs = document.querySelectorAll('.picker-tab');
+
+    tabButtons.forEach(btn => btn.classList.toggle('active', btn.dataset.tab === tab));
+    tabs.forEach(t => {
+        if (t.id === `${tab}-tab`) {
+            t.classList.add('active');
+            t.style.display = 'block';
+        } else {
+            t.classList.remove('active');
+            t.style.display = 'none';
+        }
+    });
+
+    const input = document.querySelector(`#${tab}-tab input`);
+    if (input) input.focus();
+}
+
+
+document.getElementById('gif-search').addEventListener('input', (e) => {
+    clearTimeout(gifSearchTimer);
+    gifSearchTimer = setTimeout(() => searchGifs(e.target.value), 500);
+});
+
+async function searchGifs(query) {
+    if (!query.trim()) return;
+    const container = document.getElementById('gif-results');
+    container.innerHTML = 'Loading...';
+    try {
+        const res = await fetch(`https://apps.mistium.com/tenor/search?query=${encodeURIComponent(query)}`);
+        const data = await res.json();
+        renderGifs(data.results || data);
+    } catch {
+        container.innerHTML = 'Mist blocked other sites from using her tenor search api :( If you can host one, please contact dark.';
+    }
+}
+
+function renderGifs(results) {
+    const container = document.getElementById('gif-results');
+    container.innerHTML = '';
+    if (!results.length) {
+        container.innerHTML = 'No results';
+        return;
+    }
+    results.forEach(gif => {
+        const wrapper = document.createElement('div');
+        wrapper.className = 'gif-item-wrapper';
+        const img = document.createElement('img');
+        img.src = gif.media[0].tinygif.url;
+        img.className = 'gif-result';
+        img.onclick = () => sendGif(gif.itemurl);
+        wrapper.appendChild(img);
+
+        const starBtn = document.createElement('button');
+        const isFav = favoriteGifs.some(f => f.url === gif.itemurl);
+        starBtn.innerHTML = isFav ? '<span class="material-symbols-rounded">star</span>' : '<span class="material-symbols-rounded">star_border</span>';
+        starBtn.onclick = e => {
+            e.stopPropagation();
+            toggleFavorite({ url: gif.itemurl, preview: gif.media[0].tinygif.url });
+        };
+        wrapper.appendChild(starBtn);
+
+        container.appendChild(wrapper);
+    });
+}
+
+function sendGif(url) {
+    const input = document.getElementById('mainTxtAr');
+    input.value = url;
+    sendMessage();
 }
