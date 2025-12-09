@@ -1039,7 +1039,7 @@ function getUserColor(username) {
         }
         h *= 60;
     }
-    return `hsl(${Math.round(h)}, ${Math.round(s * 80)}%, ${Math.round(l * 50)}%)`;
+    return `hsl(${Math.round(h)}, ${Math.round(s * 80)}%, ${Math.round(l * 100)}%)`;
 }
 
 
