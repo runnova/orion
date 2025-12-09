@@ -1277,7 +1277,8 @@ function sendTyping() {
 window.addEventListener("DOMContentLoaded", () => {
 
     setupTypingListener();
-    console.log(33)
+    document.getElementById("usernameLabel").innerText = window.parent.roturExtension.user.username;
+    document.getElementById("userAvatar").src = window.parent.roturExtension.user.pfp;
     fetch("emojis.json").then(async r => {
         console.log(34)
         try {
@@ -1287,7 +1288,6 @@ window.addEventListener("DOMContentLoaded", () => {
             }
 
             emojis = await r.json();
-            console.log(35)
         } catch (error) {
 
         }

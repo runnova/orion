@@ -66,6 +66,7 @@ body {
 
     &.profile_card {
         padding: 3.5px;
+    justify-content: left;
     }
 
     &.open {
