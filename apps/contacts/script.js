@@ -34,14 +34,14 @@ class ContactToggle {
             this.pinBtn.onclick = () => {
                 pinnedNames.push(name);
                 window.parent.settings.set("contacts_pinned_list", pinnedNames);
-                renderContactsList();
+                // renderContactsList();
             }
         } else {
             this.pinBtn.textContent = 'keep_off';
             this.pinBtn.onclick = () => {
                 pinnedNames = pinnedNames.filter(x => x !== name);
                 window.parent.settings.set("contacts_pinned_list", pinnedNames);
-                renderContactsList();
+                // renderContactsList();
             }
         }
         this.icon = document.createElement('div')
@@ -187,8 +187,8 @@ async function editNote(name) {
 
 
 function greenflag(myWindow) {
-    if (myWindow && myWindow.data.type == "addc") {
-        let currentUser = myWindow.data.name;
+    if (myWindow && myWindow.type == "addc") {
+        let currentUser = myWindow.name;
         const s = new Date().toISOString();
         obj[currentUser] = { imgSrc: "https://avatars.rotur.dev/" + currentUser, note: "Added " + s };
         window.parent.settings.set("contacts_list", obj);
