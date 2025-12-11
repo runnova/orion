@@ -324,7 +324,7 @@ function timeSince(timestamp) {
 async function likepost(id) {
     if (!checkifaccs()) { return }
     await fetch("https://claw.rotur.dev/rate?id=" + id + "&auth=" +
-        window.parent.roturExtension.userToken + "&rating=1&os=NovaOS");
+        window.parent.roturExtension.userToken + "&rating=1&os=orion");
     loadFeed()
 }
 
@@ -336,7 +336,7 @@ async function newpost() {
         attachments = "&attachment=" + "https://i.postimg.cc/BnvkjyQT/g.png/" + encodeURIComponent(content);
         content = '*';
     }
-    await fetch(`https://claw.rotur.dev/post?content=${content}&os=NovaOS&auth=${window.parent.roturExtension.userToken}${attachments}`);
+    await fetch(`https://claw.rotur.dev/post?content=${content}&os=orion&auth=${window.parent.roturExtension.userToken}${attachments}`);
 
     if (attachments) {
         document.getElementById("attachbtn").innerHTML = `
@@ -352,7 +352,7 @@ async function newpost() {
 async function followuser() {
     if (!checkifaccs()) { return }
     let content = document.getElementById("postinput").value;
-    await fetch("https://claw.rotur.dev/post?content=" + content + "&os=NovaOS&auth=" +
+    await fetch("https://claw.rotur.dev/post?content=" + content + "&os=orion&auth=" +
         window.parent.roturExtension.userToken);
 }
 
@@ -513,14 +513,14 @@ async function listprofilefeatures(name = selecteduser) {
         followbtntxt.innerHTML = "Unfollow";
         followbtn.style.background = "#2f2f2f";
         followbtn.onclick = async () => {
-            await fetch("https://claw.rotur.dev/unfollow?username=" + name + "&os=NovaOS&auth=" +
+            await fetch("https://claw.rotur.dev/unfollow?username=" + name + "&os=orion&auth=" +
                 window.parent.roturExtension.userToken);
         }
     } else {
         followbtntxt.innerHTML = "Follow";
         followbtn.style.background = "#4e5fa7";
         followbtn.onclick = async () => {
-            await fetch("https://claw.rotur.dev/follow?username=" + name + "&os=NovaOS&auth=" +
+            await fetch("https://claw.rotur.dev/follow?username=" + name + "&os=orion&auth=" +
                 window.parent.roturExtension.userToken);
         }
     }

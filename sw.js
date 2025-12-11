@@ -23,9 +23,3 @@ async function handle(request){
   }
   return cached;
 }
-
-async function clearCache(){
-  const keys=await caches.keys();
-  for(const k of keys) await caches.delete(k);
-  cacheTimes.clear();
-}

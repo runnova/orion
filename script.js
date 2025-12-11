@@ -543,3 +543,10 @@ function dontchsysnva() {
 if ('serviceWorker' in navigator && !navigator.serviceWorker.controller) {
     navigator.serviceWorker.register('sw.js', { scope: location.href });
 }
+
+
+async function clearCache(){
+  const keys=await caches.keys();
+  for(const k of keys) await caches.delete(k);
+  cacheTimes.clear();
+}
