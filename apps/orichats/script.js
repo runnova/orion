@@ -879,8 +879,11 @@ function renderBlocked(message, prevmsg) {
 
 function buildMessageHTML(message, prevmsg) {
     const date = new Date(message.timestamp * 1000);
-    const grouped = message.user === (prevmsg ?? { user: "" }).user;
+    let grouped = message.user === (prevmsg ?? { user: "" }).user;
     const md = formatMessageContent(message.content);
+    if (message.reply_to) {
+        grouped = false;
+    }
     const reply = renderReplyExcerpt(message);
 
     if (grouped) {
@@ -890,7 +893,7 @@ function buildMessageHTML(message, prevmsg) {
             <div class="msg_ctnt extra">
                 <div class="time" title="${date.toLocaleString()}">${escapeHTML(date.toLocaleString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true }))}</div>
                 <div class="data">
-                    <p>${md}</p>${message.edited ? '<span class="edited-tag">(edited)</span>' : ""}
+                    <p>${md} ${message.edited ? '<span class="edited-tag">(edited)</span>' : ""}</p>
                 </div>
             </div>
         </div>
@@ -910,7 +913,7 @@ function buildMessageHTML(message, prevmsg) {
                     <div class="name" onclick="${scr}" style="color:${color}">${escapeHTML(message.user)}</div>
                     <div class="time" title="${date.toLocaleString()}">${escapeHTML(date.toLocaleString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true }))}</div>
                 </div>
-                <p>${md}</p>${message.edited ? '<span class="edited-tag">(edited)</span>' : ""}
+                <p>${md} ${message.edited ? '<span class="edited-tag">(edited)</span>' : ""}</p>
             </div>
         </div>
     </div>

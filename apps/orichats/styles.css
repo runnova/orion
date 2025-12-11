@@ -801,3 +801,8 @@ div#gif-results {
         border-radius: .5em;
     }
 }
+
+.edited-tag {
+    opacity: .5;
+    font-size: small;
+}
