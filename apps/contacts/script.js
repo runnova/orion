@@ -196,6 +196,7 @@ function greenflag(myWindow) {
     } else {
         renderContactsList();
     }
+}
 
     var mainSearchBox = document.getElementById("usersearchbar");
     function makeSearch() {
@@ -210,7 +211,6 @@ function greenflag(myWindow) {
         }
     });
     mainSearchBox.addEventListener("keyup", renderSearchedList);
-}
 
 async function renderSearchedList() {
     const q = document.getElementById("usersearchbar").value.toLowerCase();
