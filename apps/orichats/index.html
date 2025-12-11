@@ -11,7 +11,7 @@
     <title>OrionClient</title>
     <meta name="description" content="">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="styles.css">
     <link rel="stylesheet" href="../../nova.css">
     <link rel="stylesheet"
         href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
@@ -20,10 +20,6 @@
 </head>
 
 <body>
-    <div id="orion" onclick="window.dispatchEvent(new Event('DOMContentLoaded'))">
-        <span class="orion">OrionClient</span>
-        <div class="loader"></div>
-    </div>
     <!--[if lt IE 7]>
             <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="#">upgrade your browser</a> to improve your experience.</p>
         <![endif]-->
@@ -35,7 +31,7 @@
                         class="material-symbols-rounded opener_chev">arrow_right</span></div>
                 <div id="serverControls">
                     <div class="single_chnl" onclick="changeServer()">
-                        <div class="symb">
+                        <div class="material-symbols-rounded">
                             swap_vert
                         </div>
                         <div class="name">
@@ -45,7 +41,7 @@
                 </div>
                 <div id="channels">
                     <div class="single_chnl">
-                        <div class="symb">
+                        <div class="material-symbols-rounded">
                             person
                         </div>
                         <div class="name">
@@ -58,7 +54,7 @@
                 <div class="top_panel">
                     <div class="channel_name">General</div>
                     <button id="memberlistbtn">
-                        <span class="symb">group</span>
+                        <span class="material-symbols-rounded">group</span>
                     </button>
                 </div>
                 <div id="msgs_list">
@@ -66,7 +62,7 @@
                 <div id="replyPrompt" class="hidden">
                     <div>Replying to <div id="replyun">darkdot</div>
                     </div>
-                    <div class="clsbtn symb">close</div>
+                    <div class="clsbtn material-symbols-rounded">close</div>
                 </div>
                 <div class="msg_area">
                     <div class="floating" id="emojipicker">

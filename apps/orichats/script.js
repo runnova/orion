@@ -1349,8 +1349,7 @@ function sendTyping() {
         ws.send(JSON.stringify({ cmd: 'typing', channel: state.currentChannel }));
 }
 
-window.addEventListener("DOMContentLoaded", () => {
-
+function greenflag() {
     setupTypingListener();
     document.getElementById("usernameLabel").innerText = window.parent.roturExtension.user.username;
     document.getElementById("userAvatar").src = window.parent.roturExtension.user.pfp;
@@ -1414,7 +1413,7 @@ window.addEventListener("DOMContentLoaded", () => {
         });
 
     })
-})
+}
 
 function toggleEmojiMenu() {
     const picker = document.getElementById("emojipicker");

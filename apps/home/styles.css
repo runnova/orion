@@ -11,6 +11,7 @@ body {
     box-shadow: 0 0 10px #000000ab;
     padding: 2em;
     margin: 2em auto;
+
     &>.heading {
         padding-bottom: .5em;
         border-bottom: 1px solid var(--box-crisp-col);
@@ -31,4 +32,17 @@ a {
     padding: 3px 7px;
     border-radius: .5em;
     border: var(--box-crisp);
+}
+
+.newest {
+    background-color: #173017;
+    color: greenyellow;
+    border: 1px solid greenyellow;
+    padding: 2px 10px;
+    border-radius: 1.5em;
+    display: inline-block;
+    font-size: 13px;
+    font-weight: normal;
+    transform: translateY(-4px);
+    margin-left: .5em;
 }
