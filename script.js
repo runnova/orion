@@ -127,14 +127,15 @@ function clearActive() {
 }
 
 
-function openApp(name, data = {}) {
+function openApp(name, data = false) {
 	iframe.style.opacity = 0;
 	oriloaderstatic.style.display = "block";
 	setTimeout(() => {
 		iframe.src = "apps/" + name;
 	}, 300);
 	iframe.onload = () => {
-		try { iframe.contentWindow.greenflag({ data }) } catch { }
+		let x = (data) ? { data } : false;
+		try { iframe.contentWindow.greenflag(x) } catch { }
 		setTheme(curtheme, iframe.contentDocument.documentElement);
 		setTimeout(() => {
 			iframe.style.opacity = 1;

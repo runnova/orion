@@ -555,26 +555,22 @@ class RoturExtension {
         }
     }
     setkey(args) {
-        if (args.VALUE.length > 1000) return "Key Too Long, Limit is 1000 Characters"
-        if (!this.is_connected) return "Not Connected"
-        if (!this.authenticated) return "Not Logged In"
-
-        const url = "https://api.rotur.dev/users"
+        const url = "https://api.rotur.dev/users";
 
         return fetch(url, {
-            method: "POST",
+            method: "PATCH",
             headers: {
-                auth: this.userToken,
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
                 key: args.KEY,
-                value: args.VALUE
-            }
-        })
-            .then(r => r.text())
-            .then(t => {
-                if (t === "Account Updated Successfully") this.user[args.KEY] = args.VALUE
-                return t
+                value: args.VALUE,
+                auth: this.userToken
             })
+        })
+            .then(r => r.text());
     }
+
 
     keyExists(args) {
         if (!this.is_connected) return false;
@@ -1710,6 +1706,7 @@ async function roturTWEventCall(data, payload) {
                 }
             })
         }
+
     } else if (data == "roturEXT_whenConnected") {
         (async () => {
             startupLoader.mark_complete("2")
