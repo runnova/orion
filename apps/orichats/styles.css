@@ -805,4 +805,6 @@ div#gif-results {
 .edited-tag {
     opacity: .5;
     font-size: small;
+    margin-left: 5px;
+    display: inline-block;
 }
