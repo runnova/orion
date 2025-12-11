@@ -127,9 +127,11 @@ async function importFriendsFromRotur() {
         if (!obj[f]) obj[f] = { imgSrc: "https://avatars.rotur.dev/" + f, note: "Rotur account" };
     });
     renderContactsList();
+
+    console.log("RENDERCONT", "rffr");
     return obj;
 }
-const renderContactsList = debounce(async () => {
+async function renderContactsListImmediate() {
     container.innerHTML = ``;
     document.getElementById("pinned").innerHTML = '';
     localObj = window.parent.settings.get("contacts_list") || {};
@@ -158,7 +160,8 @@ const renderContactsList = debounce(async () => {
         new ContactToggle(container, { imgSrc: obj[f].imgSrc, name: f, note: obj[f].note });
     });
     window.parent.settings.set("contacts_list", obj);
-}, 300);
+}
+const renderContactsList = debounce(renderContactsListImmediate, 300);
 
 function debounce(fn, delay) {
     let t;
@@ -173,6 +176,7 @@ function deleteContact(name) {
         delete obj[name];
         window.parent.settings.set("contacts_list", obj);
         renderContactsList();
+        console.log("RENDERCONT", "dlct");
     }
 };
 
@@ -182,20 +186,20 @@ async function editNote(name) {
         obj[name].note = newNote;
         window.parent.settings.set("contacts_list", obj);
         renderContactsList();
+        console.log("RENDERCONT", "ednt");
     }
 };
 
 
 function greenflag(myWindow) {
-    if (myWindow && myWindow.type == "addc") {
-        let currentUser = myWindow.name;
+    if (myWindow && myWindow.data.type == "addc") {
+        let currentUser = myWindow.data.name;
         const s = new Date().toISOString();
+        obj = window.parent.settings.get("contacts_list") || {};
         obj[currentUser] = { imgSrc: "https://avatars.rotur.dev/" + currentUser, note: "Added " + s };
         window.parent.settings.set("contacts_list", obj);
-        renderContactsList();
-    } else {
-        renderContactsList();
     }
+    renderContactsListImmediate();
 }
 
 var mainSearchBox = document.getElementById("usersearchbar");
@@ -216,6 +220,7 @@ async function renderSearchedList() {
     const q = document.getElementById("usersearchbar").value.toLowerCase();
     if (q == "") {
         renderContactsList();
+        console.log("RENDERCONT", "rdsl");
         document.getElementById("pinnedHeadIcn").innerText = "keep";
     } else {
 
