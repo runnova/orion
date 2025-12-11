@@ -541,5 +541,5 @@ function dontchsysnva() {
 	document.getElementById('orionBadgeAlert').close();
 }
 if ('serviceWorker' in navigator && !navigator.serviceWorker.controller) {
-    navigator.serviceWorker.register('sw.js', { scope: '/' });
+    navigator.serviceWorker.register('sw.js', { scope: location.href });
 }

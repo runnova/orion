@@ -168,9 +168,7 @@ async function renderContactsList() {
     window.parent.settings.set("contacts_list", obj);
 }
 
-renderContactsList();
-
-window.deleteContact = name => {
+function deleteContact(name) {
     if (obj[name]) {
         delete obj[name];
         window.parent.settings.set("contacts_list", obj);
@@ -178,7 +176,7 @@ window.deleteContact = name => {
     }
 };
 
-window.editNote = async name => {
+async function editNote(name) {
     if (obj[name]) {
         let newNote = await window.parent.ask("Enter a new note for " + name);
         obj[name].note = newNote;
@@ -187,18 +185,6 @@ window.editNote = async name => {
     }
 };
 
-var mainSearchBox = document.getElementById("usersearchbar");
-function makeSearch() {
-    let q = mainSearchBox.value;
-    if (q.length > 0) {
-        window.parent.launchSideBarApp('profile', { name: q })
-    }
-}
-mainSearchBox.addEventListener("keydown", (event) => {
-    if (event.key === "Enter") {
-        makeSearch();
-    }
-});
 
 function greenflag(myWindow) {
     if (myWindow && myWindow.data.type == "addc") {
@@ -207,7 +193,23 @@ function greenflag(myWindow) {
         obj[currentUser] = { imgSrc: "https://avatars.rotur.dev/" + currentUser, note: "Added " + s };
         window.parent.settings.set("contacts_list", obj);
         renderContactsList();
+    } else {
+        renderContactsList();
     }
+
+    var mainSearchBox = document.getElementById("usersearchbar");
+    function makeSearch() {
+        let q = mainSearchBox.value;
+        if (q.length > 0) {
+            window.parent.launchSideBarApp('profile', { name: q })
+        }
+    }
+    mainSearchBox.addEventListener("keydown", (event) => {
+        if (event.key === "Enter") {
+            makeSearch();
+        }
+    });
+    mainSearchBox.addEventListener("keyup", renderSearchedList);
 }
 
 async function renderSearchedList() {
@@ -230,5 +232,3 @@ async function renderSearchedList() {
         });
     }
 }
-
-document.getElementById("usersearchbar").addEventListener("keyup", renderSearchedList);
