@@ -129,25 +129,19 @@ async function importFriendsFromRotur() {
     renderContactsList();
     return obj;
 }
-
-async function renderContactsList() {
+const renderContactsList = debounce(async () => {
     container.innerHTML = ``;
-
     document.getElementById("pinned").innerHTML = '';
     localObj = window.parent.settings.get("contacts_list") || {};
     obj = { ...localObj };
-
     if (Object.keys(obj).length === 0) {
         obj = await importFriendsFromRotur();
     }
-
     let list = Object.keys(obj).sort((a, b) => a.localeCompare(b));
-
     let current = "";
     let pinnedNames = window.parent.settings.get("contacts_pinned_list") || [];
     if (pinnedNames.length < 1) {
-        document.getElementById("pinned").innerHTML = `
-                <div class="nothingtext">No pinned contacts</div>`;
+        document.getElementById("pinned").innerHTML = `<div class="nothingtext">No pinned contacts</div>`;
     }
     list.forEach(f => {
         if (!pinnedNames.includes(f)) {
@@ -160,12 +154,18 @@ async function renderContactsList() {
                 container.appendChild(h);
             }
         }
-
         if (!obj[f].imgSrc) obj[f].imgSrc = "https://avatars.rotur.dev/" + f;
         new ContactToggle(container, { imgSrc: obj[f].imgSrc, name: f, note: obj[f].note });
     });
-
     window.parent.settings.set("contacts_list", obj);
+}, 300);
+
+function debounce(fn, delay) {
+    let t;
+    return (...args) => {
+        clearTimeout(t);
+        t = setTimeout(() => fn(...args), delay);
+    };
 }
 
 function deleteContact(name) {
@@ -198,19 +198,19 @@ function greenflag(myWindow) {
     }
 }
 
-    var mainSearchBox = document.getElementById("usersearchbar");
-    function makeSearch() {
-        let q = mainSearchBox.value;
-        if (q.length > 0) {
-            window.parent.launchSideBarApp('profile', { name: q })
-        }
+var mainSearchBox = document.getElementById("usersearchbar");
+function makeSearch() {
+    let q = mainSearchBox.value;
+    if (q.length > 0) {
+        window.parent.launchSideBarApp('profile', { name: q })
     }
-    mainSearchBox.addEventListener("keydown", (event) => {
-        if (event.key === "Enter") {
-            makeSearch();
-        }
-    });
-    mainSearchBox.addEventListener("keyup", renderSearchedList);
+}
+mainSearchBox.addEventListener("keydown", (event) => {
+    if (event.key === "Enter") {
+        makeSearch();
+    }
+});
+mainSearchBox.addEventListener("keyup", renderSearchedList);
 
 async function renderSearchedList() {
     const q = document.getElementById("usersearchbar").value.toLowerCase();
