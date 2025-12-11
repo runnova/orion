@@ -127,7 +127,7 @@ function clearActive() {
 }
 
 
-function openApp(name, data) {
+function openApp(name, data = {}) {
 	iframe.style.opacity = 0;
 	oriloaderstatic.style.display = "block";
 	setTimeout(() => {
