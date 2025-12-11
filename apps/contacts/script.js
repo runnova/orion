@@ -121,14 +121,15 @@ let localObj = {};
 let obj = {};
 
 async function importFriendsFromRotur() {
-    // const list = JSON.parse(await window.parent.roturExtension.getFriendList());
-    // window.parent.toast("Added " + list.length + " friends from Rotur");
-    // list.forEach(f => {
-    //     if (!obj[f]) obj[f] = { imgSrc: "https://avatars.rotur.dev/" + f, note: "Rotur account" };
-    // });
-    // renderContactsList();
+    const list = JSON.parse(await window.parent.roturExtension.getFriendList());
+    if (list.length < 1) return;
+    window.parent.toast("Added " + list.length + " friends from Rotur");
+    list.forEach(f => {
+        if (!obj[f]) obj[f] = { imgSrc: "https://avatars.rotur.dev/" + f, note: "Rotur account" };
+    });
+    renderContactsList();
 
-    // console.log("RENDERCONT", "rffr");
+    console.log("RENDERCONT", "rffr");
     return obj;
 }
 async function renderContactsListImmediate() {
