@@ -3,6 +3,13 @@
     scrollbar-color: #ffffffab transparent;
 }
 
+.symb {
+    font-family: 'Material Symbols Rounded';
+    -webkit-font-smoothing: antialiased;
+    font-variation-settings: 'FILL' 0;
+    transition: font-variation-settings 0.3s ease;
+}
+
 html {
     height: 100%;
     width: 100%;
@@ -618,10 +625,12 @@ div.blockedheader>a {
         padding: 3px 8px;
         border-radius: .5em;
         border: none;
-            background-color: transparent;
+        background-color: transparent;
+
         &:hover {
             background-color: var(--col-bg3);
         }
+
         &.active {
             background-color: var(--col-bg3);
             border: var(--box-crisp);
