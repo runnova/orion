@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PNG to ICN Vectorizer</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body { background-color: #0f172a; color: #f1f5f9; }
+        canvas { image-rendering: pixelated; border: 1px solid #334155; }
+        .custom-scrollbar::-webkit-scrollbar { width: 8px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: #1e293b; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #475569; border-radius: 4px; }
+        .loader {
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #3b82f6;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            animation: spin 1s linear infinite;
+            display: inline-block;
+            vertical-align: middle;
+        }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+    </style>
+</head>
+<body class="min-h-screen p-4 md:p-8">
+    <div class="max-w-6xl mx-auto space-y-6">
+        <header class="flex justify-between items-center border-b border-slate-700 pb-4">
+            <div>
+                <h1 class="text-3xl font-bold text-blue-400">ICN Vectorizer</h1>
+                <p class="text-slate-400 text-sm">Contour-based multi-shape vectorization</p>
+            </div>
+            <div class="flex gap-2">
+                <input type="file" id="fileInput" accept="image/png" class="hidden">
+                <button onclick="document.getElementById('fileInput').click()" class="bg-blue-600 hover:bg-blue-500 px-4 py-2 rounded-lg font-medium transition">
+                    Upload PNG
+                </button>
+            </div>
+        </header>
+
+        <main class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <div class="bg-slate-800 p-6 rounded-xl border border-slate-700 space-y-4 h-fit">
+                <h2 class="text-lg font-semibold border-b border-slate-700 pb-2">1. Quantization</h2>
+                <div>
+                    <label class="block text-sm text-slate-400 mb-1">Color Count (N)</label>
+                    <input type="range" id="colorCount" min="2" max="16" value="5" class="w-full">
+                    <div class="flex justify-between text-xs text-slate-500"><span>2</span><span id="colorVal">5</span><span>16</span></div>
+                </div>
+                
+                <h2 class="text-lg font-semibold border-b border-slate-700 pb-2 pt-2">2. Vectorization</h2>
+                <div>
+                    <label class="block text-sm text-slate-400 mb-1">Simplification (Epsilon)</label>
+                    <input type="range" id="simplify" min="0" max="50" value="10" class="w-full">
+                    <div class="flex justify-between text-xs text-slate-500"><span>Sharp</span><span id="simplifyVal">1.0</span><span>Smooth</span></div>
+                </div>
+                <div>
+                    <label class="block text-sm text-slate-400 mb-1">Output Mode</label>
+                    <select id="outputMode" class="w-full bg-slate-900 border border-slate-700 rounded p-2 text-sm">
+                        <option value="polygons">Filled Polygons (tri)</option>
+                        <option value="outlines">Outlines (line/cont)</option>
+                    </select>
+                </div>
+                
+                <div class="flex items-center gap-2 pt-2">
+                    <input type="checkbox" id="flipX" checked class="w-4 h-4 rounded border-slate-700 bg-slate-900">
+                    <label for="flipX" class="text-sm text-slate-300">Flip X</label>
+                    <input type="checkbox" id="flipY" checked class="w-4 h-4 ml-4 rounded border-slate-700 bg-slate-900">
+                    <label for="flipY" class="text-sm text-slate-300">Flip Y</label>
+                </div>
+
+                <button id="processBtn" class="w-full bg-green-600 hover:bg-green-500 py-3 rounded-lg font-bold transition flex items-center justify-center gap-2">
+                    <span id="btnText">Trace Shapes</span>
+                    <span id="btnLoader" class="loader hidden"></span>
+                </button>
+            </div>
+
+            <div class="lg:col-span-2 space-y-6">
+                <div class="bg-slate-800 p-4 rounded-xl border border-slate-700">
+                    <div class="flex justify-between mb-2 items-center">
+                        <span class="text-xs font-mono text-slate-400">PREVIEW</span>
+                        <div id="status" class="text-xs text-blue-400 italic">Ready</div>
+                    </div>
+                    <div class="flex flex-wrap gap-4 justify-center bg-slate-900 p-4 rounded-lg">
+                        <div class="text-center space-y-2">
+                            <canvas id="sourceCanvas" class="max-w-full"></canvas>
+                            <div class="text-[10px] text-slate-500 uppercase">Original</div>
+                        </div>
+                        <div class="text-center space-y-2">
+                            <canvas id="quantizedCanvas" class="max-w-full"></canvas>
+                            <div class="text-[10px] text-slate-500 uppercase">Quantized Map (NOT RESULT)</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-slate-800 p-4 rounded-xl border border-slate-700">
+                    <div class="flex justify-between mb-2 items-center">
+                        <span class="text-xs font-mono text-slate-400">ICN COMMANDS (Layer Sorted & Flip Corrected)</span>
+                        <button id="copyBtn" class="text-xs bg-slate-700 hover:bg-slate-600 px-3 py-1 rounded transition">Copy Code</button>
+                    </div>
+                    <textarea id="outputCode" readonly class="w-full h-64 bg-slate-950 text-emerald-400 font-mono text-xs p-4 rounded-lg border border-slate-700 custom-scrollbar outline-none" placeholder="ICN code will appear here..."></textarea>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        const fileInput = document.getElementById('fileInput');
+        const sourceCanvas = document.getElementById('sourceCanvas');
+        const quantizedCanvas = document.getElementById('quantizedCanvas');
+        const outputCode = document.getElementById('outputCode');
+        const processBtn = document.getElementById('processBtn');
+        const status = document.getElementById('status');
+        const colorCountInput = document.getElementById('colorCount');
+        const simplifyInput = document.getElementById('simplify');
+        
+        let originalImage = null;
+
+        colorCountInput.addEventListener('input', () => document.getElementById('colorVal').textContent = colorCountInput.value);
+        simplifyInput.addEventListener('input', () => document.getElementById('simplifyVal').textContent = (simplifyInput.value / 10).toFixed(1));
+
+        fileInput.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = (event) => {
+                const img = new Image();
+                img.onload = () => {
+                    originalImage = img;
+                    const ctx = sourceCanvas.getContext('2d');
+                    const max = 300;
+                    let w = img.width, h = img.height;
+                    if (w > max || h > max) {
+                        const r = Math.min(max/w, max/h);
+                        w *= r; h *= r;
+                    }
+                    sourceCanvas.width = w; sourceCanvas.height = h;
+                    ctx.drawImage(img, 0, 0, w, h);
+                    status.textContent = "Image loaded.";
+                };
+                img.src = event.target.result;
+            };
+            reader.readAsDataURL(file);
+        });
+
+        processBtn.addEventListener('click', async () => {
+            if (!originalImage) return;
+            toggleLoading(true);
+            await new Promise(r => setTimeout(r, 50));
+
+            try {
+                const w = sourceCanvas.width;
+                const h = sourceCanvas.height;
+                quantizedCanvas.width = w;
+                quantizedCanvas.height = h;
+                const qCtx = quantizedCanvas.getContext('2d');
+                qCtx.drawImage(sourceCanvas, 0, 0, w, h);
+                
+                const imageData = qCtx.getImageData(0, 0, w, h);
+                const palette = getPalette(imageData.data, parseInt(colorCountInput.value));
+                const colorMap = applyPalette(imageData.data, palette);
+                qCtx.putImageData(imageData, 0, 0);
+
+                const epsilon = simplifyInput.value / 10;
+                const mode = document.getElementById('outputMode').value;
+                const doFlipX = document.getElementById('flipX').checked;
+                const doFlipY = document.getElementById('flipY').checked;
+                
+                let shapes = [];
+
+                for (let k = 0; k < palette.length; k++) {
+                    const color = palette[k];
+                    const hex = rgbToHex(color[0], color[1], color[2]);
+                    const mask = colorMap.map(v => v === k ? 1 : 0);
+                    const contours = findContours(mask, w, h);
+                    
+                    contours.forEach(points => {
+                        const simplified = simplifyPath(points, epsilon);
+                        if (simplified.length < 3) return;
+                        
+                        // Transform points to handle inversion
+                        const transformed = simplified.map(pt => ({
+                            x: doFlipX ? (w - pt.x) : pt.x,
+                            y: doFlipY ? (h - pt.y) : pt.y
+                        }));
+
+                        let area = 0;
+                        for (let i = 0; i < transformed.length; i++) {
+                            let j = (i + 1) % transformed.length;
+                            area += transformed[i].x * transformed[j].y;
+                            area -= transformed[j].x * transformed[i].y;
+                        }
+                        area = Math.abs(area) / 2;
+
+                        shapes.push({
+                            hex,
+                            points: transformed,
+                            area: area
+                        });
+                    });
+                }
+
+                // SORT: Largest area first
+                shapes.sort((a, b) => b.area - a.area);
+
+                let icn = [`w 1`];
+                let currentColor = null;
+
+                shapes.forEach(shape => {
+                    if (shape.hex !== currentColor) {
+                        icn.push(`c ${shape.hex}`);
+                        currentColor = shape.hex;
+                    }
+
+                    const p = shape.points;
+                    if (mode === 'polygons') {
+                        for (let i = 1; i < p.length - 1; i++) {
+                            const x1 = Math.round(p[0].x), y1 = Math.round(p[0].y);
+                            const x2 = Math.round(p[i].x), y2 = Math.round(p[i].y);
+                            const x3 = Math.round(p[i+1].x), y3 = Math.round(p[i+1].y);
+                            icn.push(`tri ${x1} ${y1} ${x2} ${y2} ${x3} ${y3}`);
+                        }
+                    } else {
+                        icn.push(`line ${Math.round(p[0].x)} ${Math.round(p[0].y)} ${Math.round(p[1].x)} ${Math.round(p[1].y)}`);
+                        for (let i = 2; i < p.length; i++) {
+                            icn.push(`cont ${Math.round(p[i].x)} ${Math.round(p[i].y)}`);
+                        }
+                        icn.push(`cont ${Math.round(p[0].x)} ${Math.round(p[0].y)}`);
+                    }
+                });
+
+                outputCode.value = icn.join('\n');
+                status.textContent = `Success. ${shapes.length} shapes sorted and flipped.`;
+            } catch (e) {
+                console.error(e);
+                status.textContent = "Error during trace.";
+            } finally {
+                toggleLoading(false);
+            }
+        });
+
+        function findContours(mask, w, h) {
+            const contours = [];
+            const visited = new Uint8Array(w * h);
+            for (let y = 0; y < h; y++) {
+                for (let x = 0; x < w; x++) {
+                    const idx = y * w + x;
+                    if (mask[idx] && !visited[idx]) {
+                        const points = traceBoundary(mask, x, y, w, h, visited);
+                        if (points && points.length > 2) contours.push(points);
+                    }
+                }
+            }
+            return contours;
+        }
+
+        function traceBoundary(mask, sx, sy, w, h, globalVisited) {
+            const points = [];
+            let currX = sx, currY = sy;
+            let prevX = sx - 1, prevY = sy;
+            const neighbors = [[0,-1],[1,-1],[1,0],[1,1],[0,1],[-1,1],[-1,0],[-1,-1]];
+            for (let limit = 0; limit < 15000; limit++) {
+                points.push({x: currX, y: currY});
+                globalVisited[currY * w + currX] = 1;
+                let startDir = 0;
+                for (let i = 0; i < 8; i++) {
+                    if (currX + neighbors[i][0] === prevX && currY + neighbors[i][1] === prevY) {
+                        startDir = (i + 1) % 8;
+                        break;
+                    }
+                }
+                let found = false;
+                for (let i = 0; i < 8; i++) {
+                    const dir = (startDir + i) % 8;
+                    const nx = currX + neighbors[dir][0];
+                    const ny = currY + neighbors[dir][1];
+                    if (nx >= 0 && nx < w && ny >= 0 && ny < h && mask[ny * w + nx]) {
+                        prevX = currX; prevY = currY;
+                        currX = nx; currY = ny;
+                        found = true;
+                        break;
+                    }
+                }
+                if (!found || (currX === sx && currY === sy)) break;
+            }
+            return points;
+        }
+
+        function simplifyPath(points, epsilon) {
+            if (points.length <= 2 || epsilon === 0) return points;
+            const sqEpsilon = epsilon * epsilon;
+            function getSqDist(p, p1, p2) {
+                let x = p1.x, y = p1.y, dx = p2.x - x, dy = p2.y - y;
+                if (dx !== 0 || dy !== 0) {
+                    let t = ((p.x - x) * dx + (p.y - y) * dy) / (dx * dx + dy * dy);
+                    if (t > 1) { x = p2.x; y = p2.y; }
+                    else if (t > 0) { x += dx * t; y += dy * t; }
+                }
+                dx = p.x - x; dy = p.y - y;
+                return dx * dx + dy * dy;
+            }
+            function simplifyDP(pts) {
+                let maxSqDist = 0, index = 0;
+                for (let i = 1; i < pts.length - 1; i++) {
+                    let d = getSqDist(pts[i], pts[0], pts[pts.length - 1]);
+                    if (d > maxSqDist) { index = i; maxSqDist = d; }
+                }
+                if (maxSqDist > sqEpsilon) {
+                    const left = simplifyDP(pts.slice(0, index + 1));
+                    const right = simplifyDP(pts.slice(index));
+                    return left.slice(0, -1).concat(right);
+                } else {
+                    return [pts[0], pts[pts.length - 1]];
+                }
+            }
+            return simplifyDP(points);
+        }
+
+        function getPalette(pixels, k) {
+            let centers = [];
+            for (let i = 0; i < k; i++) {
+                const idx = Math.floor((i / k) * (pixels.length/4)) * 4;
+                centers.push([pixels[idx], pixels[idx+1], pixels[idx+2]]);
+            }
+            for (let iter = 0; iter < 5; iter++) {
+                let groups = Array.from({length:k}, () => []);
+                for (let i = 0; i < pixels.length; i += 4) {
+                    let minD = Infinity, best = 0;
+                    for (let j = 0; j < k; j++) {
+                        const d = Math.pow(pixels[i]-centers[j][0],2)+Math.pow(pixels[i+1]-centers[j][1],2)+Math.pow(pixels[i+2]-centers[j][2],2);
+                        if (d < minD) { minD = d; best = j; }
+                    }
+                    groups[best].push([pixels[i], pixels[i+1], pixels[i+2]]);
+                }
+                centers = groups.map(g => g.length === 0 ? [0,0,0] : [Math.round(g.reduce((a,b)=>a+b[0],0)/g.length), Math.round(g.reduce((a,b)=>a+b[1],0)/g.length), Math.round(g.reduce((a,b)=>a+b[2],0)/g.length)]);
+            }
+            return centers;
+        }
+
+        function applyPalette(pixels, palette) {
+            const map = new Int32Array(pixels.length/4);
+            for (let i = 0; i < pixels.length; i += 4) {
+                let minD = Infinity, best = 0;
+                for (let j = 0; j < palette.length; j++) {
+                    const d = Math.pow(pixels[i]-palette[j][0],2)+Math.pow(pixels[i+1]-palette[j][1],2)+Math.pow(pixels[i+2]-palette[j][2],2);
+                    if (d < minD) { minD = d; best = j; }
+                }
+                pixels[i] = palette[best][0]; pixels[i+1] = palette[best][1]; pixels[i+2] = palette[best][2];
+                map[i/4] = best;
+            }
+            return map;
+        }
+
+        function rgbToHex(r, g, b) {
+            return "#" + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1);
+        }
+
+        function toggleLoading(load) {
+            processBtn.disabled = load;
+            document.getElementById('btnLoader').classList.toggle('hidden', !load);
+            document.getElementById('btnText').textContent = load ? "Tracing..." : "Trace Shapes";
+        }
+
+        document.getElementById('copyBtn').addEventListener('click', () => {
+            outputCode.select();
+            document.execCommand('copy');
+        });
+    </script>
+</body>
+</html>
