@@ -873,8 +873,25 @@ dialog#orionBadgeAlert {
     padding: 2em;
     text-align: center;
 
-    & ul {
-        text-align: left;
+    & .perk {
+        display: flex;
+        padding: .5em 1em 0.5em 0.5em;
+        gap: .5em;
+        background: var(--col-bg3);
+        margin-bottom: .3em;
+        border-radius: .5em;
+        border: var(--box-crisp);
+        word-wrap: break-word;
+    }
+}
+
+@keyframes slide {
+    0% {
+        background-position: 0%
+    }
+
+    100% {
+        background-position: 100%
     }
 }
 

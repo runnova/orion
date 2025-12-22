@@ -43,7 +43,8 @@
     <div id="sidebar">
         <div class="navsnav">
             <img class="btn" src="oclogo.png" height="50" id="orionIconCol">
-            <div class="btn bWicn" onclick="launchSideBarApp('notifications');"><i class="material-symbols-rounded">notifications</i>
+            <div class="btn bWicn" onclick="launchSideBarApp('notifications');"><i
+                    class="material-symbols-rounded">notifications</i>
             </div>
             <div style="flex:1;"></div>
             <div class="btn bWicn" onclick="sidebartoggle()"><i class="material-symbols-rounded">left_panel_close</i>
@@ -56,29 +57,33 @@
                 <div class="onebtn bWicn" data-name="claw"><i
                         class="material-symbols-rounded">crowdsource</i><a>Claw</a>
                 </div>
-                <div class="onebtn bWicn" data-name="orichats"><i
+                <div class="onebtn bWicn" data-roturRequire="true" data-name="orichats"><i
                         class="material-symbols-rounded">tag</i><a>OriginChats</a>
                 </div>
-                <div class="onebtn bWicn" data-name="credits"><i
+                <div class="onebtn bWicn" data-roturRequire="true" data-name="credits"><i
                         class="material-symbols-rounded">attach_money</i><a>Credits</a></div>
-                <!-- <div class="onebtn bWicn" data-name="calls"><i class="material-symbols-rounded">call</i><a>Calls</a>
+                <!-- <div class="onebtn bWicn" data-roturRequire="true" data-name="calls"><i class="material-symbols-rounded">call</i><a>Calls</a>
                 </div> -->
-                <div class="onebtn bWicn" data-name="mail"><i class="material-symbols-rounded">mail</i><a>Mail</a></div>
-                <div class="onebtn bWicn" data-name="contacts"><i class="material-symbols-rounded">contacts</i><a>Contacts</a></div>
+                <div class="onebtn bWicn" data-roturRequire="true" data-name="mail"><i
+                        class="material-symbols-rounded">mail</i><a>Mail</a></div>
+                <div class="onebtn bWicn" data-name="contacts"><i
+                        class="material-symbols-rounded">contacts</i><a>Contacts</a></div>
             </div>
-            <!-- <div><div id="switchSysAdBan">
-                <div class="clbtn material-symbols-rounded">close</div>
-                <span>Enter Orion Mode?</span> <i class="material-symbols-rounded">arrow_forward</i>
-            </div> -->
-            <div class="actBtns">
-                <div class="userChip username_display"
-                    onclick="launchSideBarApp('profile', { name: roturExtension.user.username });">
-
+            <div>
+                <div id="switchSysAdBan" style="display: none;">
+                    <div class="clbtn material-symbols-rounded">close</div>
+                    <span>Enter Orion Mode?</span> <i class="material-symbols-rounded">arrow_forward</i>
                 </div>
-                <div class="divider"></div>
-                <div class="btn bWicn" onclick="document.getElementById('settingsd').showModal()"><i
-                        class="material-symbols-rounded">tune</i></div>
-            </div></div>
+                <div class="actBtns">
+                    <div class="userChip username_display"
+                        onclick="launchSideBarApp('profile', { name: roturExtension.user.username });">
+
+                    </div>
+                    <div class="divider"></div>
+                    <div class="btn bWicn" onclick="document.getElementById('settingsd').showModal()"><i
+                            class="material-symbols-rounded">tune</i></div>
+                </div>
+            </div>
         </div>
     </div>
     </div>
@@ -98,8 +103,8 @@
         <div class="sidebarheader">
             <div class="name" id="sidebarappname">Contacts</div>
             <div id="openOrion" onclick="location.replace(location.origin + location.pathname + location.hash)">
-        <i class="material-symbols-rounded">arrow_back</i>
-        <div>Back to Orion</div>
+                <i class="material-symbols-rounded">arrow_back</i>
+                <div>Back to Orion</div>
             </div>
             <i class="material-symbols-rounded bicn" onclick="closeSideBar()">right_panel_close</i>
         </div>
@@ -178,16 +183,41 @@
     </dialog>
     <dialog id="orionBadgeAlert">
         <img src="oclogo.png" height="50">
-        <h1>Get the Orion badge!</h1>
+        <h1>Turn Orion Mode ON!</h1>
         <p>Change your system to Orion to</p>
-        <ul>
-            <li>Show a glowing orion tag on your profile.</li>
-            <li>Show your support to the unoffical rotur client.</li>
-            <li>Lower fees on Orion's rotur credit based services like Orion KYC.</li>
-            <li>More perks upcoming!</li>
-        </ul>
+        <div class="perk">
+            <div class="material-symbols-rounded">
+                badge
+            </div>
+            <div class="what">
+                Get a <span style="font-weight: 800;
+    background: linear-gradient(90deg, #9a5fff, #d400ff, #ff3cac, #00b7ff, #b082ff);
+    background-size: 400%;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: slide 2.5s linear infinite alternate;
+    text-shadow: 0 0 8px rgba(106, 0, 255, 0.6);">glowing</span> orion system badge.
+            </div>
+        </div>
+        <div class="perk">
+            <div class="material-symbols-rounded">
+                price_check
+            </div>
+            <div class="what">
+                System assisted daily credit claims (optional)
+            </div>
+        </div>
+        <div class="perk">
+            <div class="material-symbols-rounded">
+                shopping_cart
+            </div>
+            <div class="what">
+                Fee discounts on Orion partner sellers
+            </div>
+        </div>
         <button class="btn long" onclick="changeSysToNva()">Change system to Orion</button>
-        <button class="dismisstext long btn" onclick="dontchsysnva()">Keep <div id="alreadyinsystem">origin</div> as my system.</button>
+        <button class="dismisstext long btn" onclick="dontchsysnva()">Keep <div id="alreadyinsystem">origin</div> as my
+            system.</button>
         <!-- <img src="oclogo.png" height="50">
         <h1>Hi, this is OrionClient!</h1>
         <p>I made this client because</p>

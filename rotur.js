@@ -1678,6 +1678,15 @@ async function logoutofrtr() {
     roturExtension.disconnect();
 }
 
+var switchadban = document.getElementById("switchSysAdBan");
+switchadban.addEventListener("click", (event) => {
+    if (event.target.classList.contains("clbtn")) {
+        switchadban.style.display = "none";
+        toast("You can always switch from settings!");
+        return;
+    }
+    document.getElementById('orionBadgeAlert').showModal();
+})
 async function roturTWEventCall(data, payload) {
     if (data == "roturEXT_whenAuthenticated") {
         startupLoader.mark_complete("3");
@@ -1690,10 +1699,9 @@ async function roturTWEventCall(data, payload) {
         let userSystem = await roturExtension.getkey({ "KEY": "system" }) || "my current system";
         if (userSystem != "orion") {
             if (!settings.get("showedBadgeAd")) {
-                document.getElementById('orionBadgeAlert').showModal();
+                document.getElementById("switchSysAdBan").display = "flex";
                 document.getElementById('alreadyinsystem').innerText = userSystem;
-                settings.set("showedBadgeAd", true, 2592000000);
-                // thats a month
+                settings.set("showedBadgeAd", true, 259200000);
             }
         }
         if (settings.get("auto_daily") === true && !settings.get("claimed_daily")) {

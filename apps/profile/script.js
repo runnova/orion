@@ -39,7 +39,7 @@ async function renderProfile(name) {
     const checkBanner = async () => {
         const res = await fetch(data.banner);
         const blob = await res.blob();
-        const big = blob.size > 1500;
+        const isImage = blob.type.startsWith('image/');
 
         const el = document.querySelector('#prof_banner');
         const url = URL.createObjectURL(blob);
@@ -51,7 +51,7 @@ async function renderProfile(name) {
         };
         img.src = url;
 
-        if (big) {
+        if (isImage) {
             el.style.backgroundImage = `url("${url}")`;
             el.style.filter = "blur(0em)";
             el.style.backgroundSize = "contain";
@@ -60,6 +60,7 @@ async function renderProfile(name) {
             el.style.filter = "blur(2em)";
             el.style.backgroundSize = "cover";
         }
+
         setTimeout(() => {
             adjustHeight();
         }, 1000);
