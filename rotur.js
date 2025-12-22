@@ -1742,7 +1742,9 @@ async function roturTWEventCall(data, payload) {
 
 const params = new URLSearchParams(location.search)
 const s = params.get('rtr')
-if (s != "dont") { attemptConnection(); }
+if (s != "dont" && null == params.get('profile')) {
+    attemptConnection();
+}
 else {
     startupLoader.mark_complete("4")
     persohome.classList.remove("disp");
@@ -1750,4 +1752,8 @@ else {
     const params = new URLSearchParams(location.search)
     const s = params.get('s')
     if (s) openApp(s)
+    setTimeout(() => {
+        launchSideBarApp("profile", { name: params.get('profile') });
+        document.getElementById("sidebarapp").classList.add("onlySideBarApp")
+    }, 500);
 }

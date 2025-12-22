@@ -68,7 +68,7 @@ async function renderProfile(name) {
 
     checkBanner();
     var obj = window.parent.settings.get("contacts_list");
-    if (obj[name]) {
+    if (obj && obj[name]) {
         document.getElementById("prof_nte").innerText = obj[name].note;
     } else {
         document.getElementById("prof_nte").parentElement.remove();
@@ -232,7 +232,7 @@ dropdownBtn.addEventListener("click", () => {
 window.editNote = async () => {
     let name = currentUser;
     var obj = window.parent.settings.get("contacts_list");
-    if (obj[name]) {
+    if (obj && obj[name]) {
         let newNote = await window.parent.ask("Enter a new note for " + name);
         obj[name].note = newNote;
         window.parent.settings.set("contacts_list", obj);

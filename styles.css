@@ -361,6 +361,39 @@ div#toastdiv {
     flex-direction: column;
     border: var(--box-crisp);
 
+    &.onlySideBarApp {
+        position: absolute;
+        width: 100vw !important;
+        height: 100%;
+        margin-right: auto;
+        margin-left: auto;
+        background: var(--col-bg1);
+        max-width: 100%;
+
+        &>iframe {
+            margin: auto;
+            max-width: 600px;
+            height: calc(100% - 5em);
+            border-radius: 1em;
+            overflow: hidden;
+            border: var(--box-crisp);
+            box-shadow: 0 5px 4em black;
+        }
+
+        & #openOrion {
+            display: flex;
+        }
+    }
+
+    & #openOrion {
+        background: var(--col-bg3);
+        border-radius: 2em;
+        padding: .2em 1em .2em .7em;
+        display: none;
+        gap: .5em;
+        border: var(--box-crisp);
+    }
+
     &>.sidebarheader {
         display: flex;
         flex-direction: row;
@@ -875,16 +908,20 @@ dialog#orionBadgeAlert {
     align-items: center;
     transition: .3s;
     position: relative;
+
     &:hover {
         background-color: #ffd8a5;
         color: black;
+
         &>i {
             font-size: 20px;
         }
     }
+
     &>i {
         font-size: 16px;
     }
+
     &>.clbtn {
         position: absolute;
         top: -8px;
