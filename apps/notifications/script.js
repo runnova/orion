@@ -49,7 +49,6 @@ function greenflag() {
             const name = document.createElement("strong");
             name.textContent = item.user;
 
-
             const text = document.createElement("span");
             if (item.kind === "notif") {
                 if (item.type === "follow") text.textContent = " followed you";
