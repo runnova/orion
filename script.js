@@ -215,7 +215,6 @@ function makedialogclosable(ok) {
 	if (!myDialog.__originalClose) {
 		myDialog.__originalClose = myDialog.close;
 		myDialog.close = function () {
-			console.log(342, ok)
 			this.classList.add("closeEffect");
 
 			function handler() {

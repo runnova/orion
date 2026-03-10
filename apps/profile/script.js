@@ -1,6 +1,5 @@
 var loader = document.getElementById("glloader");
 async function renderProfile(name) {
-    console.log(67, name)
     const res = await fetch(`https://api.rotur.dev/profile?name=${encodeURIComponent(name)}&include_posts=0`);
     const data = await res.json();
     document.querySelector('#prof_pfp').src = data.pfp;
@@ -204,7 +203,6 @@ loader.style.display = "flex";
 var currentUser;
 function greenflag(myWindow) {
     loader.style.display = "flex";
-    console.log(88, myWindow.data)
     if (myWindow) {
         currentUser = myWindow.data.name;
         renderProfile(currentUser);

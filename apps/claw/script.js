@@ -387,7 +387,6 @@ function createReplyElement(reply) {
 
     const replyUserAvatarImg = document.createElement("img");
     replyUserAvatarImg.classList.add("postuseravatarsrc");
-    console.log("https://avatars.rotur.dev/" + reply.user)
     replyUserAvatarImg.src = "https://avatars.rotur.dev/" + reply.user;
 
     replyUserAvatar.appendChild(replyUserAvatarImg);

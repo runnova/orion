@@ -113,7 +113,6 @@ class RoturExtension {
 
     connectToServer(args) {
         if (!this.server || !this.accounts) {
-            console.log("Waiting for server and accounts...");
             setTimeout(() => {
                 this.connectToServer(args);
             }, 1000);
@@ -284,7 +283,6 @@ class RoturExtension {
                         }
                         this.user[packet.payload.key] = packet.payload.value;
                     } else {
-                        console.log(packet);
                         if (packet.val && packet.val.target) {
                             this.packets[packet.val.target] ??= [];
                             this.packets[packet.val.target].push(packet);
@@ -335,16 +333,13 @@ class RoturExtension {
         };
 
         this.ws.onclose = () => {
-            console.log("Disconnected!");
             roturTWEventCall("roturEXT_whenDisconnected");
             this.is_connected = false;
 
-            // Log out locally when disconnected
             if (this.authenticated) {
                 this.authenticated = false;
                 this.userToken = "";
                 this.user = {};
-                console.log("Logged out due to disconnection");
             }
         };
     }
@@ -407,7 +402,6 @@ class RoturExtension {
         document.body.appendChild(e);
 
         const _roturAuthHandler = (a) => {
-            console.log("Rotur Auth Message Received", a);
             if ("https://rotur.dev" === a.origin && "rotur-auth-token" === a.data?.type) {
                 e.remove()
                 window.removeEventListener("message", _roturAuthHandler);
@@ -1066,7 +1060,6 @@ class RoturExtension {
     getMail(args) {
         if (!this.is_connected) return "Not Connected";
         if (!this.authenticated) return "Not Logged In";
-        console.log(args)
 
         return this.handlePromise({
             cmd: "pmsg",
@@ -1550,7 +1543,6 @@ class RoturExtension {
     }
 
     allBadges() {
-        console.log(this.badges);
         return JSON.stringify(Object.keys(this.badges));
     }
 

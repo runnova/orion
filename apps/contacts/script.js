@@ -129,7 +129,6 @@ async function importFriendsFromRotur() {
     });
     renderContactsList();
 
-    console.log("RENDERCONT", "rffr");
     return obj;
 }
 async function renderContactsListImmediate() {
@@ -177,7 +176,6 @@ function deleteContact(name) {
         delete obj[name];
         window.parent.settings.set("contacts_list", obj);
         renderContactsList();
-        console.log("RENDERCONT", "dlct");
     }
 };
 
@@ -187,7 +185,6 @@ async function editNote(name) {
         obj[name].note = newNote;
         window.parent.settings.set("contacts_list", obj);
         renderContactsList();
-        console.log("RENDERCONT", "ednt");
     }
 };
 
@@ -220,8 +217,6 @@ mainSearchBox.addEventListener("keyup", renderSearchedList);
 async function renderSearchedList() {
     const q = document.getElementById("usersearchbar").value.toLowerCase();
     if (q == "") {
-        renderContactsList();
-        console.log("RENDERCONT", "rdsl");
         document.getElementById("pinnedHeadIcn").innerText = "keep";
     } else {
 

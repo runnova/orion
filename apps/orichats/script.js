@@ -57,14 +57,12 @@ document.getElementById("memberlistbtn")?.addEventListener("click", () => {
 
 function userKeysUpdate() {
     state.user_keys = window.parent.roturExtension.user ?? {};
-    console.log("user keys updated", state.user_keys);
 }
 
 function connectWebSocket() {
     if (ws && (ws.readyState === 0 || ws.readyState === 1)) return;
     try { if (ws && ws.readyState === 1) ws.close(); } catch { }
     ws = new WebSocket(currentServer);
-    ws.onopen = () => console.log("WebSocket connected (post-auth or resume)");
     attachWsHandlers();
 }
 
@@ -90,7 +88,6 @@ function roturToken() {
 }
 
 function attachWsHandlers() {
-    ws.onopen = () => console.log("WebSocket connected; awaiting handshake...");
     ws.onmessage = async (event) => {
         let data;
         try {
@@ -99,7 +96,7 @@ function attachWsHandlers() {
             console.warn("Non-JSON message", event.data);
             return;
         }
-        console.log("WS message", data);
+        console.log("WS", data);
         switch (data.cmd) {
             case "handshake": {
                 const vKey = data?.val?.validator_key;
@@ -440,12 +437,6 @@ function stripHtml(html) {
     return div.textContent || div.innerText || "";
 }
 
-function replaceImageLinks(text) {
-    return text.replace(
-        /(https?:\/\/[^\s]+\.(?:png|jpe?g|gif|webp|svg))/gi,
-        "![]($1)",
-    );
-}
 function formatMessageContent(raw) {
     if (typeof raw !== "string") raw = String(raw ?? "");
     raw = replaceEmojis(raw);
@@ -456,9 +447,13 @@ function formatMessageContent(raw) {
     const codeBlockRegex = /```(\w+)?([\s\S]*?)```/g;
     const codeBlocks = [];
     let i = 0;
+
     raw = raw.replace(codeBlockRegex, (_, lang, code) => {
         const token = `__CDBLK_${i}__`;
-        codeBlocks.push({ token, html: `<div><pre><code class="language-${lang}">${escapeHTML(code)}</code></pre></div>` });
+        codeBlocks.push({
+            token,
+            html: `<div><pre><code class="language-${lang}">${escapeHTML(code)}</code></pre></div>`
+        });
         i++;
         return token;
     });
@@ -479,30 +474,63 @@ function formatMessageContent(raw) {
     ];
     headingRegex.forEach(f => raw = raw.replace(f.r, f.t));
 
-    raw = raw.replace(/@(\w+)/g, `<span class="mention" onclick="window.parent.launchSideBarApp('profile', { name: '$1' })">@$1</span>`);
-
+    raw = raw.replace(/@(\w+)/g, `<span class="mention" onclick="window.parent.launchSideBarApp('profile',{name:'$1'})">@$1</span>`);
     raw = raw.replace(/#(\w+)/g, `<span class="mention" onclick="changeChannel('$1')">#$1</span>`);
 
     const urlRegex = /(https?:\/\/[^\s]+)/g;
+
     let out = "";
     let last = 0;
     let m;
+    const checks = [];
+
+    function tryConvertToImage(a, url) {
+        fetch(url, { method: "HEAD" })
+            .then(r => {
+                const t = r.headers.get("content-type") || "";
+                if (!t.startsWith("image/")) return;
+
+                const img = document.createElement("img");
+                img.src = proxyImageUrl(url);
+                img.className = "message-image";
+                img.loading = "lazy";
+                img.onclick = () => window.openImageModal && window.openImageModal(url);
+
+                a.replaceWith(img);
+            })
+            .catch(() => {});
+    }
+
     while ((m = urlRegex.exec(raw))) {
         const url = m[0];
         const idx = m.index;
+
         if (idx > last) out += raw.slice(last, idx);
-        const safeHref = encodeURI(url);
-        out += `<a href="${safeHref}" target="_blank" rel="noopener noreferrer">${safeHref}</a>`;
+
+        const safe = encodeURI(url);
+        const id = "url_" + Math.random().toString(36).slice(2);
+
+        out += `<a id="${id}" href="${safe}" target="_blank" rel="noopener noreferrer">${safe}</a>`;
+        checks.push({ id, url });
+
         last = idx + url.length;
     }
+
     if (last < raw.length) out += raw.slice(last);
 
     out = out.replace(/\r?\n/g, "<br>");
 
     codeBlocks.forEach(b => out = out.replace(b.token, b.html));
+
+    setTimeout(() => {
+        checks.forEach(c => {
+            const a = document.getElementById(c.id);
+            if (a) tryConvertToImage(a, c.url);
+        });
+    });
+
     return out;
 }
-
 function escapeHTML(s) {
     return s.replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", "\"": "&quot;", "'": "&#39;" }[c]));
 }
@@ -704,42 +732,12 @@ function createVideoEmbed(url) {
     return container;
 }
 
-function createImageEmbed(url) {
-    const container = document.createElement('div');
-    container.className = 'embed-container image-embed';
-
-    const wrapper = document.createElement('div');
-    wrapper.className = 'chat-image-wrapper';
-
-    const img = document.createElement('img');
-    img.src = proxyImageUrl(url);
-    img.alt = 'image';
-    img.className = 'message-image';
-    img.loading = 'lazy';
-    img.onerror = () => {
-        const fallback = document.createElement('a');
-        fallback.href = url;
-        fallback.target = '_blank';
-        fallback.rel = 'noopener noreferrer';
-        fallback.textContent = url;
-        fallback.className = 'failed-image-link';
-        container.replaceWith(fallback);
-    };
-    img.addEventListener('click', () => {
-        if (window.openImageModal) window.openImageModal(url);
-    });
-
-    wrapper.appendChild(img);
-    container.appendChild(wrapper);
-    return container;
-}
 
 async function createEmbed(url) {
     const embedInfo = await detectEmbedType(url);
     switch (embedInfo.type) {
         case 'youtube':       return createYouTubeEmbed(embedInfo.videoId, url);
         case 'video':         return createVideoEmbed(url);
-        case 'image': return createImageEmbed(url);
         case 'unknown':
         default:              return null;
     }
@@ -1011,7 +1009,6 @@ function makeLoadTrigger(channel, limit) {
         if (v && !seen) {
             seen = true;
             setTimeout(() => {
-                console.log("loading", channel, loadedCount);
                 state.additionalMessageLoad = true;
                 if (seen) {
                     ws.send(JSON.stringify({
@@ -1211,7 +1208,6 @@ function updateUserPanel() {
     const avatar = document.getElementById("userAvatar");
     const nameLabel = document.getElementById("usernameLabel");
     if (state.user) {
-        console.log("extract", state)
         const uname = extractUsername(state.user);
         if (avatar)
             avatar.src = `https://avatars.rotur.dev/${encodeURIComponent(uname)}`;
@@ -1254,7 +1250,6 @@ function showreplyPrompt(msg) {
     if (!banner) return;
     if (!canSend(state.currentChannel)) return;
     if (state.editing) cancelEdit();
-    console.log(msg)
     document.body.querySelector(`[data-id="${msg.id}"]`).classList.add("replyingto");
     banner.classList.remove("hidden");
     const uname =
@@ -1370,7 +1365,6 @@ function greenflag() {
     document.getElementById("usernameLabel").innerText = window.parent.roturExtension.user.username;
     document.getElementById("userAvatar").src = window.parent.roturExtension.user.pfp;
     fetch("emojis.json").then(async r => {
-        console.log(34)
         try {
             if (!r.ok) {
                 console.warn("Failed to get emojis!")
@@ -1470,7 +1464,6 @@ function lazyRenderMessages(selector = '.sing_msg') {
 
 
 function renderReactions(msg, container) {
-    console.log(87777777)
     const existing = container.querySelector('.message-reactions');
     if (existing) existing.remove();
 
