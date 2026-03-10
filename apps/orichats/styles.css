@@ -246,7 +246,7 @@ body {
     display: flex;
     gap: .5em;
     align-items: center;
-    padding: .3em .3em;
+    padding: .4em .5em;
     border-radius: .5em;
     margin-bottom: .2em;
     background-color: inherit;
@@ -281,6 +281,7 @@ body {
     &>.symb {
         font-size: 1.2em;
         opacity: .7;
+        height: fit-content;
     }
 }
 
@@ -693,37 +694,38 @@ div.blockedheader>a {
     }
 }
 
-.oembed_embed {
-    padding: 1em;
-    background: var(--col-bg2);
-    border-radius: .5em;
-    display: flex;
-    flex-direction: column;
-    gap: 5px;
-    border: var(--box-crisp);
-    margin-left: 3em;
-    max-width: 350px;
-    border-left: 3px solid var(--col-bgh);
+.embed-container {
+    overflow: hidden;
+    object-fit: cover;
+    margin-left: calc(37px + 1em);
+    min-height: fit-content;
+    height: 100%;
+    max-height: 300px;
+    object-fit: contain;
+    width: fit-content;
+    max-width: 500px;
 
-    &>.oembed_title {
-        color: dodgerblue;
-    }
-
-    & iframe {
+    & * {
+        height: fit-content;
+        max-height: 100%;
         width: 100%;
-        aspect-ratio: 9/6;
-        height: auto;
+        object-fit: contain;
+        border-radius: 1em;
+    }
+    &>* {
         border: var(--box-crisp);
-        border-radius: .5em;
     }
 }
 
-.tenor-gif-embed {
-    margin-left: 3em;
-    border-radius: 1em;
-    overflow: hidden;
-    width: 250px;
-    pointer-events: none;
+.youtube-embed {
+    text-align: center;
+    align-items: center;
+    position: relative;
+    max-height: 500px;
+
+    &>* {
+        border: var(--box-crisp);
+    }
 }
 
 a {
@@ -808,4 +810,22 @@ div#gif-results {
     font-size: small;
     margin-left: 5px;
     display: inline-block;
+}
+
+.message-reactions {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: .2em;
+    margin: .5em 0;
+    margin-top: .2em;
+}
+
+.reaction {
+    background-color: var(--col-bg2);
+    padding: .3em .5em;
+    border-radius: .5em;
+    &:hover{
+        filter: brightness(120%);
+    }
 }

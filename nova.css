@@ -1,4 +1,8 @@
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;800&display=swap');
+@font-face {
+    font-family: "Google Sans";
+    font-style: normal;
+    src: url("assets/google_sans.ttf") format('truetype');
+}
 
 @font-face {
 	font-family: 'Material Symbols Rounded';
@@ -145,7 +149,7 @@ body {
 	background-color: transparent;
 	color: var(--col-txt1);
 	user-select: none;
-	font-family: 'Poppins', sans-serif;
+	font-family: 'Google Sans', sans-serif;
 }
 
 body * {

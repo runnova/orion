@@ -36,7 +36,8 @@ let state = {
         return this._currentChannel;
     },
     typingUsers: {},
-    additionalMessageLoad: false
+    additionalMessageLoad: false,
+    _embedCache: {}
 };
 
 let emojis;
@@ -480,6 +481,8 @@ function formatMessageContent(raw) {
 
     raw = raw.replace(/@(\w+)/g, `<span class="mention" onclick="window.parent.launchSideBarApp('profile', { name: '$1' })">@$1</span>`);
 
+    raw = raw.replace(/#(\w+)/g, `<span class="mention" onclick="changeChannel('$1')">#$1</span>`);
+
     const urlRegex = /(https?:\/\/[^\s]+)/g;
     let out = "";
     let last = 0;
@@ -503,7 +506,6 @@ function formatMessageContent(raw) {
 function escapeHTML(s) {
     return s.replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", "\"": "&quot;", "'": "&#39;" }[c]));
 }
-
 
 function renderReplyExcerpt(message) {
     if (!message.reply_to) return "";
@@ -601,6 +603,186 @@ function updateChannelUnread(channelName) {
         link.appendChild(badge);
     }
 }
+
+const YOUTUBE_REGEX = /(?:youtube\.com\/watch\?v=|youtu\.be\/)([a-zA-Z0-9_-]{11})/;
+const IMAGE_EXTENSIONS = ['.jpg', '.jpeg', '.png', '.gif', '.webp', '.svg', '.bmp', '.ico', '.avif'];
+const VIDEO_EXTENSIONS = ['.mp4', '.webm', '.ogg', '.mov', '.avi', '.mkv', '.m4v'];
+
+function hasExtension(url, exts) {
+    const clean = url.split('?')[0].split('#')[0].toLowerCase();
+    return exts.some(ext => clean.endsWith(ext));
+}
+
+function proxyImageUrl(url) {
+    return 'https://proxy.mistium.com/?url=' + url;
+}
+
+function _mountYouTubeIframe(targetContainer, videoId) {
+    targetContainer.innerHTML = '';
+    const wrapper = document.createElement('div');
+    wrapper.className = 'youtube-iframe';
+    const iframe = document.createElement('iframe');
+    iframe.src = `https://www.youtube.com/embed/${videoId}?autoplay=1`;
+    iframe.allow = 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture';
+    iframe.allowFullscreen = true;
+    wrapper.appendChild(iframe);
+    targetContainer.appendChild(wrapper);
+}
+
+async function detectEmbedType(url) {
+    const ytMatch = url.match(YOUTUBE_REGEX);
+    if (ytMatch) return { type: 'youtube', videoId: ytMatch[1] };
+
+    const commitMatch = url.match(/github\.com\/([^/]+)\/([^/]+)\/commit\/([a-f0-9]{7,40})/i);
+    if (commitMatch) {
+        return { type: 'github_commit', owner: commitMatch[1], repo: commitMatch[2], sha: commitMatch[3], url };
+    }
+
+    if (/tenor\.com\/view\/[\w-]+-\d+(?:\?.*)?$/i.test(url)) {
+        const id = url.match(/tenor\.com\/view\/[\w-]+-(\d+)/i)?.[1];
+        return { type: 'tenor', id, url };
+    }
+
+    if (/github\.com\/([a-zA-Z0-9-]+(?:\/[a-zA-Z0-9._-]+)?)(?:\/)?$/i.test(url)) {
+        const path = url.match(/github\.com\/([a-zA-Z0-9-]+(?:\/[a-zA-Z0-9._-]+)?)/i)?.[1];
+        return { type: 'github', path, url };
+    }
+
+    if (hasExtension(url, VIDEO_EXTENSIONS) || url.startsWith('data:video/')) return { type: 'video', url };
+    if (hasExtension(url, IMAGE_EXTENSIONS) || url.startsWith('data:image/')) return { type: 'image', url };
+
+    try {
+        const controller = new AbortController();
+        const timer = setTimeout(() => controller.abort(), 5000);
+        const res = await fetch(url, { method: 'HEAD', mode: 'cors', signal: controller.signal });
+        clearTimeout(timer);
+        if (res.ok) {
+            const ct = res.headers.get('Content-Type') || '';
+            if (ct.startsWith('video/')) return { type: 'video', url };
+            if (ct.startsWith('image/')) return { type: 'image', url };
+        }
+    } catch (err) {
+        console.debug('HEAD request failed for', url, err);
+    }
+
+    return { type: 'unknown', url };
+}
+
+function createYouTubeEmbed(videoId) {
+      const container = document.createElement('div');
+        container.className = 'embed-container youtube-embed';
+    const iframe = document.createElement('iframe');
+    iframe.width = "560";
+    iframe.height = "315";
+    iframe.src = `https://www.youtube.com/embed/${videoId}`;
+    iframe.title = "YouTube video player";
+    iframe.allow = "accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share";
+    iframe.allowFullscreen = true;
+    iframe.referrerPolicy = "strict-origin-when-cross-origin";
+    container.appendChild(iframe);
+    return container;
+}
+
+function createVideoEmbed(url) {
+    const container = document.createElement('div');
+    container.className = 'embed-container video-embed';
+    const video = document.createElement('video');
+    video.src = url;
+    video.controls = true;
+    video.preload = 'metadata';
+    video.className = 'video-player';
+    video.onerror = () => {
+        container.innerHTML = '';
+        const link = document.createElement('a');
+        link.href = url;
+        link.target = '_blank';
+        link.rel = 'noopener noreferrer';
+        link.textContent = 'Video failed to load — click to open';
+        container.appendChild(link);
+    };
+    container.appendChild(video);
+    return container;
+}
+
+function createImageEmbed(url) {
+    const container = document.createElement('div');
+    container.className = 'embed-container image-embed';
+
+    const wrapper = document.createElement('div');
+    wrapper.className = 'chat-image-wrapper';
+
+    const img = document.createElement('img');
+    img.src = proxyImageUrl(url);
+    img.alt = 'image';
+    img.className = 'message-image';
+    img.loading = 'lazy';
+    img.onerror = () => {
+        const fallback = document.createElement('a');
+        fallback.href = url;
+        fallback.target = '_blank';
+        fallback.rel = 'noopener noreferrer';
+        fallback.textContent = url;
+        fallback.className = 'failed-image-link';
+        container.replaceWith(fallback);
+    };
+    img.addEventListener('click', () => {
+        if (window.openImageModal) window.openImageModal(url);
+    });
+
+    wrapper.appendChild(img);
+    container.appendChild(wrapper);
+    return container;
+}
+
+async function createEmbed(url) {
+    const embedInfo = await detectEmbedType(url);
+    switch (embedInfo.type) {
+        case 'youtube':       return createYouTubeEmbed(embedInfo.videoId, url);
+        case 'video':         return createVideoEmbed(url);
+        case 'image': return createImageEmbed(url);
+        case 'unknown':
+        default:              return null;
+    }
+}
+
+
+function _processEmbedLinks(embedLinks, groupContent) {
+    groupContent.querySelectorAll('.embed-container').forEach(e => e.remove());
+
+    for (const url of embedLinks) {
+        if (hasExtension(url, VIDEO_EXTENSIONS) || url.startsWith('data:video/')) continue;
+
+        if (url in state._embedCache) {
+            const cachedEl = state._embedCache[url];
+            if (!cachedEl) continue;
+
+            const cloned = cachedEl.cloneNode(true);
+
+            // Re-wire YouTube click handler after cloneNode
+            const thumbnail = cloned.querySelector('.youtube-thumbnail');
+            if (thumbnail) {
+                const videoId = url.match(YOUTUBE_REGEX)?.[1];
+                const container = thumbnail.closest('.youtube-embed');
+                if (container && videoId) {
+                    thumbnail.addEventListener('click', () => _mountYouTubeIframe(container, videoId));
+                }
+            }
+
+            groupContent.appendChild(cloned);
+        } else {
+            createEmbed(url)
+                .then(embedEl => {
+                    state._embedCache[url] = embedEl ? embedEl.cloneNode(true) : null;
+                    if (embedEl) groupContent.appendChild(embedEl);
+                })
+                .catch(err => {
+                    console.debug('createEmbed failed for', url, err);
+                    state._embedCache[url] = null;
+                });
+        }
+    }
+}
+
 async function fetchMetadata(url) {
     const proxy = 'https://proxy.mistium.com/?url=';
     try {
@@ -626,179 +808,13 @@ function decodeHtml(html) {
     txt.innerHTML = html;
     return txt.value;
 }
-async function detectType(url) {
-    try {
-        const r = await fetch(url, { method: 'HEAD' });
-        return r.headers.get('content-type') || "";
-    } catch {
-        return "";
-    }
-}
-async function detectType(url) {
-    try {
-        const r = await fetch(url, { method: 'HEAD' });
-        return r.headers.get('content-type') || "";
-    } catch {
-        return "";
-    }
-}
-
-async function attachTenor(container, url) {
-    const match = url.match(/tenor\.com\/view\/.*-(\d+)$/);
-    if (!match) return false;
-    const postId = match[1];
-    try {
-        const res = await fetch(`https://tenor.googleapis.com/v2/posts?ids=${postId}&key=YOUR_TENOR_API_KEY`);
-        const json = await res.json();
-        const gifUrl = json.results[0].media_formats.gif.url;
-        const img = document.createElement("img");
-        img.src = gifUrl;
-        container.appendChild(img);
-        return true;
-    } catch {
-        return false;
-    }
-}
-function embedTenor(container, url) {
-    const match = url.match(/tenor\.com\/view\/.*-(\d+)$/);
-    if (!match) return false;
-
-    const postId = match[1];
-
-    const div = document.createElement("div");
-    div.className = "tenor-gif-embed";
-    div.setAttribute("data-postid", postId);
-    div.setAttribute("data-share-method", "host");
-    div.setAttribute("data-aspect-ratio", "0.971888");
-    div.setAttribute("data-width", "250");
-    div.style.width = "auto";
-    div.innerHTML = `<a href="https://tenor.com/view/${postId}">GIF</a> from <a href="https://tenor.com/search/gifs">Tenor GIFs</a>`;
-
-    const script = document.createElement("script");
-    script.type = "text/javascript";
-    script.async = true;
-    script.src = "https://tenor.com/embed.js";
-
-    container.appendChild(div);
-    container.appendChild(script);
-
-    return true;
-}
-
-async function detectType(url) {
-    try {
-        const r = await fetch(url, { method: 'HEAD' });
-        return r.headers.get('content-type') || "";
-    } catch {
-        return "";
-    }
-}
-
-async function attachEmbed(container, url) {
-    if (url.includes("tenor.com")) {
-        const ok = embedTenor(container, url);
-        if (ok) return;
-    }
-
-    let data = null;
-    const oembedProviders = ['youtube.com', 'vimeo.com', 'twitter.com', 'flickr.com'];
-    const provider = oembedProviders.find(s => url.includes(s));
-
-    if (provider) {
-        const api = {
-            'youtube.com': `https://www.youtube.com/oembed?url=${encodeURIComponent(url)}&format=json`,
-            'vimeo.com': `https://vimeo.com/api/oembed.json?url=${encodeURIComponent(url)}`,
-            'twitter.com': `https://publish.twitter.com/oembed?url=${encodeURIComponent(url)}`,
-            'flickr.com': `https://www.flickr.com/services/oembed?url=${encodeURIComponent(url)}&format=json`
-        };
-        try {
-            const r = await fetch(api[provider]);
-            data = await r.json();
-        } catch {
-            data = null;
-        }
-    }
-
-    const mime = data ? "" : await detectType(url);
-    const wrap = document.createElement("div");
-    wrap.classList.add("oembed_embed");
-
-    const html = data?.html;
-    const isImg = mime.startsWith("image/");
-    const isVid = mime.startsWith("video/");
-
-    function decode(h) {
-        const t = document.createElement('textarea');
-        t.innerHTML = h;
-        return t.value;
-    }
-
-    if (isImg) {
-        const el = document.createElement("img");
-        el.src = url;
-        wrap.appendChild(el);
-    } else if (isVid) {
-        const el = document.createElement("video");
-        el.src = url;
-        el.controls = true;
-        wrap.appendChild(el);
-    } else if (data) {
-        if (data.author_name) {
-            const ch = document.createElement("div");
-            ch.classList.add("oembed_author");
-            ch.textContent = data.author_name;
-            wrap.appendChild(ch);
-        }
-
-        if (data.title) {
-            const ti = document.createElement("div");
-            ti.classList.add("oembed_title");
-            ti.textContent = data.title;
-            wrap.appendChild(ti);
-        }
-
-        if (html) {
-            const d = decode(html).trim();
-            if (d.startsWith("http")) {
-                const f = document.createElement("iframe");
-                f.src = d;
-                f.width = '560';
-                f.height = '315';
-                f.allow = 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture';
-                f.allowFullscreen = true;
-                wrap.appendChild(f);
-            } else {
-                const div = document.createElement("div");
-                div.innerHTML = d;
-                wrap.appendChild(div);
-            }
-        } else if (data.thumbnail_url) {
-            const el = document.createElement("img");
-            el.src = data.thumbnail_url;
-            wrap.appendChild(el);
-        }
-    } else {
-        const a = document.createElement("a");
-        a.href = url;
-        a.textContent = url;
-        a.target = "_blank";
-        wrap.appendChild(a);
-    }
-
-    container.appendChild(wrap);
-}
 
 function detectEmbeds(messageDiv, text) {
+    if (!state._embedCache) state._embedCache = {};
     const urls = [...text.matchAll(/https?:\/\/[^\s]+/g)].map(m => m[0]);
-    urls.forEach(url => attachEmbed(messageDiv, url));
+    if (urls.length === 0) return;
+    _processEmbedLinks(urls, messageDiv);
 }
-
-
-function detectEmbeds(messageDiv, text) {
-    const urls = [...text.matchAll(/https?:\/\/[^\s]+/g)].map(m => m[0]);
-    urls.forEach(url => attachEmbed(messageDiv, url));
-}
-
 
 function renderMessage(message) {
     if (message && message.id) {
@@ -1489,12 +1505,13 @@ function renderReactions(msg, container) {
 }
 
 function updateMessageReactions(msgId) {
-    console.log("UPDATE MSG REA");
     const wrapper = document.querySelector(`[data-id="${msgId}"]`);
     if (!wrapper) return;
 
-    const msg = state.messages[state.currentChannel.name]?.find(m => m.id === msgId);
+    const msg = state.messages[msgId];
     if (!msg) return;
+
+    console.log("UPDATE MSG REA");
 
     const groupContent = wrapper.querySelector('.data');
     if (groupContent) {
