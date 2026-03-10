@@ -217,7 +217,7 @@ body {
                     font-size: inherit;
                     border: 0;
                     min-height: 0;
-                    height: 1.5em;
+                    height: fit-content;
                     padding: .7em 1em;
                     outline: 0;
                     flex-grow: 1;
@@ -244,10 +244,11 @@ body {
 
 .single_chnl {
     display: flex;
-    gap: .3em;
+    gap: .5em;
     align-items: center;
-    padding: .3em;
+    padding: .3em .3em;
     border-radius: .5em;
+    margin-bottom: .2em;
     background-color: inherit;
     cursor: pointer;
     background-color: var(--col-bg2);

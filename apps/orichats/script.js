@@ -164,7 +164,6 @@ function attachWsHandlers() {
             }
             case "ready": {
                 state.user = data.user;
-                console.log("User ready", JSON.parse(state.user));
                 updateUserPanel();
                 break;
             }
@@ -284,8 +283,7 @@ function attachWsHandlers() {
                 break;
             }
             case 'message_react_add': {
-                if (!state.messages[data.channel]) break;
-                const message = state.messages[data.channel].find(m => m.id === data.id);
+                const message = state.messages[data.id];
                 if (!message) break;
 
                 if (!message.reactions) message.reactions = {};
@@ -296,26 +294,25 @@ function attachWsHandlers() {
                     message.reactions[data.emoji].push(data.from);
                 }
 
-                if (data.channel === state.currentChannel?.name) {
+                if (data.channel === state.currentChannel) {
                     updateMessageReactions(data.id);
                 }
                 break;
             }
             case 'message_react_remove': {
-                if (!state.messages[msg.channel]) break;
-                const message = state.messages[msg.channel].find(m => m.id === msg.id);
-                if (!message || !message.reactions || !message.reactions[msg.emoji]) break;
+                const message = state.messages[data.channel].find(m => m.id === data.id);
+                if (!message || !message.reactions || !message.reactions[data.emoji]) break;
 
-                const users = message.reactions[msg.emoji];
-                const idx = users.indexOf(msg.from);
+                const users = message.reactions[data.emoji];
+                const idx = users.indexOf(data.from);
                 if (idx > -1) users.splice(idx, 1);
 
                 if (users.length === 0) {
-                    delete message.reactions[msg.emoji];
+                    delete message.reactions[data.emoji];
                 }
 
-                if (msg.channel === state.currentChannel?.name) {
-                    updateMessageReactions(msg.id);
+                if (data.channel === state.currentChannel?.name) {
+                    updateMessageReactions(data.id);
                 }
                 break;
             }
@@ -1093,7 +1090,6 @@ function changeChannel(channel) {
 }
 
 function getUserColor(username) {
-    console.log(username,)
     const u = state?.users?.[username];
     const hex = u?.color || "#888888";
     const r = parseInt(hex.slice(1, 3), 16) / 255;
@@ -1199,6 +1195,7 @@ function updateUserPanel() {
     const avatar = document.getElementById("userAvatar");
     const nameLabel = document.getElementById("usernameLabel");
     if (state.user) {
+        console.log("extract", state)
         const uname = extractUsername(state.user);
         if (avatar)
             avatar.src = `https://avatars.rotur.dev/${encodeURIComponent(uname)}`;
@@ -1457,6 +1454,7 @@ function lazyRenderMessages(selector = '.sing_msg') {
 
 
 function renderReactions(msg, container) {
+    console.log(87777777)
     const existing = container.querySelector('.message-reactions');
     if (existing) existing.remove();
 
@@ -1491,6 +1489,7 @@ function renderReactions(msg, container) {
 }
 
 function updateMessageReactions(msgId) {
+    console.log("UPDATE MSG REA");
     const wrapper = document.querySelector(`[data-id="${msgId}"]`);
     if (!wrapper) return;
 

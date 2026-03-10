@@ -47,7 +47,7 @@ function greenflag() {
             data.className = "data";
 
             const name = document.createElement("strong");
-            name.textContent = item.user;
+            name.textContent = item.username || item.user;
 
             const text = document.createElement("span");
             if (item.kind === "notif") {
