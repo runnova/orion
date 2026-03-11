@@ -140,12 +140,13 @@ body {
     flex: 1;
     height: 0;
 
-    &>.channels,
-    &>.members_list {
+    & .channels,
+    & .members_list {
         width: 230px;
         background-color: var(--col-bg2);
         display: flex;
         flex-direction: column;
+        overflow-y: auto;
     }
 
     &>.channels,
@@ -161,6 +162,7 @@ body {
         flex-direction: column;
         padding: .5em;
         gap: .5em;
+        overflow-y: auto;
 
         &>.sublist_title {
             font-size: small;
