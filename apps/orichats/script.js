@@ -47,14 +47,9 @@ let ws = null;
 const membersList = document.querySelector(".members_list");
 
 document.getElementById("memberlistbtn")?.addEventListener("click", () => {
-    if (state.members_list_shown)
-        membersList.remove();
-    else
-        document.querySelector(".server_ui").append(membersList);
-
-    state.members_list_shown = !state.members_list_shown;
-})
-
+    membersList.style.display =
+        membersList.style.display === "none" ? "" : "none";
+});
 function userKeysUpdate() {
     state.user_keys = window.parent.roturExtension.user ?? {};
 }
@@ -107,8 +102,14 @@ function attachWsHandlers() {
                     .getElementById("currentServerIcon")
                     ?.setAttribute("src", state.server.icon || "");
                 const sName = state.server.name || state.server.title || "Server";
-                const header = document.getElementById("serverHeaderName");
-                if (header) header.textContent = sName;
+                const headert = document.getElementById("serverHeaderName");
+                if (headert) headert.textContent = sName;
+                const sIcon = state.server.icon;
+                const headerimg = document.getElementById("serverHeaderIcon");
+                if (headerimg) headerimg.src = sIcon;
+                const sURL = state.server.url;
+                const headerurl = document.getElementById("serverHeaderURL");
+                if (headerurl) headerurl.textContent = sURL;
                 const authTok = roturToken();
                 if (authTok && vKey) {
                     try {
@@ -1086,7 +1087,9 @@ function changeChannel(channel) {
         el.classList.toggle("active", el.id === `channel_${channel}`);
     });
 
-    document.getElementsByClassName("channel_name")[0].innerText = channel;
+    document.getElementById("channelNameDisp").innerText = channel;
+    document.getElementById("channelDescDisp").innerText = state.channels[channel].description || "Welcome to " + channel;
+    
     const mainTxtAr = document.getElementById("mainTxtAr");
     if (mainTxtAr) mainTxtAr.placeholder = `Message #${channel}`;
 
@@ -1104,7 +1107,7 @@ function changeChannel(channel) {
 
 function getUserColor(username) {
     const u = state?.users?.[username];
-    const hex = u?.color || "#888888";
+    const hex = u?.color || "#ffffff";
     const r = parseInt(hex.slice(1, 3), 16) / 255;
     const g = parseInt(hex.slice(3, 5), 16) / 255;
     const b = parseInt(hex.slice(5, 7), 16) / 255;
@@ -1284,8 +1287,9 @@ document.getElementById("top_panel").addEventListener("click", () => {
 
 async function changeServer() {
     currentServer = await window.parent.ask("Enter a server URL:") || currentServer;
+    localStorage.setItem("currentServer", currentServer);
     ws.close();
-    connectWebSocket();
+    greenflag();
 }
 
 
@@ -1363,7 +1367,7 @@ function sendTyping() {
 function greenflag() {
     setupTypingListener();
     document.getElementById("usernameLabel").innerText = window.parent.roturExtension.user.username;
-    document.getElementById("userAvatar").src = window.parent.roturExtension.user.pfp;
+    document.getElementById("userAvatar").src = `https://avatars.rotur.dev/${encodeURIComponent(window.parent.roturExtension.user.username)}`;
     fetch("emojis.json").then(async r => {
         try {
             if (!r.ok) {

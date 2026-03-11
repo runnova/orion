@@ -25,10 +25,17 @@
         <![endif]-->
     <div class="session">
         <div class="server_ui">
-<div class="serversbar"></div>
+            <div class="serversbar"></div>
             <div class="channels">
-                <div class="server_data top_panel" id="top_panel"><span id="serverHeaderName">OriginChats</span><span
-                        class="material-symbols-rounded opener_chev">arrow_right</span></div>
+                <div class="server_data top_panel" id="top_panel">
+                    <img src="" id="serverHeaderIcon">
+                    <div id="serverHeaderText">
+                        <span id="serverHeaderName">OriginChats</span>
+                        <span id="serverHeaderURL"></span>
+                    </div>
+                    <div class="fill"></div>
+                    <span class="material-symbols-rounded opener_chev">arrow_right</span>
+                </div>
                 <div id="serverControls">
                     <div class="single_chnl" onclick="changeServer()">
                         <div class="material-symbols-rounded">
@@ -49,61 +56,7 @@
                         </div>
                     </div>
                 </div>
-            </div>
-            <div class="feed">
-                <div class="top_panel">
-                    <div class="channel_name">General</div>
-                    <button id="memberlistbtn">
-                        <span class="material-symbols-rounded">group</span>
-                    </button>
-                </div>
-                <div id="msgs_list">
-                </div>
-                <div id="replyPrompt" class="hidden">
-                    <div>Replying to <div id="replyun">darkdot</div>
-                    </div>
-                    <div class="clsbtn material-symbols-rounded">close</div>
-                </div>
-                <div class="msg_area">
-                    <div class="floating" id="emojipicker">
-                        <div class="picker-header">
-                            <button class="tab-btn active" data-tab="emoji"
-                                onclick="switchPickerTab('emoji')">Emojis</button>
-                            <button class="tab-btn" data-tab="gif" onclick="switchPickerTab('gif')">GIFs</button>
-                        </div>
-
-                        <div id="picker-content">
-                            <div id="emoji-tab" class="picker-tab active">
-                                 <div class="gif-search-bar">
-                                    <input type="text" id="emojiSearch" placeholder="Search Emojis..."
-                                        autocomplete="off">
-                                    <span class="material-symbols-rounded">search</span>
-                                </div>
-                                <div id="emojiscrollable"></div>
-                            </div>
-
-                            <div id="gif-tab" class="picker-tab" style="display:none">
-                                <div class="gif-search-bar">
-                                    <input type="text" id="gif-search" placeholder="Search Tenor GIFs..."
-                                        autocomplete="off">
-                                    <span class="material-symbols-rounded">search</span>
-                                </div>
-                                <div id="gif-results"></div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="messagebar"><textarea type="text" placeholder="Message #General" id="mainTxtAr"
-                            rows="1"></textarea>
-
-                        <i class="material-symbols-rounded bicn" onclick="toggleEmojiMenu()">mood</i>
-                        <i class="material-symbols-rounded bicn">send</i>
-                    </div>
-                    <div id="typing">...</div>
-                </div>
-            </div>
-            <div class="members_list">
-                <div class="profile_card top_panel">
+                <div class="profile_card">
                     <img class="pfp" id="userAvatar" src="https://rotur.dev/Rotur%20Logo.png">
                     <div class="data">
                         <div class="name" id="usernameLabel">darkdot</div>
@@ -111,18 +64,77 @@
                     </div>
                     <div class="settings_btn"></div>
                 </div>
-                <div class="members_lists">
-                    <div class="sublist_title">Online</div>
-                    <div class="members_sublist">
-                        <div class="profile_card">
-                            <img class="pfp" src="https://rotur.dev/Rotur%20Logo.png">
-                            <div class="data">
-                                <div class="name">darkdot</div>
+            </div>
+            <div class="feedcontainer">
+                <div class="top_panel">
+                    <div class="channelDisp">
+                        <div class="material-symbols-rounded">
+                            forum
+                        </div>
+                        <div class="name">
+                            <div id="channelNameDisp"></div>
+                            <div id="channelDescDisp"></div>
+                        </div>
+                    </div>
+                    <div class="btngrp" style="margin-left: auto;">
+                        <i class="material-symbols-rounded bicn">search</i>
+                        <i class="material-symbols-rounded bicn">pin</i>
+                        <i class="material-symbols-rounded bicn">inbox</i>
+                        <i class="material-symbols-rounded bicn" id="memberlistbtn">group</i>
+                    </div>
+                </div>
+                <div class="feed">
+
+                    <div class="messageFeed">
+                        <div id="msgs_list">
+                        </div>
+                        <div id="replyPrompt" class="hidden">
+                            <div>Replying to <div id="replyun">darkdot</div>
+                            </div>
+                            <div class="clsbtn material-symbols-rounded">close</div>
+                        </div>
+                        <div class="msg_area">
+                            <div class="floating" id="emojipicker">
+                                <div id="picker-content">
+                                    <div id="emoji-tab" class="picker-tab active">
+                                        <div class="gif-search-bar">
+                                            <input type="text" id="emojiSearch" placeholder="Search Emojis..."
+                                                autocomplete="off">
+                                            <span class="material-symbols-rounded">search</span>
+                                        </div>
+                                        <div id="emojiscrollable"></div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="messagebar"><textarea type="text" placeholder="Message #General" id="mainTxtAr"
+                                    rows="1"></textarea>
+
+                                <i class="material-symbols-rounded bicn" onclick="toggleEmojiMenu()">mood</i>
+                                <i class="material-symbols-rounded bicn">send</i>
+                            </div>
+                            <div id="typing">...</div>
+                        </div>
+                    </div>
+                    <div class="members_list">
+                        <div class="members_lists">
+                            <div class="sublist_title">Online</div>
+                            <div class="members_sublist">
+                                <div class="profile_card">
+                                    <img class="pfp" src="https://rotur.dev/Rotur%20Logo.png">
+                                    <div class="data">
+                                        <div class="name">darkdot</div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
+
+
                 </div>
             </div>
+
+
         </div>
     </div>
     <script src="script.js" async defer></script>

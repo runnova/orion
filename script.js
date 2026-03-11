@@ -355,9 +355,6 @@ async function setTheme(themeName, documentItem = document.documentElement) {
 	let themeDecs = theme[themeName];
 	Object.keys(themeDecs).forEach(key => {
 		let val = themeDecs[key];
-		if (settings.get("img_bg") && /^#([0-9a-f]{3}|[0-9a-f]{6})$/i.test(val)) {
-			val = hexToRGBA(val, 0.8);
-		}
 		documentItem.style.setProperty(key, val);
 	});
 }

@@ -25,6 +25,10 @@ body {
     overflow: hidden;
 }
 
+.fill {
+    flex: 1;
+}
+
 .session {
     display: flex;
     flex-direction: column;
@@ -33,6 +37,31 @@ body {
 
 .server_data {
     width: 200px;
+    display: flex;
+    align-items: center;
+    gap: .5em;
+
+    & #serverHeaderIcon {
+        width: 2em;
+        border-radius: .5em;
+        border: var(--box-crisp);
+    }
+
+    & span#serverHeaderURL {
+        font-size: small;
+        opacity: .5;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        width: 90%;
+        display: block;
+        white-space: nowrap;
+    }
+}
+
+.feedcontainer {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
 }
 
 #top_panel {
@@ -41,12 +70,17 @@ body {
 
 .top_panel {
     width: calc(100% - 1.6em);
-    background-color: var(--col-bg3) !important;
+    background-color: var(--col-bg2);
     padding: .8em;
     justify-content: space-between;
     align-content: center;
     display: flex;
     gap: .3em;
+    transition: .2s;
+
+    &:hover {
+        background-color: var(--col-bg3);
+    }
 
     &.profile_card {
         padding: 3.5px;
@@ -66,16 +100,11 @@ body {
     gap: .5em;
     flex-grow: 0;
     align-items: center;
-    transition: .2s;
     background-color: inherit;
     cursor: pointer;
 
     &.offline {
         opacity: .5;
-    }
-
-    &:hover {
-        filter: brightness(140%);
     }
 
     &>.pfp {
@@ -115,6 +144,8 @@ body {
     &>.members_list {
         width: 230px;
         background-color: var(--col-bg2);
+        display: flex;
+        flex-direction: column;
     }
 
     &>.channels,
@@ -125,6 +156,7 @@ body {
     }
 
     & .members_lists {
+        background-color: var(--col-bg2);
         display: flex;
         flex-direction: column;
         padding: .5em;
@@ -139,6 +171,7 @@ body {
     }
 
     & #channels {
+        flex-grow: 1;
         padding: .5em;
 
         &>hr {
@@ -146,7 +179,30 @@ body {
         }
     }
 
+    .channels {
+        & .profile_card {
+            width: 100%;
+            display: flex;
+            gap: .5em;
+            flex-grow: 0;
+            align-items: center;
+            background-color: var(--col-bg2);
+            padding: 1em;
+        }
+    }
+
     .feed {
+        display: flex;
+        flex: 1;
+        flex-direction: row;
+        overflow: hidden;
+
+        &>* {
+            transition: flex .2s cubic-bezier(0.075, 0.82, 0.165, 1);
+        }
+    }
+
+    .messageFeed {
         flex: 1;
         display: flex;
         width: 0;
@@ -290,6 +346,8 @@ body {
     padding: 1em 0;
     scroll-padding: 0;
     padding: 1em .5em;
+    overflow: hidden;
+    overflow-y: scroll;
 }
 
 .sing_msg {
@@ -310,17 +368,18 @@ body {
     &>.reply-excerpt {
         opacity: .7;
         overflow: hidden;
-        width: calc(100% - 50px);
-        white-space: nowrap;
-        text-overflow: ellipsis;
         align-items: center;
         padding-left: 24px;
         gap: 5px;
         display: flex;
+        max-width: 1000px;
 
         &>.reply-preview {
+            opacity: .5;
             overflow: hidden;
             text-overflow: ellipsis;
+            white-space: nowrap;
+            width: 100%;
         }
     }
 
@@ -331,6 +390,7 @@ body {
         padding: 3px 5px;
         gap: .5em;
         position: relative;
+        text-rendering: optimizeSpeed;
 
         &.extra {
             align-items: center;
@@ -383,6 +443,7 @@ body {
             &>p {
                 margin: 0;
                 user-select: text;
+                opacity: .9;
 
                 & a {
                     overflow: hidden;
@@ -600,14 +661,6 @@ div.blockedheader>a {
     color: #1397cb;
 }
 
-#memberlistbtn {
-    background-color: transparent;
-    border: none;
-    color: var(--col-txt1);
-    padding: 0;
-    font-size: 0;
-}
-
 .floating {
     position: absolute;
     bottom: 5em;
@@ -714,6 +767,7 @@ div.blockedheader>a {
         object-fit: contain;
         border-radius: 1em;
     }
+
     &>* {
         border: var(--box-crisp);
     }
@@ -827,7 +881,40 @@ div#gif-results {
     background-color: var(--col-bg2);
     padding: .3em .5em;
     border-radius: .5em;
-    &:hover{
+
+    &:hover {
         filter: brightness(120%);
+    }
+}
+
+.channelDisp {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: .5em;
+
+    &>.name {
+        display: inherit;
+        flex-direction: column;
+
+        &>#channelDescDisp {
+            opacity: .5;
+            font-size: small;
+        }
+    }
+}
+
+.btngrp {
+    display: flex;
+    align-items: center;
+    gap: .2em;
+
+    &>* {
+        padding: .3em;
+
+        &:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: .5em;
+        }
     }
 }
