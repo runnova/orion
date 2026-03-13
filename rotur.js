@@ -1743,10 +1743,7 @@ async function roturTWEventCall(data, payload) {
 const params = new URLSearchParams(location.search)
 const s = params.get('rtr')
 if (s != "dont" && null == params.get('profile')) {
-        document.body.innerHTML = "saving you from an outdated client, in 3 seconds...";
-        setTimeout(() => {
-            location.replace("https://originchats.mistium.com/")
-        }, 3000);
+    attemptConnection();
 }
 else {
     startupLoader.mark_complete("4")
@@ -1754,8 +1751,7 @@ else {
 
     const params = new URLSearchParams(location.search)
     const s = params.get('s')
-    if (s) { openApp(s) } else {
-    }
+    if (s) openApp(s)
     setTimeout(() => {
         launchSideBarApp("profile", { name: params.get('profile') });
         document.getElementById("sidebarapp").classList.add("onlySideBarApp")
