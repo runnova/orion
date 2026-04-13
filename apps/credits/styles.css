@@ -429,5 +429,14 @@ iframe#kycframe {
     border: 0;
     outline: none;
     border-radius: .5em;
-    filter: invert(1);
+}
+
+.credit {
+    width: 100%;
+    text-align: center;
+    font-size: 1em;
+    font-weight: bold;
+    background: white;
+    color: black;
+    padding: 1em 0;
 }
