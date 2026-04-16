@@ -951,3 +951,14 @@ dialog#orionBadgeAlert {
         border: var(--box-crisp);
     }
 }
+
+#rotur-auth {
+    width: calc(100vw - 1em);
+    height: calc(100vh - 1em);
+    top: .5em;
+    left: .5em;
+    pointer-events: auto;
+    position: absolute;
+    z-index: 999;
+    border: 0;
+}

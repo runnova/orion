@@ -379,27 +379,24 @@ class RoturExtension {
         return false;
     }
 
-    login_prompt({ STYLE_URL }) {
+    async login_prompt() {
         if (!this.is_connected) { console.error("Not Connected"); return; }
         if (this.authenticated) { console.error("Already Logged In"); return; }
 
-        const e = document.createElement("iframe");
-        e.id = "rotur-auth";
-        e.src = `https://rotur.dev/auth?system=orion&styles=${encodeURIComponent(STYLE_URL)}`;
-        Object.assign(e.style, {
-            width: "70%",
-            height: "80%",
-            border: "none",
-            pointerEvents: "auto",
-            position: "absolute",
-            top: "10%",
-            right: "14.5%",
-            border: "var(--box-crisp)",
-            borderRadius: "1em",
-            zIndex: 999
-        });
+        const style_url = "assets/roturstyle.css"
 
-        document.body.appendChild(e);
+        const css = await fetch(style_url).then(r => r.text())
+        const dataUri = `data:text/css;charset=utf-8,${encodeURIComponent(css)}`
+        const e = document.createElement("iframe")
+        e.id = "rotur-auth"
+        e.src = `https://rotur.dev/auth?system=orion&styles=${encodeURIComponent(dataUri)}`
+        e.style.visibility = "hidden"
+
+        e.addEventListener("load", () => {
+            e.style.visibility = "visible"
+        })
+
+        document.body.appendChild(e)
 
         const _roturAuthHandler = (a) => {
             if ("https://rotur.dev" === a.origin && "rotur-auth-token" === a.data?.type) {
@@ -1721,7 +1718,7 @@ async function roturTWEventCall(data, payload) {
                     await roturExtension.loginToken({ TOKEN: JSON.parse(localroturdata).token })
                 }
             } else {
-                roturExtension.login_prompt({ STYLE_URL: "https://runnova.github.io/NovaOS/libs/roturstyle.css" });
+                roturExtension.login_prompt();
             }
 
             const params = new URLSearchParams(location.search)

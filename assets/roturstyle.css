@@ -1,0 +1,74 @@
+html {
+    --primary: #9B302F !important;
+}
+body {
+    background-color: transparent !important;
+}
+
+.modal {
+    position: relative;
+}
+
+.security-notice {
+    display: none;
+}
+
+.main-content {
+    align-items: stretch;
+
+    &>* {
+        align-items: center;
+
+        &>* {
+            max-width: none !important;
+        }
+    }
+}
+
+.form-group {
+    max-width: none;
+}
+
+.btn-primary {
+    position: absolute;
+    bottom: 2em;
+    right: 2em;
+    width: fit-content;
+}
+
+.sidebar-header>p {
+    position: relative;
+    color: transparent;
+    opacity: .5;
+
+    &:after {
+        position: absolute;
+        top: 0;
+        left: 0;
+        content: "Orion is a Rotur client.";
+        color: var(--text);
+    }
+}
+
+.google-signin-container,
+[style="width:100%;max-width:320px;display:flex;justify-content:center;margin-top:1rem;"] {
+    display: none !important;
+}
+
+.logo-container {
+    width: fit-content;
+    margin: 0 auto;
+    overflow: hidden;
+    border-radius: 1em;
+    margin-bottom: 1.5em;
+}
+
+.subtitle::after {
+    content: " to continue to Orion.";
+}
+
+.tos-links {
+    position: absolute;
+    bottom: 2em;
+    text-align: justify;
+}
