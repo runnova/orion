@@ -1,6 +1,8 @@
-html {
+:root {
     --primary: #9B302F !important;
+    --primary-hover: #c27742;
 }
+
 body {
     background-color: transparent !important;
 }
@@ -55,6 +57,10 @@ body {
     display: none !important;
 }
 
+[style="margin-top:1.5rem;display:flex;flex-direction:column;gap:0.75rem;width:100%;max-width:280px;"] {
+    margin: auto;
+}
+
 .logo-container {
     width: fit-content;
     margin: 0 auto;
@@ -71,4 +77,44 @@ body {
     position: absolute;
     bottom: 2em;
     text-align: justify;
+}
+
+.h-captcha {
+    margin-bottom: 4em;
+    text-align: center;
+}
+
+.welcome-content h1 {
+    height: 2em;
+    color: transparent;
+    position: relative;
+    white-space: nowrap;
+
+    &::after {
+        content: "Welcome to Orion!";
+        font-size: 39px;
+        color: var(--text);
+        top: 0;
+        left: 0;
+        position: absolute;
+        text-align: center;
+    }
+}
+
+.welcome-content p {
+    color: transparent;
+    position: relative;
+
+    &::after {
+        content: "Sign in to your Rotur account or create a new one.";
+        color: var(--text-secondary);
+        top: 0;
+        left: 0;
+        position: absolute;
+        text-align: center;
+    }
+}
+
+.welcome-logo img {
+    content: url(https://runnova.github.io/orion/oclogo.png);
 }

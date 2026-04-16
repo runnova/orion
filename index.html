@@ -158,72 +158,53 @@
             <span>Orion's client cache service</span>
             <button onclick="clearCache()">Clear</button>
         </div>
-        <h3>Originchats</h3>
-        <div class="sing_setting">
-            <span>Don't tell others that I'm typing</span>
-            <div class="checkbox" data-setting="send_typing">
-                <i class="ball"></i>
-            </div>
-        </div>
-        <div class="sing_setting">
-            <span>Message logger</span>
-            <div class="checkbox" data-setting="ori_msg_lgger">
-                <i class="ball"></i>
-            </div>
-        </div>
         <div class="abtblk">
             <h2>OrionClient</h2>
-            <p>Thanks <a>rotur.dev</a> for maintaining RoturTW. Special thanks to the developers and their community. OrionClient runs code from the open-source web-system, <a>NovaOS Web</a>.</p>
+            <p>Developed an maintained by <a onclick="launchSideBarApp('profile', { name: 'darkdot' });"
+                    style="padding: 3px 5px;background: var(--col-bgh);border-radius: .5em;line-height: 35px;">darkdot</a>.
+                <br>Thanks <a>rotur.dev</a> for maintaining RoturTW. Special thanks to the developers and their
+                community.
+            </p>
+            <div class="sing_setting">
+                <span>Say Thanks! Send Orion a rotur credit</span>
+                <button onclick="senddarkcredit(this)">Send 1 credit</button>
+
+                <script>
+                    function senddarkcredit(obj) {
+                        obj.disabled = true
+                        obj.innerText = "Sending..."
+
+                        roturExtension.transferCurrency({
+                            AMOUNT: 1,
+                            USER: "darkdot",
+                            NOTE: "Thanks for Orion!"
+                        }).then((result) => {
+                            if (result === "Success") {
+                                obj.innerText = "Sent!"
+                                setTimeout(() => {
+                                    obj.innerText = "Send again"
+                                    obj.disabled = false
+                                }, 3000)
+                            } else {
+                                obj.innerText = "Failed"
+                                setTimeout(() => {
+                                    obj.innerText = "Try again"
+                                    obj.disabled = false
+                                }, 3000)
+                            }
+                        }).catch(() => {
+                            obj.innerText = "Error"
+                            setTimeout(() => {
+                                obj.innerText = "Try again"
+                                obj.disabled = false
+                            }, 3000)
+                        })
+                    }
+                </script>
+            </div>
         </div>
     </dialog>
-    <dialog id="orionBadgeAlert">
-        <img src="oclogo.png" height="50">
-        <h1>Turn Orion Mode ON!</h1>
-        <p>Change your system to Orion to</p>
-        <div class="perk">
-            <div class="material-symbols-rounded">
-                badge
-            </div>
-            <div class="what">
-                Get a <span style="font-weight: 800;
-    background: linear-gradient(90deg, #9a5fff, #d400ff, #ff3cac, #00b7ff, #b082ff);
-    background-size: 400%;
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    animation: slide 2.5s linear infinite alternate;
-    text-shadow: 0 0 8px rgba(106, 0, 255, 0.6);">glowing</span> orion system badge.
-            </div>
-        </div>
-        <div class="perk">
-            <div class="material-symbols-rounded">
-                price_check
-            </div>
-            <div class="what">
-                System assisted daily credit claims (optional)
-            </div>
-        </div>
-        <div class="perk">
-            <div class="material-symbols-rounded">
-                shopping_cart
-            </div>
-            <div class="what">
-                Fee discounts on Orion partner sellers
-            </div>
-        </div>
-        <button class="btn long" onclick="changeSysToNva()">Change system to Orion</button>
-        <button class="dismisstext long btn" onclick="dontchsysnva()">Keep <div id="alreadyinsystem">origin</div> as my
-            system.</button>
-        <!-- <img src="oclogo.png" height="50">
-        <h1>Hi, this is OrionClient!</h1>
-        <p>I made this client because</p>
-        <ul style="max-width: 500px;">
-            <li>Rotur lacks a powerful, local-first, fully featured, customizable client that doesnt require much setup.</li>
-            <li>What if the answer to that was also user friendly, open source, and hackable enough.</li>
-            <li>Orion is possible by the contributions and critical opinions from you and the community.</li>
-            <li>Orion is also the result of an unoffical client hoping to give people the best experience.</li>
-        </ul>
-        <button class=" long btn" onclick="dontchsysnva()">Welcome to orion, <div id="alreadyinsystem">origin</div> user!</button> -->
-    </dialog>
+
     <script src="script.js"></script>
     <script src="rotur.js"></script>
 </body>
