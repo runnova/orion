@@ -1,6 +1,6 @@
 var pfplib = {};
 
-function createUserData(from, timestamp, clickHandler) {
+function createUserData(from, to, timestamp, clickHandler) {
     const wrapper = document.createElement("div");
     wrapper.className = "mailuserdata";
     wrapper.onclick = clickHandler;
@@ -26,10 +26,11 @@ function createUserData(from, timestamp, clickHandler) {
         </div>
 
         <div class="mailuserdynamics">
-            <div class="mailusername">${from}</div>
-            <div class="mailtimestamp">${formatFullDate(timestamp)}</div>
+            <div class="mailusername" onclick="window.parent.launchSideBarApp('profile', { name: '${from}' }) ">${from}</div>
+            <div class="mailtimestamp" onclick="window.parent.launchSideBarApp('profile', { name: '${to}' }) ">To: ${to}</div>
         </div>
         <div style="flex: 1"></div>
+            <div class="mailtimestamp">${formatFullDate(timestamp)}</div>
         <div class="printBtn btn" onclick="printMail()">
                         <div class="material-symbols-rounded">print</div>
         </div>
@@ -109,6 +110,7 @@ async function openMail(mailId, mailMeta) {
     readMailDynamics.appendChild(
         createUserData(
             mailMeta.from,
+            mailMeta.recipient,
             mailMeta.timestamp,
             () => viewprofile(mailMeta.from)
         )
@@ -149,7 +151,7 @@ async function listMails() {
         mailElement.setAttribute("mail-id", mailId);
 
         mailElement.innerHTML = `
-            <div class="user">
+            <div class="user" onclick="window.parent.launchSideBarApp('profile', { name: '${mail.from}' }) ">
                 <img
                     class="mailAvatar"
                     src="${avatar}"
