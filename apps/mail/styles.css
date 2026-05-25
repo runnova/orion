@@ -132,6 +132,17 @@
 
 #mailBody {
     padding: 2em;
+
+    & img {
+        width: 8em;
+        height: 8em;
+        object-fit: contain;
+        border: var(--box-crisp);
+    }
+
+    & h1, h2, h3 {
+        margin: .2em 0;
+    }
 }
 
 .mailAvatar {

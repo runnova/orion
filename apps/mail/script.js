@@ -90,6 +90,63 @@ function formatRelativeTime(timestamp) {
     return date.getFullYear().toString();
 }
 
+function parseMarkdown(text) {
+    return text
+        .replace(/^### (.*)$/gm, "<h3>$1</h3>")
+        .replace(/^## (.*)$/gm, "<h2>$1</h2>")
+        .replace(/^# (.*)$/gm, "<h1>$1</h1>")
+        .replace(/\*\*(.*?)\*\*/g, "<b>$1</b>")
+        .replace(/__(.*?)__/g, "<u>$1</u>")
+        .replace(/_(.*?)_/g, "<i>$1</i>")
+        .replace(/~~(.*?)~~/g, "<s>$1</s>")
+        .replace(/\n/g, "<br>");
+}
+
+function renderMailBody(body) {
+    const container = document.createElement("div");
+
+    const imageRegex = /\[RAIMG\](.*?)\[\/RAIMG\]/gs;
+
+    let lastIndex = 0;
+    let match;
+
+    while ((match = imageRegex.exec(body)) !== null) {
+        const textBefore = body.slice(lastIndex, match.index);
+
+        if (textBefore) {
+            const text = document.createElement("div");
+
+            text.innerHTML = parseMarkdown(textBefore);
+
+            container.appendChild(text);
+        }
+
+        const img = document.createElement("img");
+
+        img.src = match[1].trim();
+        img.alt = "Mail image";
+        img.style.maxWidth = "100%";
+        img.style.display = "block";
+        img.style.margin = "8px 0";
+
+        container.appendChild(img);
+
+        lastIndex = imageRegex.lastIndex;
+    }
+
+    const remainingText = body.slice(lastIndex);
+
+    if (remainingText) {
+        const text = document.createElement("div");
+
+        text.innerHTML = parseMarkdown(remainingText);
+
+        container.appendChild(text);
+    }
+
+    return container;
+}
+
 async function openMail(mailId, mailMeta) {
     const raw = await window.parent.roturExtension.getMail({
         ID: mailId
@@ -100,8 +157,13 @@ async function openMail(mailId, mailMeta) {
     document.getElementById("mailTitle").textContent =
         mailData.info?.title || "";
 
-    document.getElementById("mailBody").textContent =
-        mailData.body || "";
+    const mailBody = document.getElementById("mailBody");
+
+    mailBody.innerHTML = "";
+
+    mailBody.appendChild(
+        renderMailBody(mailData.body || "")
+    );
 
     const readMailDynamics = document.getElementById("readMailDynamics");
 
