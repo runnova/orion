@@ -52,7 +52,7 @@ async function listMails() {
         div.classList.add("singMail");
         div.appendChild(mailUserData);
         div.setAttribute("mail-id", currentMail);
-        div.innerHTML += `<div class="title">${m.title}</div>`;
+        div.innerText += `<div class="title">${m.title}</div>`;
         div.onclick = async () => {
             const mailDataRaw = await window.parent.roturExtension.getMail({ ID: Number(div.getAttribute("mail-id")) }) || '{}';
             const mailData = JSON.parse(mailDataRaw);
