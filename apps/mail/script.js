@@ -1,107 +1,252 @@
 var pfplib = {};
 
+function createUserData(from, timestamp, clickHandler) {
+    const wrapper = document.createElement("div");
+    wrapper.className = "mailuserdata";
+    wrapper.onclick = clickHandler;
+
+    function formatFullDate(timestamp) {
+        return new Date(timestamp).toLocaleString(undefined, {
+            weekday: "long",
+            year: "numeric",
+            month: "long",
+            day: "numeric",
+            hour: "numeric",
+            minute: "2-digit"
+        });
+    }
+
+    wrapper.innerHTML = `
+        <div class="mailuseravatar">
+            <img
+                class="mailuseravatarsrc"
+                src="https://avatars.rotur.dev/${from}"
+                alt="${from}"
+            >
+        </div>
+
+        <div class="mailuserdynamics">
+            <div class="mailusername">${from}</div>
+            <div class="mailtimestamp">${formatFullDate(timestamp)}</div>
+        </div>
+        <div style="flex: 1"></div>
+        <div class="printBtn btn" onclick="printMail()">
+                        <div class="material-symbols-rounded">print</div>
+        </div>
+    `;
+
+    pfplib[from] = `https://avatars.rotur.dev/${from}`;
+
+    return wrapper;
+}
+
+function formatRelativeTime(timestamp) {
+    const now = new Date();
+    const date = new Date(timestamp);
+
+    const diff = now - date;
+
+    const mins = Math.floor(diff / 60000);
+    const hours = Math.floor(mins / 60);
+
+    if (mins < 1) {
+        return "Just now";
+    }
+
+    if (hours < 24) {
+        const sameDay =
+            now.getDate() === date.getDate() &&
+            now.getMonth() === date.getMonth() &&
+            now.getFullYear() === date.getFullYear();
+
+        if (sameDay) {
+            return "Today";
+        }
+    }
+
+    const yesterday = new Date();
+    yesterday.setDate(now.getDate() - 1);
+
+    const isYesterday =
+        date.getDate() === yesterday.getDate() &&
+        date.getMonth() === yesterday.getMonth() &&
+        date.getFullYear() === yesterday.getFullYear();
+
+    if (isYesterday) {
+        return "Yesterday";
+    }
+
+    const sameYear =
+        now.getFullYear() === date.getFullYear();
+
+    if (sameYear) {
+        return date.toLocaleDateString(undefined, {
+            month: "short",
+            day: "numeric"
+        });
+    }
+
+    return date.getFullYear().toString();
+}
+
+async function openMail(mailId, mailMeta) {
+    const raw = await window.parent.roturExtension.getMail({
+        ID: mailId
+    }) || "{}";
+
+    const mailData = JSON.parse(raw);
+
+    document.getElementById("mailTitle").textContent =
+        mailData.info?.title || "";
+
+    document.getElementById("mailBody").textContent =
+        mailData.body || "";
+
+    const readMailDynamics = document.getElementById("readMailDynamics");
+
+    readMailDynamics.innerHTML = "";
+
+    readMailDynamics.appendChild(
+        createUserData(
+            mailMeta.from,
+            mailMeta.timestamp,
+            () => viewprofile(mailMeta.from)
+        )
+    );
+}
 async function listMails() {
     const raw = await window.parent.roturExtension.getAllMail();
     const mails = JSON.parse(raw);
-    const list = document.querySelector('#mailList');
-    list.innerHTML = '';
-    const now = Date.now();
-    let currentMail = 0;
-    for (const m of mails) {
-        currentMail += 1;
-        const diff = now - m.timestamp;
-        const mins = Math.floor(diff / 60000);
-        const hours = Math.floor(mins / 60);
-        const days = Math.floor(hours / 24);
-        const rel = days > 0 ? days + 'd' : hours > 0 ? hours + 'h' : mins + 'm';
 
-        const mailUserData = document.createElement("div");
-        mailUserData.classList.add("mailuserdata");
-        mailUserData.onclick = () => {
-            window.parent.launchSideBarApp('profile', { name: m.from })
-        };
+    const list = document.querySelector("#mailList");
 
-        const mailUserAvatar = document.createElement("div");
-        mailUserAvatar.classList.add("mailuseravatar");
+    list.innerHTML = "";
 
-        const userAvatarImg = document.createElement("img");
-        userAvatarImg.classList.add("mailuseravatarsrc");
-        userAvatarImg.src = "https://avatars.rotur.dev/" + m.from;
-        pfplib[m.from] = userAvatarImg.src;
+    const fragment = document.createDocumentFragment();
 
-        mailUserAvatar.appendChild(userAvatarImg);
+    for (let index = 0; index < mails.length; index++) {
+        const mail = mails[index];
 
-        const mailUserDynamics = document.createElement("div");
-        mailUserDynamics.classList.add("mailuserdynamics");
+        const mailId = index + 1;
 
-        const mailUsername = document.createElement("div");
-        mailUsername.classList.add("mailusername");
-        mailUsername.textContent = m.from;
+        const relativeTime = formatRelativeTime(mail.timestamp);
 
-        const mailTimestamp = document.createElement("div");
-        mailTimestamp.classList.add("mailtimestamp");
-        mailTimestamp.textContent = rel;
+        let avatar = pfplib[mail.from];
 
-        mailUserDynamics.appendChild(mailUsername);
-        mailUserDynamics.appendChild(mailTimestamp);
-
-        mailUserData.appendChild(mailUserAvatar);
-        mailUserData.appendChild(mailUserDynamics);
-
-        const div = document.createElement('div');
-        div.classList.add("singMail");
-        div.appendChild(mailUserData);
-        div.setAttribute("mail-id", currentMail);
-        div.innerText += `<div class="title">${m.title}</div>`;
-        div.onclick = async () => {
-            const mailDataRaw = await window.parent.roturExtension.getMail({ ID: Number(div.getAttribute("mail-id")) }) || '{}';
-            const mailData = JSON.parse(mailDataRaw);
-            document.getElementById("mailTitle").innerText = mailData.info?.title || '';
-            document.getElementById("mailBody").innerText = mailData.body || '';
-
-
-            const mailUserData = document.getElementById("readMailDynamics");
-            mailUserData.innerHTML = '';
-            mailUserData.classList.add("mailuserdata");
-            mailUserData.onclick = () => {
-                viewprofile(m.from);
-            };
-
-            const mailUserAvatar = document.createElement("div");
-            mailUserAvatar.classList.add("mailuseravatar");
-
-            const userAvatarImg = document.createElement("img");
-            userAvatarImg.classList.add("mailuseravatarsrc");
-            userAvatarImg.src = "https://avatars.rotur.dev/" + m.from;
-            pfplib[m.from] = userAvatarImg.src;
-
-            mailUserAvatar.appendChild(userAvatarImg);
-
-            const mailUserDynamics = document.createElement("div");
-            mailUserDynamics.classList.add("mailuserdynamics");
-
-            const mailUsername = document.createElement("div");
-            mailUsername.classList.add("mailusername");
-            mailUsername.textContent = m.from;
-
-            const mailTimestamp = document.createElement("div");
-            mailTimestamp.classList.add("mailtimestamp");
-            mailTimestamp.textContent = rel;
-
-            mailUserDynamics.appendChild(mailUsername);
-            mailUserDynamics.appendChild(mailTimestamp);
-
-
-            mailUserData.appendChild(mailUserAvatar);
-            mailUserData.appendChild(mailUserDynamics);
-
+        if (!avatar) {
+            avatar = `https://avatars.rotur.dev/${mail.from}`;
+            pfplib[mail.from] = avatar;
         }
-        list.appendChild(div);
 
-        const divider = document.createElement("div");
-        divider.classList.add("divider");
-        list.appendChild(divider);
+        const snippet = (mail.body || "")
+            .replace(/\s+/g, " ")
+            .trim()
+            .slice(0, 80);
+
+        const mailElement = document.createElement("div");
+
+        mailElement.className = "singMail";
+        mailElement.setAttribute("mail-id", mailId);
+
+        mailElement.innerHTML = `
+            <div class="user">
+                <img
+                    class="mailAvatar"
+                    src="${avatar}"
+                    alt="${mail.from}"
+                    loading="lazy"
+                >
+
+                <span>${mail.from}</span>
+            </div>
+
+            <div class="text">
+                <div class="title">${mail.title}</div>
+
+                <div class="peek">${snippet}</div>
+            </div>
+
+            <div class="timestamp">
+                ${relativeTime}
+            </div>
+
+            <div class="options">
+                <div class="material-symbols-rounded">
+                    more_vert
+                </div>
+            </div>
+        `;
+
+        mailElement.onclick = () => openMail(mailId, mail);
+
+        fragment.appendChild(mailElement);
     }
 
+    list.appendChild(fragment);
 }
 listMails();
+
+function printMail() {
+    window.print()
+}
+
+const mailDraftPage = document.getElementById("mailDraftPage")
+
+const initBtn = mailDraftPage.querySelector(".initBtn")
+const draftPage = mailDraftPage.querySelector(".draftPage")
+
+const toInput = document.getElementById("compose_to")
+const titleInput = document.getElementById("compose_title")
+const messageInput = document.getElementById("compose_message")
+
+const cancelBtn = mailDraftPage.querySelector(".txtbtn")
+const sendBtn = mailDraftPage.querySelector(".txtbtn.target")
+
+const errTxt = mailDraftPage.querySelector(".errtxt")
+
+draftPage.style.display = "none"
+
+function resetDraft() {
+    toInput.value = ""
+    titleInput.value = ""
+    messageInput.value = ""
+    errTxt.textContent = ""
+
+    draftPage.style.display = "none"
+    initBtn.style.display = "flex"
+}
+
+function openDraft() {
+    initBtn.style.display = "none"
+    draftPage.style.display = "flex"
+}
+
+initBtn.addEventListener("click", openDraft)
+
+cancelBtn.addEventListener("click", resetDraft)
+
+sendBtn.addEventListener("click", async () => {
+    errTxt.textContent = ""
+
+    try {
+        const response = await window.parent.roturExtension.sendMail({
+            SUBJECT: titleInput.value.trim(),
+            MESSAGE: messageInput.value.trim(),
+            TO: toInput.value.trim()
+        })
+
+        if (response?.error) {
+            errTxt.textContent = response.error
+            return
+        }
+
+        if (typeof response === "string") {
+            errTxt.textContent = response
+            return
+        }
+
+        resetDraft()
+    } catch (err) {
+        errTxt.textContent = err?.message || String(err)
+    }
+})

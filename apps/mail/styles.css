@@ -2,8 +2,13 @@
     display: flex;
     flex-direction: row;
     height: 100vh;
-    gap: .5em;
     justify-content: flex-start;
+    position: relative;
+
+    &>* {
+        width: 0;
+        flex: 1;
+    }
 
     &>.listSection {
         background: var(--col-bg2);
@@ -24,14 +29,47 @@
             &>.singMail {
                 padding: .5em;
                 cursor: pointer;
+                overflow: hidden;
+                border-radius: var(--siz-radius1);
+                display: flex;
+                flex-direction: row;
+                flex-wrap: nowrap;
+                white-space: nowrap;
+                gap: 2em;
+                align-items: center;
+                display: inherit;
 
-                &>.title {
-                    margin: 5px 0;
-                    font-size: 1.1em;
+                &>* {
+                    white-space: nowrap;
+                }
+
+                &>.user {
+                    display: inherit;
+                    gap: .3em;
+                    width: 6em;
+                }
+
+                &>.text {
+                    display: flex;
+                    flex-direction: row;
+                    flex-wrap: nowrap;
+                    white-space: nowrap;
+                    overflow: hidden;
+                    gap: .5em;
+                    flex: 1;
+
+                    &>.title {
+                        font-weight: bold;
+                    }
+
+                    &>.peek {
+                        flex-grow: none;
+                        overflow: hidden;
+                        text-overflow: ellipsis;
+                    }
                 }
 
                 &:hover {
-                    border-radius: var(--siz-radius1);
                     background-color: var(--col-bg3);
                 }
             }
@@ -81,14 +119,10 @@
 }
 
 .readMailSection {
-    max-width: 800px;
-    box-shadow: 0 0 10px #000000ab;
-    border-radius: 1em;
-    width: 90%;
-    margin: 2em auto;
     background-color: var(--col-bg2);
     border: var(--box-crisp);
     overflow: hidden;
+    min-width: 500px;
 }
 
 .mailHeader {
@@ -98,4 +132,136 @@
 
 #mailBody {
     padding: 2em;
+}
+
+.mailAvatar {
+    width: 1.3em;
+    height: 1.3em;
+    border-radius: 1em;
+}
+
+#mailTitle {
+    margin: 0;
+    margin-bottom: .5em;
+}
+
+@media print {
+    .listSection {
+        display: none;
+    }
+
+    .printBtn {
+        display: none;
+    }
+
+    * {
+        background-color: white;
+        color: black;
+    }
+
+    #mailBody,
+    .mailHeader {
+        padding: .5em;
+    }
+}
+
+@keyframes slideIn {
+    0% {
+        transform: translateY(5px);
+        opacity: 0;
+    }
+}
+
+#mailDraftPage {
+    position: absolute;
+    bottom: 1em;
+    right: 1em;
+    width: fit-content;
+    display: flex;
+    align-items: end;
+    flex-direction: column;
+    gap: 1em;
+
+    &>* {
+        animation: slideIn .5s cubic-bezier(0.075, 0.82, 0.165, 1);
+    }
+
+    &>.initBtn {
+        display: flex;
+        background: var(--colors-accent);
+        padding: 1em;
+        display: flex;
+        border-radius: 1em;
+        align-items: center;
+        gap: .5em;
+        width: fit-content;
+    }
+
+    &>.draftPage {
+        padding: 1em;
+        background: var(--col-bg3);
+        border-radius: .5em;
+        display: flex;
+        flex-direction: column;
+        gap: .5em;
+        width: 500px;
+        box-shadow: 0 5px 10px #0000002e;
+    }
+}
+
+input,
+textarea {
+    background-color: transparent;
+    color: inherit;
+    border: none;
+    outline: 0;
+    font: inherit;
+    resize: vertical;
+}
+
+.inputs {
+    display: flex;
+    flex-direction: column;
+    gap: .3em;
+
+    .input {
+        display: flex;
+        flex-direction: row;
+        gap: .3em;
+        align-items: center;
+
+        &>.label {
+            width: 2.5em;
+        }
+    }
+}
+
+.btnfooter {
+    display: flex;
+    gap: .5em;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+
+    &>.errtxt {
+        color: var(--col-bad);
+    }
+}
+
+@keyframes btnmorph {
+    0% {
+        scale: 1.3;
+    }
+}
+
+.txtbtn {
+    padding: .5em 1em;
+    background-color: var(--col-bg3);
+    filter: brightness(120%);
+    border-radius: .5em;
+
+    &.target {
+        background-color: var(--colors-accent);
+        animation: btnmorph .3s cubic-bezier(0.075, 0.82, 0.165, 1);
+    }
 }

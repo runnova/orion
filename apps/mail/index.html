@@ -1,6 +1,6 @@
-
 <!DOCTYPE html>
 <html>
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,25 +8,68 @@
     <link rel="stylesheet" href="../../nova.css">
     <link rel="stylesheet" href="styles.css">
 </head>
+
 <body>
     <div class="main">
         <div class="listSection">
             <div class="label">All Mail</div>
             <div class="divider"></div>
             <div id="mailList">
-
+                <div class="singMail">
+                    <div class="user">darkdot</div>
+                    <div class="text">
+                        <div class="title">Heya fella</div>
+                        <div class="peek">- congrats on finding your new grandma! hope both of you have a wonderful life
+                            ahead!</div>
+                    </div>
+                    <div class="timestamp">Nov 28</div>
+                    <div class="options">
+                        <div class="material-symbols-rounded">more_vert</div>
+                    </div>
+                </div>
             </div>
         </div>
         <div class="readMailSection">
             <div class="mailHeader">
-            <div id="readMailDynamics"></div>
                 <h1 id="mailTitle">Hello RoturMail User!</h1>
+                <div id="readMailDynamics"></div>
             </div>
             <div id="mailBody">
                 Click on any mail cards on the left panel to display its content.
             </div>
         </div>
+        <div id="mailDraftPage">
+            <div class="draftPage">
+                <div class="inputs">
+                    <div class="input">
+                        <div class="label">To: </div>
+                        <input type="text" id="compose_to" placeholder="Enter a username...">
+                    </div>
+                    <div class="input">
+                        <div class="label">Title: </div>
+                        <input type="text" id="compose_title" placeholder="Give a title...">
+                    </div>
+                </div>
+                <textarea id="compose_message" placeholder="Write mail content here..." rows="11"></textarea>
+                <div class="btnfooter">
+                    <div class="txtbtn">
+                        Cancel
+                    </div>
+                    <div class="errtxt">Recipient doesn't exist</div>
+                    <div class="txtbtn target">
+                        Send
+                    </div>
+                </div>
+            </div>
+            <div class="initBtn">
+                <div class="material-symbols-rounded draftIcon">
+                    post_add
+                </div>
+                Draft Mail
+            </div>
+        </div>
     </div>
     <script src="script.js"></script>
 </body>
+
 </html>
