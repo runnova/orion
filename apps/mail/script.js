@@ -229,6 +229,7 @@ cancelBtn.addEventListener("click", resetDraft)
 
 sendBtn.addEventListener("click", async () => {
     errTxt.textContent = ""
+    errTxt.style.color = ""
 
     try {
         const response = await window.parent.roturExtension.sendMail({
@@ -238,17 +239,23 @@ sendBtn.addEventListener("click", async () => {
         })
 
         if (response?.error) {
+            errTxt.style.color = "red"
             errTxt.textContent = response.error
             return
         }
 
         if (typeof response === "string") {
+            errTxt.style.color = "green"
             errTxt.textContent = response
+            resetDraft()
             return
         }
 
+        errTxt.style.color = "green"
+        errTxt.textContent = "Mail sent successfully"
         resetDraft()
     } catch (err) {
+        errTxt.style.color = "red"
         errTxt.textContent = err?.message || String(err)
     }
 })
