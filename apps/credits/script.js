@@ -16,6 +16,167 @@ function recalculatepaycheck() {
     let element = document.getElementById("totalpaymentfr");
     element.innerText = parseFloat(payment_screen_amt.value) + 1;
 }
+
+function createChart(canvasId, config) {
+    const ctx = document.getElementById(canvasId).getContext("2d");
+    return new Chart(ctx, config);
+}
+
+function createLineChart(canvasId, labels, datasets, options = {}) {
+    const { customPlugins, ...optionsWithoutCustomPlugins } = options;
+    return createChart(canvasId, {
+        type: "line",
+        data: {
+            labels,
+            datasets
+        },
+        options: {
+            responsive: true,
+            ...optionsWithoutCustomPlugins
+        },
+        plugins: customPlugins || []
+    });
+}
+
+function createBarChart(canvasId, labels, datasets, options = {}) {
+    const { customPlugins, ...optionsWithoutCustomPlugins } = options;
+    return createChart(canvasId, {
+        type: "bar",
+        data: {
+            labels,
+            datasets
+        },
+        options: {
+            responsive: true,
+            ...optionsWithoutCustomPlugins
+        },
+        plugins: customPlugins || []
+    });
+}
+
+function createPieChart(canvasId, labels, data, colors, options = {}) {
+    const { customPlugins, ...optionsWithoutCustomPlugins } = options;
+    return createChart(canvasId, {
+        type: "pie",
+        data: {
+            labels,
+            datasets: [{
+                data,
+                backgroundColor: colors
+            }]
+        },
+        options: {
+            responsive: true,
+            ...optionsWithoutCustomPlugins
+        },
+        plugins: customPlugins || []
+    });
+}
+
+const avatarCache = {};
+
+async function loadAvatars(usernames) {
+    for (const username of usernames) {
+        if (username && username !== 'others' && !avatarCache[username]) {
+            await new Promise((resolve) => {
+                const canvas = document.createElement('canvas');
+                canvas.width = 48;
+                canvas.height = 48;
+                const ctx = canvas.getContext('2d');
+                ctx.fillStyle = getColorForUser(username);
+                ctx.beginPath();
+                ctx.arc(24, 24, 24, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.fillStyle = '#FFFFFF';
+                ctx.font = 'bold 16px Arial';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.fillText(createInitials(username), 24, 24);
+                avatarCache[username] = canvas;
+                
+                try {
+                    const img = new Image();
+                    img.crossOrigin = 'anonymous';
+                    img.onload = () => {
+                        const imgCanvas = document.createElement('canvas');
+                        imgCanvas.width = 48;
+                        imgCanvas.height = 48;
+                        const imgCtx = imgCanvas.getContext('2d');
+                        imgCtx.drawImage(img, 0, 0, 48, 48);
+                        avatarCache[username] = imgCanvas;
+                        resolve();
+                    };
+                    img.onerror = () => resolve();
+                    img.src = `https://avatars.rotur.dev/${encodeURIComponent(username)}`;
+                } catch (e) {
+                    resolve();
+                }
+            });
+        }
+    }
+}
+
+function getColorForUser(username) {
+    if (!window.avatarColors) window.avatarColors = {};
+    if (!window.avatarColors[username]) {
+        const colors = ['#FF6B6B', '#4ECDC4', '#45B7D1', '#FFA07A', '#98D8C8', '#F7DC6F', '#BB8FCE', '#85C1E2', '#F8B88B', '#A8E6CF'];
+        const hash = Array.from(username).reduce((acc, char) => acc + char.charCodeAt(0), 0);
+        window.avatarColors[username] = colors[hash % colors.length];
+    }
+    return window.avatarColors[username];
+}
+
+function createInitials(username) {
+    return username.split(/[\s_-]+/).map(part => part[0]).join('').toUpperCase().slice(0, 2);
+}
+
+function createAvatarPlugin(usernames, chartType = 'pie') {
+    return {
+        id: 'avatarPlugin',
+        beforeDatasetsDraw(chart) {
+            if (chartType !== 'pie') return;
+            
+            const ctx = chart.ctx;
+            const meta = chart.getDatasetMeta(0);
+            if (!meta || !meta.data) return;
+
+            meta.data.forEach((datapoint, index) => {
+                const username = usernames[index];
+                if (username && username !== 'others' && avatarCache[username]) {
+                    const canvas = avatarCache[username];
+                    const pattern = ctx.createPattern(canvas, 'repeat');
+                    ctx.fillStyle = pattern;
+                    ctx.beginPath();
+                    ctx.arc(datapoint.x, datapoint.y, datapoint.circumradius, datapoint.startAngle, datapoint.endAngle);
+                    ctx.lineTo(datapoint.x, datapoint.y);
+                    ctx.fill();
+                }
+            });
+        },
+        afterDatasetsDraw(chart) {
+            if (chartType === 'pie') return;
+            
+            const ctx = chart.ctx;
+            const meta = chart.getDatasetMeta(0);
+            if (!meta || !meta.data) return;
+
+            meta.data.forEach((datapoint, index) => {
+                const username = usernames[index];
+                if (username && username !== 'others' && avatarCache[username]) {
+                    const canvas = avatarCache[username];
+                    const {x, y} = datapoint.getProps(['x', 'y']);
+
+                    if (chartType === 'bar') {
+                        ctx.drawImage(canvas, x - 12, y - 30, 24, 24);
+                    } else if (chartType === 'line') {
+                        ctx.drawImage(canvas, x - 10, y - 10, 20, 20);
+                    }
+                }
+            });
+        }
+    };
+}
+
 (async () => {
     const rawData = await window.parent.roturExtension.getTransactions();
     const currentBalance = await window.parent.roturExtension.getBalance();
@@ -114,31 +275,30 @@ function recalculatepaycheck() {
     container.innerHTML = '';
     container.appendChild(table);
 
-    const ctx = document.getElementById('transactionChart').getContext('2d');
     const graphLabels = dataPoints.map(d => `${d.user}: ${d.amount}`);
     const graphData = dataPoints.map(d => d.balance);
+    const transactionUsers = dataPoints.map(d => d.user).filter(Boolean);
+    await loadAvatars(transactionUsers);
 
-    new Chart(ctx, {
-        type: 'line',
-        data: {
-            labels: graphLabels,
-            datasets: [{
-                label: 'Balance Over Time',
-                data: graphData,
-                borderColor: "white",
-                backgroundColor: window.parent.accent,
-                tension: 0.2,
-                fill: true
-            }]
-        },
-        options: {
-            responsive: true,
+    createLineChart(
+        'transactionChart',
+        graphLabels,
+        [{
+            label: 'Balance Over Time',
+            data: graphData,
+            borderColor: "white",
+            backgroundColor: window.parent.accent,
+            tension: 0.2,
+            fill: true
+        }],
+        {
             scales: {
                 x: { title: { display: true, text: 'Transaction' }, ticks: { maxRotation: 90, minRotation: 45 } },
                 y: { title: { display: true, text: 'Balance' } }
-            }
+            },
+            customPlugins: [createAvatarPlugin(transactionUsers, 'line')]
         }
-    });
+    );
 
     function filterDataByRange(range, data) {
         const now = new Date();
@@ -231,38 +391,34 @@ function recalculatepaycheck() {
     const { payers, receivers } = aggregateTotals(dataPoints);
 
     const topPayers = topFive(payers);
-    new Chart(document.getElementById("topPayersChart").getContext("2d"), {
-        type: 'pie',
-        data: {
-            labels: topPayers.map(e => e[0]),
-            datasets: [{
-                data: topPayers.map(e => e[1]),
-                backgroundColor: ['#e74c3c', '#c0392b', '#d35400', '#e67e22', '#f1c40f', '#7f8c8d']
-            }]
-        },
-        options: {
-            responsive: true
-        }
-    });
+    const topPayersUsernames = topPayers.map(e => e[0]);
+    await loadAvatars(topPayersUsernames);
+    createPieChart(
+        'topPayersChart',
+        topPayersUsernames,
+        topPayers.map(e => e[1]),
+        ['#e74c3c', '#c0392b', '#d35400', '#e67e22', '#f1c40f', '#7f8c8d'],
+        { customPlugins: [createAvatarPlugin(topPayersUsernames, 'pie')] }
+    );
 
     const topReceivers = topFive(receivers);
-    new Chart(document.getElementById("topReceiversChart").getContext("2d"), {
-        type: 'bar',
-        data: {
-            labels: topReceivers.map(e => e[0]),
-            datasets: [{
-                label: 'Received',
-                data: topReceivers.map(e => e[1]),
-                backgroundColor: '#2ecc71'
-            }]
-        },
-        options: {
-            responsive: true,
+    const topReceiversUsernames = topReceivers.map(e => e[0]);
+    await loadAvatars(topReceiversUsernames);
+    createBarChart(
+        'topReceiversChart',
+        topReceiversUsernames,
+        [{
+            label: 'Received',
+            data: topReceivers.map(e => e[1]),
+            backgroundColor: '#2ecc71'
+        }],
+        {
             plugins: {
                 legend: { display: false }
-            }
+            },
+            customPlugins: [createAvatarPlugin(topReceiversUsernames, 'bar')]
         }
-    });
+    );
 
     function weekStart(d) {
         const x = new Date(d);
@@ -293,24 +449,21 @@ function recalculatepaycheck() {
 
     const vol = buildVolatility(dataPoints);
 
-    new Chart(document.getElementById("volatilityChart"), {
-        type: 'bar',
-        data: {
-            labels: ["Week 3", "Week 2", "Week 1"],
-            datasets: [{
-                data: vol,
-                backgroundColor: ['#9b59b6', '#8e44ad', '#6c3483']
-            }]
-        },
-        options: {
-            responsive: true,
+    createBarChart(
+        'volatilityChart',
+        ["Week 3", "Week 2", "Week 1"],
+        [{
+            data: vol,
+            backgroundColor: ['#9b59b6', '#8e44ad', '#6c3483']
+        }],
+        {
             maintainAspectRatio: false,
             plugins: {
                 legend: { display: false },
                 tooltip: { enabled: false }
             }
         }
-    });
+    );
 
     document.getElementById("volatilityChart").style.height = "200px";
 
@@ -357,32 +510,29 @@ function recalculatepaycheck() {
         daysLast
     );
 
-    new Chart(document.getElementById("weekCompareChart").getContext("2d"), {
-        type: "line",
-        data: {
-            labels: daysThis,
-            datasets: [
-                {
-                    label: "This Week",
-                    data: dataThisWeek,
-                    borderColor: "#27ae60",
-                    backgroundColor: window.parent.accent,
-                    fill: true,
-                    tension: 0.2
-                },
-                {
-                    label: "Last Week",
-                    data: dataLastWeek,
-                    borderColor: "#bdc3c7",
-                    borderDash: [6, 3],
-                    tension: 0.2
-                }
-            ]
-        },
-        options: {
-            responsive: true
-        }
-    }); function aggregateReasonTypes(data) {
+    createLineChart(
+        'weekCompareChart',
+        daysThis,
+        [
+            {
+                label: "This Week",
+                data: dataThisWeek,
+                borderColor: "#27ae60",
+                backgroundColor: window.parent.accent,
+                fill: true,
+                tension: 0.2
+            },
+            {
+                label: "Last Week",
+                data: dataLastWeek,
+                borderColor: "#bdc3c7",
+                borderDash: [6, 3],
+                tension: 0.2
+            }
+        ]
+    );
+
+    function aggregateReasonTypes(data) {
         const map = {};
         data.forEach(d => {
             const k = d.note || "unknown";
@@ -407,21 +557,19 @@ function recalculatepaycheck() {
         return e[2] === "to" ? "#d44343" : "#5be45b";
     });
 
-    new Chart(document.getElementById("topReasonsChart").getContext("2d"), {
-        type: "pie",
-        data: {
-            labels: r.map(e => e[0]),
-            datasets: [{
-                data: r.map(e => e[1]),
-                backgroundColor: colors
-            }]
-        },
-        options: {
-            responsive: true
+    createBarChart(
+        'topReasonsChart',
+        r.map(e => e[0]),
+        [{
+            data: r.map(e => e[1]),
+            backgroundColor: colors
+        }],
+        {
+            plugins: {
+                legend: { display: false }
+            }
         }
-    });
-
-
+    );
 
     document.getElementById("pfponnav").src = "https://avatars.rotur.dev/" + window.parent.roturExtension.user.username;
 })();
