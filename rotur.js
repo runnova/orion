@@ -65,24 +65,7 @@ class RoturExtension {
                 this.server = "wss://rotur.mistium.com";
             });
 
-        this._initializeBadges(); // Start fetching badges
 
-    }
-
-    async _initializeBadges() {
-        await this._getBadges(); // Wait for the fetch operation to complete
-    }
-
-    async _getBadges() {
-        try {
-            const response = await fetch("https://raw.githubusercontent.com/RoturTW/Badges/main/badges.json");
-            if (!response.ok) throw new Error('Network response was not ok');
-
-            const data = await response.json();
-            this.badges = data;
-        } catch (error) {
-            this.badges = [];
-        }
     }
 
     openUpdate() {
@@ -1515,40 +1498,6 @@ class RoturExtension {
 
     RAWdeleteAllPackets() {
         this.packetQueue = [];
-    }
-
-    gotBadgesSuccessfully() {
-        return JSON.stringify(this.badges) !== "[]";
-    }
-
-    userBadges() {
-        if (!this.is_connected) return "Not Connected";
-        if (!this.authenticated) return "Not Logged In";
-        return JSON.stringify(this.user["sys.badges"]);
-    }
-
-    userBadgeCount() {
-        if (!this.is_connected) return "Not Connected";
-        if (!this.authenticated) return "Not Logged In";
-        return this.user["sys.badges"].length;
-    }
-
-    hasBadge(args) {
-        if (!this.is_connected) return false;
-        if (!this.authenticated) return false;
-        return this.user["sys.badges"].includes(args.BADGE);
-    }
-
-    allBadges() {
-        return JSON.stringify(Object.keys(this.badges));
-    }
-
-    badgeInfo(args) {
-        return JSON.stringify(this.badges?.[args.BADGE] ?? {});
-    }
-
-    redownloadBadges() {
-        this._initializeBadges()
     }
 
     callUser(args) {

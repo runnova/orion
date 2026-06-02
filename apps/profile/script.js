@@ -3,6 +3,7 @@ async function renderProfile(name) {
     const res = await fetch(`https://api.rotur.dev/profile?name=${encodeURIComponent(name)}&include_posts=0`);
     const data = await res.json();
     document.querySelector('#prof_pfp').src = data.pfp;
+    document.querySelector('.pfp>.overlay').src = `https://avatars.rotur.dev/.overlay/${name}`;
     document.querySelector('#prof_name').textContent = data.username;
     document.querySelector('#prof_more').innerHTML = `<a>${data.private ? '<i class="icon">lock</i> Private' : '<i class="icon">public</i> Public'}</a> • <a class="${(data.system == "orion") ? 'special' : ''}">${data.system}</a> • <a>${data.pronouns}</a>`;
     document.querySelector('#prof_abtme').innerHTML = escapeHTML(data.bio).replace(/\n/g, '<br>');

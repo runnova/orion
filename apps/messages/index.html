@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en" xml:lang="en" xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width">
+  <title>Messages</title>
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="../../nova.css">
+</head>
+
+<body>
+  <div class="sidebar">
+    <div class="searchbar">
+      <input type="text" id="searchbar" placeholder="Search...">
+      <div class="icon">search</div>
+    </div>
+    <div id="notes">
+      <div class="note_user">
+        <div class="note">My status</div>
+        <div class="pfp">
+          <img src="" alt="">
+          <img src="" alt="" class="overlay">
+        </div>
+      </div>
+    </div>
+    <div class="messagesbarheader">
+      <span>Messages</span>
+      <div class="icon">add</div>
+    </div>
+    <div id="users_list">
+      <div class="user_single">
+        <div class="pfp">
+          <img src="" alt="">
+          <img src="" alt="" class="overlay">
+          <div class="online_badge"></div>
+        </div>
+        <div class="data">
+          <div class="single_username">?</div>
+          <div class="single_user_text"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="texting_space">
+    <div class="texting_header">
+      <div class="user_single">
+        <div class="pfp">
+          <img src="" alt="">
+          <img src="" alt="" class="overlay">
+          <div class="online_badge"></div>
+        </div>
+        <div class="data">
+          <div class="single_username">?</div>
+          <div class="single_user_text"></div>
+        </div>
+      </div>
+    </div>
+    <div class="message_scroller" id="interactive_logs">
+      <div class="message_single their">
+        hello
+      </div>
+      <div class="message_single our">
+        hi
+      </div>
+    </div>
+    <div class="messagebox">
+      <div id="typing-indicator"></div>
+      <div class="textbox">
+        <div class="textarea"></div>
+      </div>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+  <script src="script.js"></script>
+</body>
+
+</html>

@@ -18,16 +18,24 @@
         <div class="profhead">
             <div id="prof_banner"></div>
             <div class="prof_head_data">
-                
-                <img src="" id="prof_pfp" alt="Profile Picture">
+                <div class="pfp">
+                    <img src="" id="prof_pfp" alt="">
+                    <img src="" alt="" class="overlay">
+                </div>
                 <div class="namesection">
                     <div id="prof_name">darkdot</div>
                     <div class="btnGrp dropdown">
-                        <button id="followBtn" onclick="window.parent.roturExtension.sendFriendRequest({ FRIEND: currentUser })">Add friend</button>
+                        <button id="followBtn"
+                            onclick="window.parent.roturExtension.sendFriendRequest({ FRIEND: currentUser })">Add
+                            friend</button>
                         <button id="dropdwnbtn"><i class="icon">more_vert</i></button>
                         <div id="followDropDown" class="dropdownitems">
-                            <div class="item" onclick="window.parent.openApp('contacts', { 'type':'addc', name: currentUser })">Add contact</div>
-                            <div class="item" onclick="navigator.clipboard.writeText('https://runnova.github.io/orion?profile=' + currentUser)">Copy URL</div>
+                            <div class="item"
+                                onclick="window.parent.openApp('contacts', { 'type':'addc', name: currentUser })">Add
+                                contact</div>
+                            <div class="item"
+                                onclick="navigator.clipboard.writeText('https://runnova.github.io/orion?profile=' + currentUser)">
+                                Copy URL</div>
                         </div>
                     </div>
                 </div>
