@@ -10,7 +10,7 @@
 	src: url("assets/icons.woff2") format('woff2');
 }
 
-.material-symbols-rounded {
+.icon {
 	font-family: 'Material Symbols Rounded';
 	font-weight: normal;
 	font-style: normal;
@@ -30,7 +30,7 @@
 	}
 }
 
-.bWicn:hover .material-symbols-rounded {
+.bWicn:hover .icon {
 	font-variation-settings: 'FILL' 1;
 	animation: jump 2s var(--time1);
 }
@@ -190,7 +190,7 @@ textarea::placeholder {
 	gap: 0.5rem;
 }
 
-.ctxmenuitem .material-symbols-rounded {
+.ctxmenuitem .icon {
 	font-size: 1rem;
 	opacity: 0.5;
 }
@@ -210,6 +210,6 @@ textarea::placeholder {
 	}
 }
 
-.material-symbols-rounded {
+.icon {
 	font-weight: 300 !important;
 }

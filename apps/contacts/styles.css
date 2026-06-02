@@ -21,7 +21,7 @@ body {
         max-width: 1000px;
         margin: auto;
 
-        &>.button>.material-symbols-rounded {
+        &>.button>.icon {
             opacity: .5;
             display: flex;
             justify-content: center;
@@ -185,7 +185,7 @@ body {
     }
 }
 
-.gobtn.material-symbols-rounded {
+.gobtn.icon {
     transition: .3s;
     padding: 8px;
     border-radius: 1em;

@@ -1,9 +1,12 @@
 :root {
     --primary: #9B302F !important;
     --primary-hover: #c27742;
+    --accent: #9B302F;
+    --accent-dim: #814e3a;
+    --accent-glow: #cf9f9926;
 }
 
-body {
+body, #app {
     background-color: transparent !important;
 }
 
@@ -25,6 +28,14 @@ body {
             max-width: none !important;
         }
     }
+}
+
+._field_1rrgd_1 {
+    display: none;
+}
+
+._welcomeArea_aya3w_154 {
+    position: relative;
 }
 
 .form-group {
@@ -52,15 +63,6 @@ body {
     }
 }
 
-.google-signin-container,
-[style="width:100%;max-width:320px;display:flex;justify-content:center;margin-top:1rem;"] {
-    display: none !important;
-}
-
-[style="margin-top:1.5rem;display:flex;flex-direction:column;gap:0.75rem;width:100%;max-width:280px;"] {
-    margin: auto;
-}
-
 .logo-container {
     width: fit-content;
     margin: 0 auto;
@@ -69,22 +71,24 @@ body {
     margin-bottom: 1.5em;
 }
 
-.subtitle::after {
+._sidebarSubtitle_1ql4d_157::after {
     content: " to continue to Orion.";
 }
 
-.tos-links {
+._tosLinks_1ql4d_443 {
     position: absolute;
     bottom: 2em;
+    width: fit-content;
     text-align: justify;
+    background: var(--btn-primary-color);
 }
 
-.h-captcha {
+._formGroup_aya3w_292 {
     margin-bottom: 4em;
     text-align: center;
 }
 
-.welcome-content h1 {
+._welcomeContent_aya3w_174 h1 {
     height: 2em;
     color: transparent;
     position: relative;
@@ -98,23 +102,43 @@ body {
         left: 0;
         position: absolute;
         text-align: center;
+        width: 100%;
     }
 }
 
-.welcome-content p {
+._welcomeContent_aya3w_174 p {
     color: transparent;
     position: relative;
 
     &::after {
         content: "Sign in to your Rotur account or create a new one.";
-        color: var(--text-secondary);
+        color: var(--text);
         top: 0;
         left: 0;
         position: absolute;
         text-align: center;
+        width: 100%;
     }
 }
 
-.welcome-logo img {
+._logo_1ql4d_239 img , ._welcomeLogo_aya3w_166 img {
     content: url(https://runnova.github.io/orion/oclogo.png);
+    border: 0;
+    box-shadow: none;
+}
+
+._btnWelcomePrimary_aya3w_204, ._btnPrimary_1ql4d_314 {
+    color: var(--text);
+}
+
+._permFullAccessToggleDanger_aya3w_912._permFullAccessToggleActive_aya3w_903, ._permDangerWarning_aya3w_990 {
+    background-color: #91f8710f;
+    border-color: #7ff8714d;
+    &:hover {
+        background-color: #91f8710f;
+    }
+}
+
+._notice_1ql4d_376 ._noticeInfo_1ql4d_392, ._permGroupGrid_aya3w_393, ._permCustomizeToggle_aya3w_500, ._noticeInfo_1ql4d_392 {
+    display: none;
 }

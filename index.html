@@ -44,30 +44,30 @@
         <div class="navsnav">
             <img class="btn" src="oclogo.png" height="50" id="orionIconCol">
             <div class="btn bWicn" onclick="launchSideBarApp('notifications');"><i
-                    class="material-symbols-rounded">notifications</i>
+                    class="icon">notifications</i>
             </div>
             <div style="flex:1;"></div>
-            <div class="btn bWicn" onclick="sidebartoggle()"><i class="material-symbols-rounded">left_panel_close</i>
+            <div class="btn bWicn" onclick="sidebartoggle()"><i class="icon">left_panel_close</i>
             </div>
         </div>
         <div id="persohome">
             <div class="grid">
-                <div class="onebtn bWicn" data-name="home"><i class="material-symbols-rounded">home</i> <a>Home</a>
+                <div class="onebtn bWicn" data-name="home"><i class="icon">home</i> <a>Home</a>
                 </div>
                 <div class="onebtn bWicn" data-name="claw"><i
-                        class="material-symbols-rounded">crowdsource</i><a>Claw</a>
+                        class="icon">crowdsource</i><a>Claw</a>
                 </div>
                 <div class="onebtn bWicn" data-roturRequire="true" data-name="credits"><i
-                        class="material-symbols-rounded">attach_money</i><a>Credits</a></div>
+                        class="icon">attach_money</i><a>Credits</a></div>
                 <div class="onebtn bWicn" data-roturRequire="true" data-name="mail"><i
-                        class="material-symbols-rounded">mail</i><a>Mail</a></div>
+                        class="icon">mail</i><a>Mail</a></div>
                 <div class="onebtn bWicn" data-name="contacts"><i
-                        class="material-symbols-rounded">contacts</i><a>Contacts</a></div>
+                        class="icon">contacts</i><a>Contacts</a></div>
             </div>
             <div>
                 <div id="switchSysAdBan" style="display: none;">
-                    <div class="clbtn material-symbols-rounded">close</div>
-                    <span>Enter Orion Mode?</span> <i class="material-symbols-rounded">arrow_forward</i>
+                    <div class="clbtn icon">close</div>
+                    <span>Enter Orion Mode?</span> <i class="icon">arrow_forward</i>
                 </div>
                 <div class="actBtns">
                     <div class="userChip username_display"
@@ -76,7 +76,7 @@
                     </div>
                     <div class="divider"></div>
                     <div class="btn bWicn" onclick="document.getElementById('settingsd').showModal()"><i
-                            class="material-symbols-rounded">tune</i></div>
+                            class="icon">tune</i></div>
                 </div>
             </div>
         </div>
@@ -90,7 +90,7 @@
         <iframe id="mainframe" src=""></iframe>
     </div>
     <div id="divider">
-        <i class="material-symbols-rounded">drag_indicator</i>
+        <i class="icon">drag_indicator</i>
         <div class="elem"></div>
     </div>
     <div id="sidebarapp" class="appwindow">
@@ -98,10 +98,10 @@
         <div class="sidebarheader">
             <div class="name" id="sidebarappname">Contacts</div>
             <div id="openOrion" onclick="location.replace(location.origin + location.pathname + location.hash)">
-                <i class="material-symbols-rounded">arrow_back</i>
+                <i class="icon">arrow_back</i>
                 <div>Back to Orion</div>
             </div>
-            <i class="material-symbols-rounded bicn" onclick="closeSideBar()">right_panel_close</i>
+            <i class="icon bicn" onclick="closeSideBar()">right_panel_close</i>
         </div>
         <iframe id="sidebarappframe" src=""></iframe>
     </div>
@@ -118,7 +118,7 @@
             <div class="tit">
                 Settings
             </div>
-            <div onclick="document.getElementById('settingsd').close()" class="closebtn material-symbols-rounded bicn">
+            <div onclick="document.getElementById('settingsd').close()" class="closebtn icon bicn">
                 close
             </div>
         </div>
@@ -128,16 +128,6 @@
         <h1>Theme</h1>
         <p>Use a color theme to change the look of OrionClient</p>
         <div><select id="themesel">
-                <option>Default</option>
-                <option>Light</option>
-                <option>Heaven</option>
-                <option>Communism</option>
-                <option>Banks use this</option>
-                <option>Make it look AI</option>
-                <option>Hacker</option>
-                <option>Night Shift</option>
-                <option>Aquamarine+</option>
-                <option>Ristretto</option>
             </select>
         </div>
         <h2>Customization</h2>

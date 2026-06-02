@@ -32,7 +32,7 @@ function createUserData(from, to, timestamp, clickHandler) {
         <div style="flex: 1"></div>
             <div class="mailtimestamp">${formatFullDate(timestamp)}</div>
         <div class="printBtn btn" onclick="printMail()">
-                        <div class="material-symbols-rounded">print</div>
+                        <div class="icon">print</div>
         </div>
     `;
 
@@ -235,7 +235,7 @@ async function listMails() {
             </div>
 
             <div class="options">
-                <div class="material-symbols-rounded">
+                <div class="icon">
                     more_vert
                 </div>
             </div>

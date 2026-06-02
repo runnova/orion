@@ -28,7 +28,7 @@ class ContactToggle {
         let pinnedNames = window.parent.settings.get("contacts_pinned_list") || [];
 
         this.pinBtn = document.createElement('div')
-        this.pinBtn.className = 'gobtn material-symbols-rounded'
+        this.pinBtn.className = 'gobtn icon'
         if (!pinnedNames.includes(name)) {
             this.pinBtn.textContent = 'keep';
             this.pinBtn.onclick = () => {
@@ -45,7 +45,7 @@ class ContactToggle {
             }
         }
         this.icon = document.createElement('div')
-        this.icon.className = 'gobtn material-symbols-rounded'
+        this.icon.className = 'gobtn icon'
         this.icon.textContent = 'chevron_right'
 
         this.head.appendChild(pfp)
@@ -92,7 +92,7 @@ class ContactToggle {
             const btn = document.createElement('div')
             btn.className = 'big btn'
             const icn = document.createElement('div')
-            icn.className = 'icn material-symbols-rounded'
+            icn.className = 'icn icon'
             icn.textContent = a.icon
             const span = document.createElement('span')
             span.textContent = a.text

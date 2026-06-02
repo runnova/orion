@@ -621,7 +621,7 @@ div#toastdiv {
         cursor: pointer;
         justify-content: space-between;
 
-        &>.material-symbols-rounded {
+        &>.icon {
             opacity: .5;
             font-size: 20px;
         }

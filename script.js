@@ -115,8 +115,22 @@ var theme = {
 		"--col-bgh": "#8AB057",
 		"--col-txt1": "#FFFFFF",
 		"--col-txth": "#FFFFFF",
+	},
+	"amoled": {
+		"--col-bg1": "#000000",
+		"--col-bg2": "#050505",
+		"--col-bg3": "#0f0f0f",
+		"--col-bgh": "#8b3003",
+		"--col-txt1": "#FFFFFF",
+		"--col-txth": "#ffffff",
 	}
 }
+
+Object.keys(theme).forEach(key => {
+	const ele = document.createElement("option");
+	ele.innerText = key;
+	document.getElementById("themesel").appendChild(ele)
+})
 
 persohome.classList.toggle("disp");
 
@@ -240,7 +254,7 @@ function openModal(type, { title = '', message, options = null, status = null, p
 		modalItemsCont.classList.add('modal-items');
 
 		const icon = document.createElement('span');
-		icon.classList.add('material-symbols-rounded');
+		icon.classList.add('icon');
 		let ic = "warning";
 		if (status === "success") ic = "check_circle";
 		else if (status === "failed") ic = "dangerous";
@@ -495,12 +509,12 @@ var startupLoader = {
 			return
 		}
 		var ele = document.querySelector(`[startup-loader="${process}"]`);
-		ele.innerHTML = `<i class="material-symbols-rounded">check</i>`;
+		ele.innerHTML = `<i class="icon">check</i>`;
 		ele.parentElement.classList.add("done")
 	},
 	mark_error: (process) => {
 		var ele = document.querySelector(`[startup-loader="${process}"]`);
-		ele.innerHTML = `<i class="material-symbols-rounded" style="color: red">close</i>`
+		ele.innerHTML = `<i class="icon" style="color: red">close</i>`
 	},
 	dead: () => {
 		document.getElementById("oriFullPLoader").style = `
@@ -538,12 +552,12 @@ function dontchsysnva() {
 	document.getElementById('orionBadgeAlert').close();
 }
 if ('serviceWorker' in navigator && !navigator.serviceWorker.controller) {
-    navigator.serviceWorker.register('sw.js', { scope: location.href });
+	navigator.serviceWorker.register('sw.js', { scope: location.href });
 }
 
 
-async function clearCache(){
-  const keys=await caches.keys();
-  for(const k of keys) await caches.delete(k);
-  cacheTimes.clear();
+async function clearCache() {
+	const keys = await caches.keys();
+	for (const k of keys) await caches.delete(k);
+	cacheTimes.clear();
 }
