@@ -27,13 +27,19 @@ if (user.username) {
 const cards = document.querySelectorAll(".gallery_strip .card");
 
 cards[0].querySelector(".credits_amount").textContent =
-    user.balance ?? 0;
+    window.parent.roturExtension.getBalance() ?? 0;
 
 cards[1].querySelector(".credits_amount").textContent =
-    user.friends?.length ?? 0;
+    window.parent.roturExtension.friends.list.length ?? 0;
 
-cards[2].querySelector(".credits_amount").textContent =
-    user.followers?.length ?? 0;
+(async () => {
 
-cards[3].querySelector(".credits_amount").textContent =
-    user.following?.length ?? 0;
+    const res = await fetch(`https://api.rotur.dev/profile?name=${encodeURIComponent(user.username)}&include_posts=0`);
+    const data = await res.json();
+
+    cards[2].querySelector(".credits_amount").textContent =
+        data.followers ?? 0;
+
+    cards[3].querySelector(".credits_amount").textContent =
+        data.following ?? 0;
+})();

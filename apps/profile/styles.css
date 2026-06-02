@@ -83,12 +83,30 @@ body {
     font-size: 2em;
 }
 
-#prof_pfp {
+.pfp {
     width: 8em;
     border-radius: 2em;
     border: var(--box-crisp);
     margin-bottom: .5em;
     box-shadow: 0 0 10px #000000ab;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+
+    &>img {
+        position: absolute;
+        width: 80%;
+        height: 80%;
+        border-radius: 1em;
+    }
+
+    &>.overlay {
+        z-index: 2;
+        width: 100%;
+        height: 100%;
+        border-radius: 0em;
+    }
 }
 
 #prof_more {

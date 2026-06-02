@@ -8,7 +8,6 @@ async function renderProfile(name) {
     document.querySelector('#prof_abtme').innerHTML = escapeHTML(data.bio).replace(/\n/g, '<br>');
     document.querySelector('#prof_crds').textContent = data.currency;
     document.querySelector('#prof_flwrs').textContent = data.followers;
-    document.querySelector('#prof_marry').textContent = data.married_to || 'Nobody';
     const badgesContainer = document.querySelector('#prof_badges');
     badgesContainer.innerHTML = '';
     data.badges.forEach(b => {
