@@ -1616,23 +1616,19 @@ async function logoutofrtr() {
     roturExtension.disconnect();
 }
 
-var switchadban = document.getElementById("switchSysAdBan");
-switchadban.addEventListener("click", (event) => {
-    if (event.target.classList.contains("clbtn")) {
-        switchadban.style.display = "none";
-        toast("You can always switch from settings!");
-        return;
-    }
-    document.getElementById('orionBadgeAlert').showModal();
-})
 async function roturTWEventCall(data, payload) {
     if (data == "roturEXT_whenAuthenticated") {
         startupLoader.mark_complete("3");
+        openApp("home");
+        window.parent.launchSideBarApp('notifications');
         notify(`Logged in ${roturExtension.user.username}, welcome back!`)
         persohome.classList.remove("disp");
         [...document.getElementsByClassName("username_display")].forEach(element => {
             element.innerText = roturExtension.user.username;
-        })
+        });
+        [...document.getElementsByClassName("pfp_display")].forEach(element => {
+            element.src = `https://avatars.rotur.dev/${encodeURIComponent(roturExtension.user.username)}`;
+        });
         startupLoader.mark_complete("4");
         let userSystem = await roturExtension.getkey({ "KEY": "system" }) || "my current system";
         if (userSystem != "orion") {

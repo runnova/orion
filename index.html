@@ -43,8 +43,7 @@
     <div id="sidebar">
         <div class="navsnav">
             <img class="btn" src="oclogo.png" height="50" id="orionIconCol">
-            <div class="btn bWicn" onclick="launchSideBarApp('notifications');"><i
-                    class="icon">notifications</i>
+            <div class="btn bWicn" onclick="launchSideBarApp('notifications');"><i class="icon">notifications</i>
             </div>
             <div style="flex:1;"></div>
             <div class="btn bWicn" onclick="sidebartoggle()"><i class="icon">left_panel_close</i>
@@ -54,32 +53,23 @@
             <div class="grid">
                 <div class="onebtn bWicn" data-name="home"><i class="icon">home</i> <a>Home</a>
                 </div>
-                <div class="onebtn bWicn" data-name="claw"><i
-                        class="icon">crowdsource</i><a>Claw</a>
+                <div class="onebtn bWicn" data-name="claw"><i class="icon">crowdsource</i><a>Claw</a>
                 </div>
                 <div class="onebtn bWicn" data-roturRequire="true" data-name="credits"><i
                         class="icon">attach_money</i><a>Credits</a></div>
-                <div class="onebtn bWicn" data-roturRequire="true" data-name="mail"><i
-                        class="icon">mail</i><a>Mail</a></div>
-                <div class="onebtn bWicn" data-name="contacts"><i
-                        class="icon">contacts</i><a>Contacts</a></div>
-                <div class="onebtn bWicn" data-name="messages"><i
-                        class="icon">chat</i><a>Messages</a></div>
+                <div class="onebtn bWicn" data-roturRequire="true" data-name="mail"><i class="icon">mail</i><a>Mail</a>
+                </div>
+                <div class="onebtn bWicn" data-name="contacts"><i class="icon">contacts</i><a>Contacts</a></div>
+                <div class="onebtn bWicn" data-name="messages"><i class="icon">chat</i><a>Messages</a></div>
             </div>
-            <div>
-                <div id="switchSysAdBan" style="display: none;">
-                    <div class="clbtn icon">close</div>
-                    <span>Enter Orion Mode?</span> <i class="icon">arrow_forward</i>
+            <div class="actBtns">
+                <div class="userChip"
+                    onclick="launchSideBarApp('profile', { name: roturExtension.user.username });">
+                    <img class="pfp_display"><span class="username_display"></span>
                 </div>
-                <div class="actBtns">
-                    <div class="userChip username_display"
-                        onclick="launchSideBarApp('profile', { name: roturExtension.user.username });">
-
-                    </div>
-                    <div class="divider"></div>
-                    <div class="btn bWicn" onclick="document.getElementById('settingsd').showModal()"><i
-                            class="icon">tune</i></div>
-                </div>
+                <div class="divider"></div>
+                <div class="btn bWicn" onclick="document.getElementById('settingsd').showModal()"><i
+                        class="icon">tune</i></div>
             </div>
         </div>
     </div>
@@ -116,87 +106,159 @@
         </div>
     </div>
     <dialog id="settingsd">
-        <div class="dianav">
-            <div class="tit">
-                Settings
-            </div>
-            <div onclick="document.getElementById('settingsd').close()" class="closebtn icon bicn">
-                close
-            </div>
-        </div>
-        <h1>Account</h1>
-        <div>Not <span class="username_display">darkdot</span>? <a onclick="logoutofrtr();" class="link">Sign out</a>
-        </div>
-        <h1>Theme</h1>
-        <p>Use a color theme to change the look of OrionClient</p>
-        <div><select id="themesel">
-            </select>
-        </div>
-        <h2>Customization</h2>
-        <div class="sing_setting">
-            <span>Use image as background</span>
-            <div class="textInput" data-setting="img_bg">
-            </div>
-            <button onclick="applyBgSts()">Apply</button>
-        </div>
-        <h1>Preferences</h1>
-        <div class="sing_setting">
-            <span>Claim daily credits on login</span>
-            <div class="checkbox" data-setting="auto_daily">
-                <i class="ball"></i>
-            </div>
-        </div>
-        <div class="sing_setting">
-            <span>Orion's client cache service</span>
-            <button onclick="clearCache()">Clear</button>
-        </div>
-        <div class="abtblk">
-            <h2>OrionClient</h2>
-            <p>Developed an maintained by <a onclick="launchSideBarApp('profile', { name: 'darkdot' });"
-                    style="padding: 3px 5px;background: var(--col-bgh);border-radius: .5em;line-height: 35px;">darkdot</a>.
-                <br>Thanks <a>rotur.dev</a> for maintaining RoturTW. Special thanks to the developers and their
-                community.
-            </p>
-            <div class="sing_setting">
-                <span>Say Thanks! Send Orion a rotur credit</span>
-                <button onclick="senddarkcredit(this)">Send 1 credit</button>
+        <div class="settings-layout">
 
-                <script>
-                    function senddarkcredit(obj) {
-                        obj.disabled = true
-                        obj.innerText = "Sending..."
+            <aside class="settings-sidebar">
+                <div class="sidebar-title">Settings</div>
 
-                        roturExtension.transferCurrency({
-                            AMOUNT: 1,
-                            USER: "darkdot",
-                            NOTE: "Thanks for Orion!"
-                        }).then((result) => {
-                            if (result === "Success") {
-                                obj.innerText = "Sent!"
-                                setTimeout(() => {
-                                    obj.innerText = "Send again"
-                                    obj.disabled = false
-                                }, 3000)
-                            } else {
-                                obj.innerText = "Failed"
-                                setTimeout(() => {
-                                    obj.innerText = "Try again"
-                                    obj.disabled = false
-                                }, 3000)
-                            }
-                        }).catch(() => {
-                            obj.innerText = "Error"
-                            setTimeout(() => {
-                                obj.innerText = "Try again"
-                                obj.disabled = false
-                            }, 3000)
-                        })
-                    }
-                </script>
-            </div>
+                <button class="sidebar-item active" data-page="account">
+                    Account
+                </button>
+
+                <button class="sidebar-item" data-page="theme">
+                    Theme
+                </button>
+
+                <button class="sidebar-item" data-page="preferences">
+                    Preferences
+                </button>
+
+                <button class="sidebar-item" data-page="about">
+                    About
+                </button>
+
+                <div class="sidebar-spacer"></div>
+
+                <button class="sidebar-close" onclick="document.getElementById('settingsd').close()">
+                    Close
+                </button>
+            </aside>
+
+            <main class="settings-content">
+
+                <section class="settings-page active" id="account">
+                    <h1>Account</h1>
+
+                    <div>
+                        Not <span class="username_display">darkdot</span>?
+                        <a onclick="logoutofrtr();" class="link">Sign out</a>
+                    </div>
+                </section>
+
+                <section class="settings-page" id="theme">
+                    <h1>Theme</h1>
+
+                    <p>Use a color theme to change the look of OrionClient</p>
+
+                    <select id="themesel"></select>
+
+                    <h2>Customization</h2>
+
+                    <div class="sing_setting">
+                        <span>Use image as background</span>
+
+                        <div class="textInput" data-setting="img_bg">
+                        </div>
+
+                        <button onclick="applyBgSts()">
+                            Apply
+                        </button>
+                    </div>
+                </section>
+
+                <section class="settings-page" id="preferences">
+                    <h1>Preferences</h1>
+
+                    <div class="sing_setting">
+                        <span>Claim daily credits on login</span>
+
+                        <div class="checkbox" data-setting="auto_daily">
+                            <i class="ball"></i>
+                        </div>
+                    </div>
+                    <div class="sing_setting">
+                        <span>Open notifications on login</span>
+
+                        <div class="checkbox" data-setting="auto_notifpane">
+                            <i class="ball"></i>
+                        </div>
+                    </div>
+                    <div class="sing_setting">
+                        <span>Orion will open this app on login</span>
+
+                        <select id="loginAppsSelect" data-setting="auto_app"></select>
+                    </div>
+                    <div class="sing_setting">
+                        <span>Orion's client cache service</span>
+
+                        <button onclick="clearCache()">
+                            Clear
+                        </button>
+                    </div>
+                </section>
+
+                <section class="settings-page" id="about">
+                    <div class="abtblk">
+                        <h2>OrionClient</h2>
+
+                        <p>
+                            Developed and maintained by
+                            <a onclick="launchSideBarApp('profile', { name: 'darkdot' });" class="profile-pill">
+                                darkdot
+                            </a>
+                            <br>
+                            Thanks rotur.dev for maintaining RoturTW.
+                            Special thanks to the developers and their community.
+                        </p>
+
+                        <div class="sing_setting">
+                            <span>
+                                Say Thanks! Send Orion a rotur credit
+                            </span>
+
+                            <button onclick="senddarkcredit(this)">
+                                Send 1 credit
+                            </button>
+                        </div>
+                    </div>
+                </section>
+
+            </main>
+
         </div>
     </dialog>
+    <script>
+        function senddarkcredit(obj) {
+            obj.disabled = true
+            obj.innerText = "Sending..."
 
+            roturExtension.transferCurrency({
+                AMOUNT: 1,
+                USER: "darkdot",
+                NOTE: "Thanks for Orion!"
+            }).then((result) => {
+                if (result === "Success") {
+                    obj.innerText = "Sent!"
+                    setTimeout(() => {
+                        obj.innerText = "Send again"
+                        obj.disabled = false
+                    }, 3000)
+                } else {
+                    obj.innerText = "Failed"
+                    setTimeout(() => {
+                        obj.innerText = "Try again"
+                        obj.disabled = false
+                    }, 3000)
+                }
+            }).catch(() => {
+                obj.innerText = "Error"
+                setTimeout(() => {
+                    obj.innerText = "Try again"
+                    obj.disabled = false
+                }, 3000)
+            })
+        }
+    </script>
     <script src="script.js"></script>
     <script src="rotur.js"></script>
 </body>

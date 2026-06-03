@@ -7,8 +7,7 @@ body {
 .sing_notif {
     display: flex;
     flex-direction: row;
-    height: 40px;
-    align-items: center;
+    align-items: flex-start;
     gap: .5em;
     margin-bottom: .3em;
     padding: .3em;
@@ -19,12 +18,13 @@ body {
     }
 
     &>img {
-        height: 100%;
         border-radius: .5em;
+        height: 30px;
     }
+
     &>div>* {
-     display: inline-block;
-     margin-right: 5px;   
+        display: inline-block;
+        margin-right: 5px;
     }
 }
 

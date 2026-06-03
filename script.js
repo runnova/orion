@@ -347,8 +347,6 @@ function ask(question, preset = '') {
 	return openModal('ask', { message: question, preset });
 }
 
-openApp("home");
-
 function setTheme(themeName, documentItem = document.documentElement) {
 	themeName = themeName.toLowerCase();
 	var themeDecs = theme[themeName];
@@ -457,26 +455,38 @@ function closeSideBar() {
 closeSideBar();
 
 document.querySelectorAll(".checkbox").forEach(item => {
-	const key = item.getAttribute("data-setting");
-	if (settings.get(key)) item.classList.add("enabled");
-	else item.classList.remove("enabled");
+	const key = item.dataset.setting;
+
+	item.classList.toggle("enabled", !!settings.get(key));
 
 	item.onclick = () => {
-		const v = !item.classList.contains("enabled");
-		settings.set(key, v);
-		item.classList.toggle("enabled");
+		const value = !item.classList.contains("enabled");
+		settings.set(key, value);
+		item.classList.toggle("enabled", value);
 	};
 });
 
 document.querySelectorAll(".textInput").forEach(item => {
-	const key = item.getAttribute("data-setting");
+	const key = item.dataset.setting;
+
 	const input = document.createElement("input");
 	input.type = "text";
 	input.value = settings.get(key) || "";
+
 	item.appendChild(input);
 
 	input.oninput = () => {
 		settings.set(key, input.value);
+	};
+});
+
+document.querySelectorAll("select[data-setting]").forEach(select => {
+	const key = select.dataset.setting;
+
+	select.value = settings.get(key) || "";
+
+	select.onchange = () => {
+		settings.set(key, select.value);
 	};
 });
 
@@ -561,3 +571,39 @@ async function clearCache() {
 	for (const k of keys) await caches.delete(k);
 	cacheTimes.clear();
 }
+
+
+const sidebarButtons = document.querySelectorAll(".sidebar-item");
+const pages = document.querySelectorAll(".settings-page");
+
+sidebarButtons.forEach(button => {
+    button.addEventListener("click", () => {
+        const target = button.dataset.page;
+
+        sidebarButtons.forEach(btn =>
+            btn.classList.remove("active")
+        );
+
+        pages.forEach(page =>
+            page.classList.remove("active")
+        );
+
+        button.classList.add("active");
+
+        document
+            .getElementById(target)
+            .classList.add("active");
+    });
+});
+
+const select = document.getElementById('loginAppsSelect');
+
+document.querySelectorAll('[data-name]').forEach(el => {
+    const name = el.dataset.name;
+
+    const option = document.createElement('option');
+    option.value = name;
+    option.textContent = name;
+
+    select.appendChild(option);
+});

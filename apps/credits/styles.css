@@ -440,3 +440,18 @@ iframe#kycframe {
     color: black;
     padding: 1em 0;
 }
+
+div#donescreen {
+    justify-content: center;
+    align-items: center;
+}
+
+.doneIcon {
+    font-size: 6em;
+    color: #71ff1f;
+    box-shadow: 0 0 1em;
+    border-radius: 3em;
+    padding: .5em;
+    text-shadow: 0 0 10px;
+    font-weight: bolder !important;
+}

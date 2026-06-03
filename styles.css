@@ -199,6 +199,17 @@ div#toastdiv {
 
     & .userChip {
         flex: 1;
+        display: flex;
+        flex-direction: row;
+        align-items: center; 
+        gap: .5em;
+        overflow: hidden;
+        &>img {
+            width: 2.5em;
+            aspect-ratio: 1/1;
+            border-radius: .5em;
+            transform: scale(.9);
+        }
     }
 
     &.collapsed {
@@ -662,36 +673,96 @@ div#toastdiv {
         width: 1px;
     }
 }
-
 dialog#settingsd {
-    aspect-ratio: 4/3;
-    max-height: 80%;
-    border-radius: .7em;
+    width: min(900px, 90vw);
+    height: min(650px, 85vh);
+    padding: 0;
     border: 0;
-    background-color: var(--col-bg2);
+    outline: none;
+    overflow: hidden;
+
+    background: var(--col-bg2);
+    border-radius: .8em;
     border: var(--box-crisp);
     box-shadow: 0 5px 1em #000000ab;
-    outline: none;
+}
+
+.settings-layout {
+    display: flex;
+    height: 100%;
+}
+
+.settings-sidebar {
+    width: 220px;
+    flex-shrink: 0;
+
+    display: flex;
+    flex-direction: column;
+    gap: .35em;
+
+    padding: 1em;
+
+    border-right: 1px solid var(--box-crisp-col);
+    background: var(--col-bg);
+}
+
+.sidebar-title {
+    font-size: 1.4em;
+    font-weight: 600;
+    margin-bottom: .5em;
+}
+
+.sidebar-item,
+.sidebar-close {
+    border: none;
+    background: transparent;
+
+    text-align: left;
+    padding: .75em 1em;
+
+    border-radius: .6em;
+    cursor: pointer;
+
+    color: inherit;
+    font: inherit;
+}
+
+.sidebar-item:hover,
+.sidebar-close:hover {
+    background: var(--col-bg3);
+}
+
+.sidebar-item.active {
+    background: var(--col-bgh);
+}
+
+.sidebar-spacer {
+    flex: 1;
+}
+
+.settings-content {
+    flex: 1;
+    overflow-y: auto;
     padding: 1.5em;
+}
 
-    &>.dianav {
-        display: flex;
-        flex-direction: row;
-        justify-content: space-between;
-        padding-bottom: .5em;
-        border-bottom: 1px solid var(--box-crisp-col);
-        align-items: center;
-        font-size: 1.5em;
+.settings-page {
+    display: none;
+}
 
-        &>.closebtn {
-            padding: .5em;
-            display: flex;
-            font-size: 20px;
-            background-color: var(--col-bg3);
-            border-radius: 2em;
-            cursor: pointer;
-        }
-    }
+.settings-page.active {
+    display: block;
+}
+
+.settings-page h1 {
+    margin-top: 0;
+}
+
+.profile-pill {
+    padding: 3px 5px;
+    background: var(--col-bgh);
+    border-radius: .5em;
+    line-height: 35px;
 }
 
 .abtblk {
@@ -701,7 +772,7 @@ dialog#settingsd {
     margin-top: 1em;
 }
 
-#themesel {
+select {
     background: var(--col-bg3);
     color: var(--col-txt1);
     padding: .5em;
