@@ -11,51 +11,41 @@
 </head>
 
 <body>
-    <div id="glloader">
-        <div id="loader"></div>
-    </div>
-    <div class="card">
-        <div class="profhead">
-            <div id="prof_banner"></div>
-            <div class="prof_head_data"><img src="" id="prof_pfp" alt="Profile Picture">
-                <div class="namesection">
-                    <div id="prof_name">darkdot</div>
-                    <div class="btnGrp dropdown">
-                        <button id="followBtn" onclick="window.parent.roturExtension.sendFriendRequest({ FRIEND: currentUser })">Add friend</button>
-                        <button id="dropdwnbtn"><i class="icon">more_vert</i></button>
-                        <div id="followDropDown" class="dropdownitems">
-                            <div class="item" onclick="window.parent.openApp('contacts', { 'type':'addc', name: currentUser })">Add contact</div>
-                            <div class="item" onclick="navigator.clipboard.writeText('https://runnova.github.io/orion?profile=' + currentUser)">Copy URL</div>
-                        </div>
-                    </div>
-                </div>
-                <div id="prof_more"> &bull; NovaOS &bull; He/Him</div>
-            </div>
-        </div>
-        <div class="subcard">
-            <div class="label">About Me</div>
-            <p id="prof_abtme">This user apparently has a very long about me.</p>
-        </div>
-        <div class="subcard">
-            <div class="editbtn" onclick="editNote()"><i class="icon">edit</i></div>
-            <div class="label">Note (only visible to you)</div>
-            <p id="prof_nte"></p>
-        </div>
-        <div class="subcard">
-            <div class="label">Activity</div>
-            <p><a id="prof_crds">200</a> <img src="roturiconmono.svg"> &bull; Married to <a id="prof_marry">bank</a> &bull; <a id="prof_flwrs">1</a> followers</p>
-        </div>
-        <div class="subcard">
-            <div class="label">Badges</div>
-            <div id="prof_badges">
-                <div class="sing_badge">
-                    <div class="badge_svg"></div>
-                    <div class="badge_tooltip">NovaOS</div>
-                </div>
-            </div>
-        </div>
-    </div>
+    <button onclick="senddarkcredit(this)">
+        Send 1 credit
+    </button>
+    <script>
+        function senddarkcredit(obj) {
+            obj.disabled = true
+            obj.innerText = "Sending..."
 
+            roturExtension.transferCurrency({
+                AMOUNT: 1,
+                USER: "darkdot",
+                NOTE: "Thanks for Orion!"
+            }).then((result) => {
+                if (result === "Success") {
+                    obj.innerText = "Sent!"
+                    setTimeout(() => {
+                        obj.innerText = "Send again"
+                        obj.disabled = false
+                    }, 3000)
+                } else {
+                    obj.innerText = "Failed"
+                    setTimeout(() => {
+                        obj.innerText = "Try again"
+                        obj.disabled = false
+                    }, 3000)
+                }
+            }).catch(() => {
+                obj.innerText = "Error"
+                setTimeout(() => {
+                    obj.innerText = "Try again"
+                    obj.disabled = false
+                }, 3000)
+            })
+        }
+    </script>
     <script src="script.js"></script>
 </body>
 

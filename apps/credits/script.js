@@ -93,7 +93,7 @@ async function loadAvatars(usernames) {
                 ctx.textBaseline = 'middle';
                 ctx.fillText(createInitials(username), 24, 24);
                 avatarCache[username] = canvas;
-                
+
                 try {
                     const img = new Image();
                     img.crossOrigin = 'anonymous';
@@ -135,7 +135,7 @@ function createAvatarPlugin(usernames, chartType = 'pie') {
         id: 'avatarPlugin',
         beforeDatasetsDraw(chart) {
             if (chartType !== 'pie') return;
-            
+
             const ctx = chart.ctx;
             const meta = chart.getDatasetMeta(0);
             if (!meta || !meta.data) return;
@@ -155,7 +155,7 @@ function createAvatarPlugin(usernames, chartType = 'pie') {
         },
         afterDatasetsDraw(chart) {
             if (chartType === 'pie') return;
-            
+
             const ctx = chart.ctx;
             const meta = chart.getDatasetMeta(0);
             if (!meta || !meta.data) return;
@@ -164,7 +164,7 @@ function createAvatarPlugin(usernames, chartType = 'pie') {
                 const username = usernames[index];
                 if (username && username !== 'others' && avatarCache[username]) {
                     const canvas = avatarCache[username];
-                    const {x, y} = datapoint.getProps(['x', 'y']);
+                    const { x, y } = datapoint.getProps(['x', 'y']);
 
                     if (chartType === 'bar') {
                         ctx.drawImage(canvas, x - 12, y - 30, 24, 24);
@@ -201,6 +201,7 @@ function createAvatarPlugin(usernames, chartType = 'pie') {
         let time = '';
         let user = '';
         let amount = 0;
+        let type = '';
         let note = '';
         let timestamp = 0;
 
@@ -216,6 +217,7 @@ function createAvatarPlugin(usernames, chartType = 'pie') {
                     time: '',
                     timestamp: Date.now(),
                     user: 'unknown',
+                    type,
                     amount,
                     note,
                     balance: runningBalance
@@ -236,6 +238,7 @@ function createAvatarPlugin(usernames, chartType = 'pie') {
                 time,
                 timestamp,
                 user,
+                type,
                 amount: signed,
                 note,
                 balance: runningBalance
@@ -254,7 +257,7 @@ function createAvatarPlugin(usernames, chartType = 'pie') {
 
     [...dataPoints].sort((a, b) => b.timestamp - a.timestamp).forEach(r => {
         const tr = document.createElement('tr');
-        [r.time, r.user, r.amount, r.note, r.balance].forEach((v, i) => {
+        [r.time, r.user, r.amount, ((r.type != "in" && r.type != "out") ? ` (${r.type}) ` : "") + r.note, r.balance].forEach((v, i) => {
             const td = document.createElement('td');
             td.textContent = v;
             if (i === 2) {
