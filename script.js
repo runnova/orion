@@ -46,9 +46,9 @@ var theme = {
 	},
 	"communism": {
 		"--col-bg1": "#150000",
-		"--col-bg2": "#57000a",
-		"--col-bg3": "#ff6464",
-		"--col-bgh": "#ff0000",
+		"--col-bg2": "#2D1B1D",
+		"--col-bg3": "#CE1315",
+		"--col-bgh": "#ff4b4d",
 		"--col-txt1": "#FFFFFF",
 		"--col-txth": "#FFFFFF"
 	},
@@ -84,13 +84,13 @@ var theme = {
 		"--col-txt1": "#F2F1F3",
 		"--col-txth": "#141414"
 	},
-	"banks use this": {
-		"--col-bg1": "#1a1d6a",
-		"--col-bg2": "#3c428d",
-		"--col-bg3": "#38485f",
-		"--col-bgh": "#00155b",
-		"--col-txt1": "#ffffff",
-		"--col-txth": "#ff7272"
+	"light blue": {
+		"--col-bg1": "#f7f7ff",
+		"--col-bg2": "#f9ffff",
+		"--col-bg3": "#c6deff",
+		"--col-bgh": "#3d57ff",
+		"--col-txt1": "#3a68ff",
+		"--col-txth": "#ffffff"
 	},
 	"heaven": {
 		"--col-bg1": "#ffffff",
@@ -443,6 +443,7 @@ function launchSideBarApp(name, data) {
 	sidebarappframe.src = "apps/" + name;
 	oriloaderstatic2.style.display = "block"
 	sidebarappframe.onload = () => {
+		setTheme(curtheme, sidebarappframe.contentDocument.documentElement);
 		oriloaderstatic2.style.display = "none"
 		try { sidebarappframe.contentWindow.greenflag({ data }) } catch { }
 	}

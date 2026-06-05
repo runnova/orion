@@ -734,6 +734,7 @@ dialog#settingsd {
 
 .sidebar-item.active {
     background: var(--col-bgh);
+    color: var(--col-txth);
 }
 
 .sidebar-spacer {
@@ -761,6 +762,7 @@ dialog#settingsd {
 .profile-pill {
     padding: 3px 5px;
     background: var(--col-bgh);
+    color: var(--col-txth);
     border-radius: .5em;
     line-height: 35px;
 }
@@ -1032,4 +1034,21 @@ dialog#orionBadgeAlert {
     position: absolute;
     z-index: 999;
     border: 0;
+}
+
+@media only screen and (max-width: 600px) {
+    .settings-layout {
+        flex-direction: column;
+    }
+
+    .sidebar-title {
+        display: none;
+    }
+
+    .settings-sidebar {
+        flex-direction: row;
+    }
+    .sidebar-item, .sidebar-close {
+        padding: .3em .5em ;
+    }
 }

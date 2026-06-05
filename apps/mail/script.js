@@ -147,6 +147,22 @@ function renderMailBody(body) {
     return container;
 }
 
+export function sanitize(input) {
+    return input.replace(/[<>&'"/()=]/g, char => {
+        switch (char) {
+            case '&': return '&amp;';
+            case '<': return '&lt;';
+            case '>': return '&gt;';
+            case '\'': return '&apos;';
+            case '"': return '&quot;';
+            case '/': return '&sol;';
+            case '(': return '&lpar;';
+            case ')': return '&rpar;';
+            case '': return '&equals;';
+        }
+    });
+};
+
 async function openMail(mailId, mailMeta) {
     const raw = await window.parent.roturExtension.getMail({
         ID: mailId
@@ -162,7 +178,7 @@ async function openMail(mailId, mailMeta) {
     mailBody.innerHTML = "";
 
     mailBody.appendChild(
-        renderMailBody(mailData.body || "")
+        renderMailBody(sanitize(mailData.body) || "")
     );
 
     const readMailDynamics = document.getElementById("readMailDynamics");

@@ -168,12 +168,13 @@
             flex: 1;
             padding: .5em .8em;
             background-color: var(--col-bgh);
+            color: var(--col-txth);
         }
     }
 }
 
 .item .icon {
-	font-variation-settings: 'FILL' 1;
+    font-variation-settings: 'FILL' 1;
 }
 
 .item-active {
@@ -263,4 +264,13 @@ input {
     border: 0;
     color: inherit;
     font: inherit;
+}
+
+@media only screen and (max-width: 600px) {
+    #item_preview {
+        max-width: calc(100% - 5em);
+        &>.content {
+            flex-direction: column;
+        }
+    }
 }

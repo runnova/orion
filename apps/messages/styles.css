@@ -80,6 +80,7 @@ body {
 
         & .contains_text {
             background-color: var(--col-bgh);
+    color: var(--col-txth);
             border-radius: 2em .5em .5em 2em;
         }
 
