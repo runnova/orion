@@ -139,11 +139,7 @@ async function loadFeed(type = 'claw', obj, useOffset = false, torefresh = false
         const postTimestamp = document.createElement("div");
         postTimestamp.classList.add("posttimestamp");
         if (post.os) {
-            if (post.os === "NovaOS") {
-                postTimestamp.innerHTML = timeSince(post.timestamp) + " | Posted here";
-            } else {
                 postTimestamp.textContent = timeSince(post.timestamp) + " | Posted on " + post.os;
-            }
         } else {
             postTimestamp.textContent = timeSince(post.timestamp);
         }
