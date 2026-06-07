@@ -147,7 +147,7 @@ function renderMailBody(body) {
     return container;
 }
 
-export function sanitize(input) {
+function sanitize(input) {
     return input.replace(/[<>&'"/()=]/g, char => {
         switch (char) {
             case '&': return '&amp;';
